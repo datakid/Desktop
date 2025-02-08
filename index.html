@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinkExpress Desktop</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+  <!-- Dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Theme Colors - Dark */
+      --bg-dark: #0a0a0c;
+      --surface-dark: rgba(28, 28, 35, 0.98);
+      --text-dark: #ffffff;
+      --text-secondary-dark: rgba(255, 255, 255, 0.8);
+      
+      /* Theme Colors - Light */
+      --bg-light: #f0f0f5;
+      --surface-light: rgba(255, 255, 255, 0.98);
+      --text-light: #1a1a1a;
+      --text-secondary-light: rgba(0, 0, 0, 0.75);
+      
+      /* Accents */
+      --gradient-blue: linear-gradient(135deg, #3b82f6, #2563eb);
+      --gradient-purple: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      --gradient-green: linear-gradient(135deg, #10b981, #059669);
+      --gradient-red: linear-gradient(135deg, #ef4444, #dc2626);
+      
+      /* Glass Effects */
+      --glass-bg-dark: rgba(20, 20, 28, 0.85);
+      --glass-bg-light: rgba(255, 255, 255, 0.85);
+      --glass-border-dark: rgba(255, 255, 255, 0.1);
+      --glass-border-light: rgba(0, 0, 0, 0.07);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+
+      /* Layout */
+      --dock-padding: 12px;
+      --dock-icon-size: 56px;
+      --window-radius: 20px;
+    }
+
+    /* Theme Switching */
+    [data-theme="light"] {
+      --bg-color: var(--bg-light);
+      --surface-color: var(--surface-light);
+      --text-color: var(--text-light);
+      --text-secondary: var(--text-secondary-light);
+      --glass-bg: var(--glass-bg-light);
+      --glass-border: var(--glass-border-light);
+    }
+    [data-theme="dark"] {
+      --bg-color: var(--bg-dark);
+      --surface-color: var(--surface-dark);
+      --text-color: var(--text-dark);
+      --text-secondary: var(--text-secondary-dark);
+      --glass-bg: var(--glass-bg-dark);
+      --glass-border: var(--glass-border-dark);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      user-select: none;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-color);
+      color: var(--text-color);
+      overflow: hidden;
+      transition: background-color 0.3s ease;
+      position: relative;
+    }
+
+    /* Subtle Animated Background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.03), transparent 70%);
+      animation: rotateBackground 60s linear infinite;
+      z-index: 0;
+    }
+    @keyframes rotateBackground {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .desktop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-position: center;
+      background-size: cover;
+      transition: filter 0.3s ease;
+      z-index: -2;
+    }
+    [data-theme="dark"] .desktop {
+      background-image: url('https://source.unsplash.com/1920x1080/?cosmic,abstract,night');
+      filter: brightness(0.6) contrast(1.1) saturate(1.4);
+    }
+    [data-theme="light"] .desktop {
+      background-image: url('https://source.unsplash.com/1920x1080/?vivid,abstract,day');
+      filter: brightness(0.9) contrast(1.0) saturate(1.2);
+    }
+
+    /* Pulsating Decorative Shapes */
+    .decoration-shape {
+      position: fixed;
+      border-radius: 50%;
+      background: var(--gradient-purple);
+      opacity: 0.1;
+      filter: blur(80px);
+      z-index: -1;
+      animation: pulse 8s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(0.95); opacity: 0.1; }
+      50% { transform: scale(1.05); opacity: 0.2; }
+    }
+    .shape1 { width: 400px; height: 400px; top: -100px; left: -100px; }
+    .shape2 { width: 300px; height: 300px; bottom: -80px; right: -80px; background: var(--gradient-blue); }
+
+    /* Enhanced, Subtle Particle Effects */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .particle {
+      position: absolute;
+      background: var(--text-color);
+      border-radius: 50%;
+      opacity: 0.08;
+      animation: float 25s infinite linear;
+    }
+    @keyframes float {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(10px, -10px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    /* Top Bar with Clock */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      padding: 0 20px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .clock-widget {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .clock-widget i {
+      color: var(--text-secondary);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .user-profile:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--gradient-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    .user-name {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Premium Widget Styling */
+    .system-widgets {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: 340px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 100;
+    }
+    .widget {
+      background: var(--glass-bg);
+      backdrop-filter: blur(30px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--window-radius);
+      padding: 24px;
+      box-shadow: var(--glass-shadow);
+      position: relative;
+      overflow: hidden;
+      animation: widgetAppear 0.5s ease forwards;
+      opacity: 0;
+    }
+    @keyframes widgetAppear {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .widget::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.04), transparent 70%);
+      animation: rotateBackground 60s linear infinite;
+      z-index: -1;
+    }
+    .widget-header {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .widget-header i {
+      font-size: 20px;
+      color: var(--text-secondary);
+    }
+    .widget-content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .quick-link {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-color);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .quick-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(5px);
+    }
+    .quick-link i {
+      margin-right: 12px;
+      font-size: 18px;
+      color: var(--text-secondary);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      position: fixed;
+      top: 50%;
+      left: 20px;
+      transform: translateY(-50%);
+      background: var(--glass-bg);
+      backdrop-filter: blur(30px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--window-radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--glass-shadow);
+      z-index: 900;
+    }
+    .quick-action-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .quick-action-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.1);
+    }
+    .quick-action-btn i {
+      font-size: 20px;
+      color: var(--text-color);
+    }
+
+    /* Enhanced Dock */
+    .dock-container {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+    }
+    .dock {
+      background: var(--glass-bg);
+      backdrop-filter: blur(30px);
+      border: 1px solid var(--glass-border);
+      border-radius: 30px;
+      padding: var(--dock-padding);
+      display: flex;
+      gap: 16px;
+      box-shadow: var(--glass-shadow), 0 0 40px rgba(0,0,0,0.2);
+      position: relative;
+    }
+    .dock::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      right: -20px;
+      bottom: -20px;
+      background: var(--glass-bg);
+      border-radius: 40px;
+      opacity: 0.3;
+      filter: blur(20px);
+      z-index: -1;
+    }
+    .dock-item {
+      width: var(--dock-icon-size);
+      height: var(--dock-icon-size);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .dock-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(rgba(255,255,255,0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    .dock-item:hover::before {
+      opacity: 1;
+    }
+    .dock-item i {
+      font-size: 24px;
+      color: #fff;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
+      margin-bottom: 4px;
+    }
+    .dock-item span {
+      font-size: 11px;
+      font-weight: 500;
+      color: #fff;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.15s ease;
+    }
+    .dock-item:hover span {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .dock-item.adventure { background: var(--gradient-blue); }
+    .dock-item.continue { background: var(--gradient-purple); }
+    .dock-item.system { background: var(--gradient-green); }
+    .dock-item.exit { background: var(--gradient-red); }
+  </style>
+</head>
+<body data-theme="dark">
+  <!-- Background Elements -->
+  <div class="desktop"></div>
+  <div class="decoration-shape shape1"></div>
+  <div class="decoration-shape shape2"></div>
+  <div class="particles" id="particles"></div>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="user-profile">
+      <div class="user-avatar"><span>DK</span></div>
+      <div class="user-name">datakid</div>
+    </div>
+    <div class="clock-widget">
+      <i class="fas fa-clock"></i>
+      <span id="utcClock">UTC</span>
+    </div>
+    <div id="quickThemeToggle" class="quick-action-btn">
+      <i class="fas fa-moon"></i>
+    </div>
+  </div>
+
+  <!-- Premium Quick Links Widget -->
+  <div class="system-widgets">
+    <div class="widget" id="quickLinksWidget">
+      <div class="widget-header">
+        Quick Links <i class="fas fa-link"></i>
+      </div>
+      <div class="widget-content">
+        <button class="quick-link" onclick="window.open('https://protocols-one.vercel.app/', '_blank')">
+          <i class="fas fa-shield-alt"></i>
+          Protocols
+        </button>
+        <button class="quick-link" onclick="window.open('https://searchbar-five-beta.vercel.app/', '_blank')">
+          <i class="fas fa-list"></i>
+          The List
+        </button>
+        <button class="quick-link" id="pricesButton">
+          <i class="fas fa-tags"></i>
+          Prices
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <div class="quick-action-btn" onclick="window.open('https://finalapp-nine.vercel.app/', '_blank')">
+      <i class="fas fa-star"></i>
+    </div>
+    <div class="quick-action-btn" onclick="window.open('https://dashboard2-iota.vercel.app/', '_blank')">
+      <i class="fas fa-compass"></i>
+    </div>
+    <div class="quick-action-btn" id="quickExit">
+      <i class="fas fa-power-off"></i>
+    </div>
+  </div>
+
+  <!-- Dock -->
+  <div class="dock-container">
+    <div class="dock">
+      <div class="dock-item adventure" onclick="window.open('https://finalapp-nine.vercel.app/', '_blank')">
+        <i class="fas fa-star"></i>
+        <span>Adventure</span>
+      </div>
+      <div class="dock-item continue" onclick="window.open('https://dashboard2-iota.vercel.app/', '_blank')">
+        <i class="fas fa-compass"></i>
+        <span>Continue</span>
+      </div>
+      <div class="dock-item system">
+        <i class="fas fa-cog"></i>
+        <span>System</span>
+      </div>
+      <div class="dock-item exit" id="exitButton">
+        <i class="fas fa-power-off"></i>
+        <span>Exit</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Real-time UTC Clock
+    function updateClock() {
+      const now = new Date();
+      const utcString = now.toISOString().replace('T', ' ').split('.')[0];
+      document.getElementById('utcClock').textContent = utcString;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Create subtle particle effects
+    function createParticles() {
+      const particles = document.getElementById('particles');
+      const particleCount = 15; // Reduced count for subtlety
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        const size = Math.random() * 2 + 1;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = Math.random() * 100 + 'vw';
+        particle.style.top = Math.random() * 100 + 'vh';
+        particle.style.animationDuration = (Math.random() * 20 + 20) + 's';
+        particle.style.animationDelay = Math.random() * 5 + 's';
+        particles.appendChild(particle);
+      }
+    }
+    createParticles();
+
+    // Prices random link selection
+    const priceLinks = [
+      "https://newlist-eta.vercel.app/",
+      "https://newlist2.vercel.app/"
+    ];
+    document.getElementById("pricesButton").addEventListener("click", () => {
+      const randomIndex = Math.floor(Math.random() * priceLinks.length);
+      window.open(priceLinks[randomIndex], "_blank");
+    });
+
+    // Theme switching with smooth transition
+    const body = document.body;
+    const quickThemeToggle = document.getElementById('quickThemeToggle');
+    quickThemeToggle.addEventListener('click', () => {
+      const current = body.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      gsap.to(body, {
+        opacity: 0.5,
+        duration: 0.15,
+        onComplete: () => {
+          body.setAttribute('data-theme', next);
+          quickThemeToggle.innerHTML = `<i class="fas fa-${next === 'dark' ? 'moon' : 'sun'}"></i>`;
+          gsap.to(body, { opacity: 1, duration: 0.15 });
+        }
+      });
+    });
+
+    // Exit animation
+    function exitSystem() {
+      gsap.to('.dock-container', { y: 100, opacity: 0, duration: 0.2 });
+      gsap.to('.quick-actions', { x: -100, opacity: 0, duration: 0.2 });
+      gsap.to('.system-widgets', { x: 100, opacity: 0, duration: 0.2 });
+      gsap.to('.top-bar', { y: -100, opacity: 0, duration: 0.2 });
+      gsap.to('body', {
+        opacity: 0,
+        duration: 0.3,
+        delay: 0.2,
+        onComplete: () => {
+          window.close();
+          if (window.location.href.includes('about:')) {
+            window.location.replace('about:blank');
+          }
+          window.location.href = 'about:blank';
+        }
+      });
+    }
+    document.getElementById('exitButton').addEventListener('click', exitSystem);
+    document.getElementById('quickExit').addEventListener('click', exitSystem);
+
+    // Enhanced dock animations
+    document.querySelectorAll('.dock-item').forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        gsap.to(item, { scale: 1.3, y: -10, duration: 0.15, ease: 'power4.out' });
+      });
+      item.addEventListener('mouseleave', () => {
+        gsap.to(item, { scale: 1, y: 0, duration: 0.15, ease: 'power4.out' });
+      });
+    });
+
+    // Initial animations
+    window.addEventListener('load', () => {
+      gsap.from("#quickLinksWidget", { opacity: 0, y: 20, duration: 0.6, ease: "power4.out" });
+      gsap.from('.dock-container', { y: 100, opacity: 0, duration: 0.4, ease: 'power4.out' });
+      gsap.from('.quick-actions', { x: -100, opacity: 0, duration: 0.4, ease: 'power4.out' });
+      gsap.from('.top-bar', { y: -100, opacity: 0, duration: 0.4, ease: 'power4.out' });
+    });
+  </script>
+</body>
+</html>
