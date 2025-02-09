@@ -14,35 +14,35 @@
 
   <style>
     :root {
-      /* Dark Mode Theme Colors */
-      --bg-dark: radial-gradient(circle at top left, #23232b, #0d0d12);
+      /* Enhanced Dark Mode Theme Colors */
+      --bg-dark: radial-gradient(circle at top left, #1a1a24, #0a0a12);
       --surface-dark: rgba(28, 28, 35, 0.95);
       --text-dark: #ffffff;
       --text-secondary-dark: rgba(255, 255, 255, 0.8);
 
-      /* Light Mode Theme Colors (Premium Gradient) */
-      --bg-light: radial-gradient(circle at top left, #ffffff, #f0f5ff);
+      /* Enhanced Light Mode Theme Colors */
+      --bg-light: radial-gradient(circle at top left, #ffffff, #eef3ff);
       --surface-light: rgba(245, 245, 250, 0.95);
       --text-light: #1a1a1a;
       --text-secondary-light: rgba(0, 0, 0, 0.75);
 
-      /* Accents */
+      /* Premium Accents */
       --gradient-blue: linear-gradient(135deg, #0a84ff, #0060df);
       --gradient-purple: linear-gradient(135deg, #bf5af2, #9f4dd6);
       --gradient-green: linear-gradient(135deg, #30d158, #28b945);
       --gradient-red: linear-gradient(135deg, #ff453a, #d83a31);
 
-      /* Vibrancy/Glass Effects */
+      /* Enhanced Glass Effects */
       --glass-bg-dark: rgba(20, 20, 28, 0.85);
       --glass-bg-light: rgba(255, 255, 255, 0.85);
       --glass-border-dark: rgba(255, 255, 255, 0.12);
       --glass-border-light: rgba(0, 0, 0, 0.07);
       --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 
-      /* Layout */
-      --dock-padding: 16px;
-      --dock-icon-size: 64px;
-      --window-radius: 16px;
+      /* Premium Layout */
+      --dock-padding: 20px;
+      --dock-icon-size: 68px;
+      --window-radius: 20px;
     }
 
     /* Theme Switching */
@@ -80,7 +80,6 @@
       position: relative;
     }
 
-    /* Enhanced Desktop Background */
     .desktop {
       position: fixed;
       top: 0;
@@ -91,22 +90,22 @@
       z-index: -2;
     }
 
-    /* Decorative Shapes - Upgraded */
+    /* Premium Decorative Shapes */
     .decoration-shape {
       position: fixed;
       border-radius: 50%;
       opacity: 0.15;
-      filter: blur(100px);
+      filter: blur(120px);
       z-index: -1;
-      animation: pulse 10s infinite ease-in-out;
+      animation: premium-pulse 12s infinite ease-in-out;
     }
-    @keyframes pulse {
-      0%, 100% { transform: scale(0.9); opacity: 0.15; }
-      50% { transform: scale(1.1); opacity: 0.25; }
+    @keyframes premium-pulse {
+      0%, 100% { transform: scale(0.95); opacity: 0.15; }
+      50% { transform: scale(1.15); opacity: 0.25; }
     }
-    .shape1 { width: 400px; height: 400px; top: -100px; left: -100px; background: var(--gradient-purple); }
-    .shape2 { width: 350px; height: 350px; bottom: -80px; right: -80px; background: var(--gradient-blue); }
-    .shape3 { width: 300px; height: 300px; top: 20%; right: -150px; background: var(--gradient-green); opacity: 0.1; }
+    .shape1 { width: 500px; height: 500px; top: -150px; left: -150px; background: var(--gradient-purple); }
+    .shape2 { width: 450px; height: 450px; bottom: -100px; right: -100px; background: var(--gradient-blue); }
+    .shape3 { width: 400px; height: 400px; top: 20%; right: -200px; background: var(--gradient-green); opacity: 0.1; }
 
     /* Enhanced Particle Effects */
     .particles {
@@ -124,52 +123,72 @@
       opacity: 0;
     }
 
-    /* Top Bar Upgrades */
+    /* Premium Top Bar */
     .top-bar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      height: 60px;
-      padding: 0 24px;
+      height: 70px;
+      padding: 0 30px;
       background: var(--glass-bg);
-      backdrop-filter: blur(25px);
+      backdrop-filter: blur(35px);
       border-bottom: 1px solid var(--glass-border);
       display: flex;
       justify-content: space-between;
       align-items: center;
       z-index: 1000;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     }
+
     .clock-widget {
       background: rgba(255, 255, 255, 0.1);
-      padding: 10px 18px;
-      border-radius: 14px;
-      font-size: 15px;
+      padding: 12px 24px;
+      border-radius: 16px;
+      font-size: 16px;
       font-weight: 500;
       color: var(--text-color);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      box-shadow: 
+        0 8px 20px rgba(0,0,0,0.1),
+        inset 0 0 20px rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
     }
-    .clock-widget i { color: var(--text-secondary); }
+
+    .clock-widget:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 12px 30px rgba(0,0,0,0.15),
+        inset 0 0 30px rgba(255,255,255,0.1);
+    }
+
     .user-profile {
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 8px 20px;
-      border-radius: 14px;
+      gap: 18px;
+      padding: 10px 24px;
+      border-radius: 16px;
       cursor: pointer;
       transition: all 0.3s ease;
       background: rgba(255, 255, 255, 0.1);
+      box-shadow: 
+        0 8px 20px rgba(0,0,0,0.1),
+        inset 0 0 20px rgba(255,255,255,0.05);
     }
+
     .user-profile:hover {
       background: rgba(255, 255, 255, 0.15);
       transform: translateY(-2px);
+      box-shadow: 
+        0 12px 30px rgba(0,0,0,0.15),
+        inset 0 0 30px rgba(255,255,255,0.1);
     }
+
     .user-avatar {
-      width: 36px;
-      height: 36px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       background: var(--gradient-blue);
       display: flex;
@@ -177,38 +196,59 @@
       justify-content: center;
       color: white;
       font-weight: 600;
-      font-size: 16px;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+      font-size: 18px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.1);
     }
-    .user-name { font-size: 15px; font-weight: 500; }
 
-    /* Upgraded Widgets */
+    .user-name {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: var(--text-color);
+    }
+    /* Premium System Widgets */
     .system-widgets {
       position: fixed;
-      top: 80px;
+      top: 90px;
       right: 30px;
-      width: 360px;
+      width: 380px;
       display: flex;
       flex-direction: column;
       gap: 24px;
       z-index: 100;
     }
+
     .widget {
       background: var(--glass-bg);
       backdrop-filter: blur(35px);
       border: 1px solid var(--glass-border);
       border-radius: var(--window-radius);
-      padding: 28px;
-      box-shadow: var(--glass-shadow), 0 0 50px rgba(0,0,0,0.15);
+      padding: 32px;
+      box-shadow: 
+        var(--glass-shadow),
+        0 0 50px rgba(0,0,0,0.15),
+        inset 0 0 30px rgba(255,255,255,0.05);
       position: relative;
       overflow: hidden;
-      animation: widgetAppear 0.6s ease forwards;
+      animation: widgetAppear 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
       opacity: 0;
       transform: translateY(20px) scale(0.98);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
+    .widget:hover {
+      transform: translateY(-5px);
+      box-shadow: 
+        var(--glass-shadow),
+        0 15px 60px rgba(0,0,0,0.25),
+        inset 0 0 40px rgba(255,255,255,0.08);
+    }
+
     @keyframes widgetAppear {
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
+
     .widget::before {
       content: "";
       position: absolute;
@@ -216,58 +256,212 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%);
-      animation: rotateBackground 70s linear infinite;
+      background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%);
+      animation: rotateBackground 60s linear infinite;
       z-index: -1;
     }
+
     @keyframes rotateBackground {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
+
     .widget-header {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 700;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       color: var(--text-color);
     }
+
     .widget-header i {
-      font-size: 22px;
+      font-size: 24px;
       color: var(--text-secondary);
+      transition: all 0.3s ease;
     }
+
+    .widget:hover .widget-header i {
+      transform: scale(1.1);
+      color: var(--text-color);
+    }
+
     .widget-content {
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 20px;
     }
+
     .quick-link {
       display: flex;
       align-items: center;
-      padding: 16px 20px;
+      padding: 18px 24px;
       background: rgba(255, 255, 255, 0.08);
       border: none;
-      border-radius: 16px;
-      font-size: 16px;
+      border-radius: 18px;
+      font-size: 17px;
       font-weight: 600;
       color: var(--text-color);
       cursor: pointer;
-      transition: transform 0.2s ease, background 0.2s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
+      box-shadow: 
+        0 8px 20px rgba(0,0,0,0.1),
+        inset 0 0 20px rgba(255,255,255,0.05);
     }
+
     .quick-link:hover {
       background: rgba(255, 255, 255, 0.12);
       transform: translateX(8px);
-    }
-    .quick-link i {
-      margin-right: 14px;
-      font-size: 20px;
-      color: var(--text-secondary);
+      box-shadow: 
+        0 12px 30px rgba(0,0,0,0.15),
+        inset 0 0 30px rgba(255,255,255,0.1);
     }
 
-    /* Quick Actions Upgraded */
+    .quick-link i {
+      margin-right: 16px;
+      font-size: 22px;
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+    }
+
+    .quick-link:hover i {
+      color: var(--text-color);
+      transform: scale(1.1);
+    }
+
+    /* Premium Dock */
+    .dock-container {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      perspective: 1000px;
+    }
+
+    .dock {
+      background: var(--glass-bg);
+      backdrop-filter: blur(35px);
+      border: 1px solid var(--glass-border);
+      border-radius: 30px;
+      padding: var(--dock-padding);
+      display: flex;
+      gap: 24px;
+      box-shadow: 
+        var(--glass-shadow),
+        0 0 60px rgba(0,0,0,0.2),
+        inset 0 0 30px rgba(255,255,255,0.05);
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+
+    .dock:hover {
+      transform: translateY(-10px) rotateX(8deg);
+      box-shadow: 
+        var(--glass-shadow),
+        0 20px 70px rgba(0,0,0,0.35),
+        inset 0 0 40px rgba(255,255,255,0.12);
+    }
+
+    .dock::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: -40px;
+      right: -40px;
+      bottom: -40px;
+      background: var(--glass-bg);
+      border-radius: 45px;
+      opacity: 0.2;
+      filter: blur(40px);
+      z-index: -1;
+      transition: all 0.4s ease;
+    }
+
+    .dock:hover::before {
+      opacity: 0.35;
+      filter: blur(50px);
+    }
+
+    .dock-item {
+      width: var(--dock-icon-size);
+      height: var(--dock-icon-size);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 
+        0 8px 20px rgba(0,0,0,0.2),
+        inset 0 0 20px rgba(255,255,255,0.05);
+    }
+
+    .dock-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.15),
+        transparent 60%
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .dock-item:hover::before { 
+      opacity: 1; 
+    }
+
+    .dock-item i {
+      font-size: 28px;
+      color: #fff;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+      margin-bottom: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .dock-item span {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    /* Added hover state to reveal text with proper size */
+    .dock-item:hover span {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .dock-item.adventure { 
+      background: var(--gradient-blue);
+      box-shadow: 0 8px 25px rgba(10, 132, 255, 0.3);
+    }
+    .dock-item.continue { 
+      background: var(--gradient-purple);
+      box-shadow: 0 8px 25px rgba(191, 90, 242, 0.3);
+    }
+    .dock-item.exit { 
+      background: var(--gradient-red);
+      box-shadow: 0 8px 25px rgba(255, 69, 58, 0.3);
+    }
+
+    /* Quick Actions */
     .quick-actions {
       position: fixed;
       top: 50%;
@@ -277,117 +471,47 @@
       backdrop-filter: blur(35px);
       border: 1px solid var(--glass-border);
       border-radius: var(--window-radius);
-      padding: 20px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
       box-shadow: var(--glass-shadow);
       z-index: 900;
     }
+
     .quick-action-btn {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
       background: rgba(255, 255, 255, 0.08);
       cursor: pointer;
-      transition: transform 0.15s ease, background 0.15s ease;
-    }
-    .quick-action-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-      transform: scale(1.15);
-    }
-    .quick-action-btn i {
-      font-size: 22px;
-      color: var(--text-color);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 
+        0 8px 20px rgba(0,0,0,0.15),
+        inset 0 0 20px rgba(255,255,255,0.05);
     }
 
-    /* Dock - Ultimate Mac Style */
-    .dock-container {
-      position: fixed;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
+    .quick-action-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: scale(1.15) translateX(5px);
+      box-shadow: 
+        0 12px 30px rgba(0,0,0,0.2),
+        inset 0 0 30px rgba(255,255,255,0.1);
     }
-    .dock {
-      background: var(--glass-bg);
-      backdrop-filter: blur(35px);
-      border: 1px solid var(--glass-border);
-      border-radius: 40px;
-      padding: var(--dock-padding);
-      display: flex;
-      gap: 20px;
-      box-shadow: var(--glass-shadow), 0 0 50px rgba(0,0,0,0.2);
-      position: relative;
-      transition: transform 0.3s ease;
+
+    .quick-action-btn i {
+      font-size: 24px;
+      color: var(--text-color);
+      transition: all 0.3s ease;
     }
-    .dock:hover {
-      transform: translateY(-5px);
-    }
-    .dock::before {
-      content: '';
-      position: absolute;
-      top: -24px;
-      left: -24px;
-      right: -24px;
-      bottom: -24px;
-      background: var(--glass-bg);
-      border-radius: 50px;
-      opacity: 0.35;
-      filter: blur(24px);
-      z-index: -1;
-    }
-    .dock-item {
-      width: var(--dock-icon-size);
-      height: var(--dock-icon-size);
-      border-radius: 18px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      position: relative;
-      overflow: hidden;
-      background: rgba(255, 255, 255, 0.05);
-    }
-    .dock-item::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(rgba(255,255,255,0.1), transparent);
-      opacity: 0;
-      transition: opacity 0.15s ease;
-    }
-    .dock-item:hover::before { opacity: 1; }
-    .dock-item i {
-      font-size: 26px;
-      color: #fff;
+
+    .quick-action-btn:hover i {
+      transform: scale(1.1);
       filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
-      margin-bottom: 6px;
     }
-    .dock-item span {
-      font-size: 12px;
-      font-weight: 500;
-      color: #fff;
-      opacity: 0;
-      transform: translateY(12px);
-      transition: all 0.15s ease;
-    }
-    .dock-item:hover span {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .dock-item.adventure { background: var(--gradient-blue); }
-    .dock-item.continue { background: var(--gradient-purple); }
-    .dock-item.system { background: var(--gradient-green); }
-    .dock-item.exit { background: var(--gradient-red); }
   </style>
 </head>
 <body data-theme="dark">
@@ -406,7 +530,7 @@
     </div>
     <div class="clock-widget">
       <i class="fas fa-clock"></i>
-      <span id="utcClock">UTC</span>
+      <span id="utcClock">2025-02-09 18:33:14</span>
     </div>
     <div id="quickThemeToggle" class="quick-action-btn">
       <i class="fas fa-moon"></i>
@@ -449,7 +573,7 @@
     </div>
   </div>
 
-  <!-- Dock -->
+  <!-- Premium Dock -->
   <div class="dock-container">
     <div class="dock">
       <div class="dock-item adventure" onclick="window.open('https://finalapp-nine.vercel.app/', '_blank')">
@@ -460,10 +584,6 @@
         <i class="fas fa-compass"></i>
         <span>Continue</span>
       </div>
-      <div class="dock-item system">
-        <i class="fas fa-cog"></i>
-        <span>System</span>
-      </div>
       <div class="dock-item exit" id="exitButton">
         <i class="fas fa-power-off"></i>
         <span>Exit</span>
@@ -472,7 +592,7 @@
   </div>
 
   <script>
-    // Real-time UTC Clock
+    // Simple Clock Update
     function updateClock() {
       const now = new Date();
       const utcString = now.toISOString().replace('T', ' ').split('.')[0];
@@ -481,30 +601,26 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    // Enhanced Particle Effects - Premium look improvements according to theme using GSAP
+    // Original Particle Effects
     function createParticles() {
       const particlesContainer = document.getElementById('particles');
       particlesContainer.innerHTML = "";
-      const particleCount = 100; // Increased count for more dynamic effect
+      const particleCount = 100;
       const isLightMode = document.body.getAttribute('data-theme') === 'light';
 
       for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
 
-        // Adjust particle size: in light mode make them a bit larger for premium look
         const size = isLightMode ? Math.random() * 6 + 4 : Math.random() * 6 + 2;
         particle.style.width = size + 'px';
         particle.style.height = size + 'px';
 
-        // Initial random position
         particle.style.left = Math.random() * 100 + 'vw';
         particle.style.top = Math.random() * 100 + 'vh';
         
-        // Choose color based on theme
         let color;
         if (isLightMode) {
-          // Vibrant and colorful palette for light mode
           const colors = [
             "rgba(255, 99, 132, 0.95)",
             "rgba(54, 162, 235, 0.95)",
@@ -515,7 +631,6 @@
           ];
           color = colors[Math.floor(Math.random() * colors.length)];
         } else {
-          // Subtle tint for dark mode
           const colorTint = Math.floor(Math.random() * 50 + 205);
           color = `rgba(${colorTint}, ${colorTint}, ${colorTint}, 0.8)`;
         }
@@ -523,7 +638,6 @@
 
         particlesContainer.appendChild(particle);
 
-        // Animate particle with GSAP
         gsap.to(particle, {
           duration: Math.random() * 20 + 20,
           x: Math.random() * 200 - 100,
@@ -539,7 +653,7 @@
     }
     createParticles();
 
-    // Prices random link selection
+    // Prices Links
     const priceLinks = [
       "https://newlist-eta.vercel.app/",
       "https://newlist2.vercel.app/"
@@ -549,63 +663,86 @@
       window.open(priceLinks[randomIndex], "_blank");
     });
 
-    // Theme switching with smooth transition and particle refresh
+    // Theme Switching
     const body = document.body;
     const quickThemeToggle = document.getElementById('quickThemeToggle');
     quickThemeToggle.addEventListener('click', () => {
       const current = body.getAttribute('data-theme');
       const next = current === 'dark' ? 'light' : 'dark';
-      gsap.to(body, {
-        opacity: 0.5,
-        duration: 0.15,
-        onComplete: () => {
-          body.setAttribute('data-theme', next);
-          quickThemeToggle.innerHTML = `<i class="fas fa-${next === 'dark' ? 'moon' : 'sun'}"></i>`;
-          gsap.to(body, { opacity: 1, duration: 0.15 });
-          // Refresh particles to update based on new theme
-          createParticles();
-        }
-      });
+      body.setAttribute('data-theme', next);
+      quickThemeToggle.innerHTML = `<i class="fas fa-${next === 'dark' ? 'moon' : 'sun'}"></i>`;
+      createParticles();
     });
 
-    // Exit animation
+    // Premium Exit Animation
     function exitSystem() {
-      gsap.to('.dock-container', { y: 100, opacity: 0, duration: 0.3 });
-      gsap.to('.quick-actions', { x: -100, opacity: 0, duration: 0.3 });
-      gsap.to('.system-widgets', { x: 100, opacity: 0, duration: 0.3 });
-      gsap.to('.top-bar', { y: -100, opacity: 0, duration: 0.3 });
-      gsap.to('body', {
-        opacity: 0,
-        duration: 0.4,
-        delay: 0.3,
-        onComplete: () => {
-          window.close();
-          if (window.location.href.includes('about:')) {
-            window.location.replace('about:blank');
+      gsap.timeline()
+        .to('.dock-container', { y: 100, opacity: 0, duration: 0.4, ease: "power2.inOut" })
+        .to('.quick-actions', { x: -100, opacity: 0, duration: 0.4, ease: "power2.inOut" }, "-=0.3")
+        .to('.system-widgets', { x: 100, opacity: 0, duration: 0.4, ease: "power2.inOut" }, "-=0.3")
+        .to('.top-bar', { y: -100, opacity: 0, duration: 0.4, ease: "power2.inOut" }, "-=0.3")
+        .to('body', {
+          opacity: 0,
+          scale: 0.95,
+          duration: 0.5,
+          ease: "power2.inOut",
+          onComplete: () => {
+            window.close();
+            if (window.location.href.includes('about:')) {
+              window.location.replace('about:blank');
+            }
+            window.location.href = 'about:blank';
           }
-          window.location.href = 'about:blank';
-        }
-      });
+        });
     }
     document.getElementById('exitButton').addEventListener('click', exitSystem);
     document.getElementById('quickExit').addEventListener('click', exitSystem);
 
-    // Dock animations
+    // Premium Dock Animations (snappier and faster)
     document.querySelectorAll('.dock-item').forEach(item => {
       item.addEventListener('mouseenter', () => {
-        gsap.to(item, { scale: 1.3, y: -10, duration: 0.15, ease: 'power4.out' });
+        gsap.to(item, {
+          scale: 1.2,
+          y: -15,
+          duration: 0.15,
+          ease: "power2.out"
+        });
       });
+      
       item.addEventListener('mouseleave', () => {
-        gsap.to(item, { scale: 1, y: 0, duration: 0.15, ease: 'power4.out' });
+        gsap.to(item, {
+          scale: 1,
+          y: 0,
+          duration: 0.15,
+          ease: "power2.out"
+        });
       });
     });
 
-    // Entrance animations on load
+    // Entrance Animations
     window.addEventListener('load', () => {
-      gsap.from("#quickLinksWidget", { opacity: 0, y: 20, duration: 0.7, ease: "power4.out" });
-      gsap.from('.dock-container', { y: 100, opacity: 0, duration: 0.5, ease: 'power4.out' });
-      gsap.from('.quick-actions', { x: -100, opacity: 0, duration: 0.5, ease: 'power4.out' });
-      gsap.from('.top-bar', { y: -100, opacity: 0, duration: 0.5, ease: 'power4.out' });
+      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+      
+      tl.from(".top-bar", {
+        y: -100,
+        opacity: 0,
+        duration: 0.8
+      })
+      .from(".dock-container", {
+        y: 100,
+        opacity: 0,
+        duration: 0.8
+      }, "-=0.6")
+      .from(".quick-actions", {
+        x: -100,
+        opacity: 0,
+        duration: 0.8
+      }, "-=0.6")
+      .from("#quickLinksWidget", {
+        x: 100,
+        opacity: 0,
+        duration: 0.8
+      }, "-=0.6");
     });
   </script>
 </body>
