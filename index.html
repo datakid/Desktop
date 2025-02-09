@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -557,23 +558,25 @@
 
   <script>
     // Update Clock for Cairo, Egypt in 12-hour format
-    function updateClock() {
-      const options = {
-        timeZone: 'Africa/Cairo',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        hour12: true,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      };
-      const now = new Date();
-      const timeString = now.toLocaleString('en-US', options);
-      document.getElementById('utcClock').textContent = timeString;
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
+ function updateClock() {
+  const options = {
+    timeZone: 'Africa/Cairo',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true,
+  };
+  const now = new Date();
+  // Using 'en-GB' locale to get day/month/year format
+  const timeString = now.toLocaleString('en-GB', options);
+  document.getElementById('utcClock').textContent = timeString;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
 
     // Particle Effects
     function createParticles() {
