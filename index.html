@@ -9,8 +9,8 @@
   <!-- Dependencies -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
     :root {
@@ -151,17 +151,13 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      box-shadow: 
-        0 8px 20px rgba(0,0,0,0.1),
-        inset 0 0 20px rgba(255,255,255,0.05);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1), inset 0 0 20px rgba(255,255,255,0.05);
       transition: all 0.3s ease;
     }
 
     .clock-widget:hover {
       transform: translateY(-2px);
-      box-shadow: 
-        0 12px 30px rgba(0,0,0,0.15),
-        inset 0 0 30px rgba(255,255,255,0.1);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15), inset 0 0 30px rgba(255,255,255,0.1);
     }
 
     .user-profile {
@@ -173,17 +169,13 @@
       cursor: pointer;
       transition: all 0.3s ease;
       background: rgba(255, 255, 255, 0.1);
-      box-shadow: 
-        0 8px 20px rgba(0,0,0,0.1),
-        inset 0 0 20px rgba(255,255,255,0.05);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1), inset 0 0 20px rgba(255,255,255,0.05);
     }
 
     .user-profile:hover {
       background: rgba(255, 255, 255, 0.15);
       transform: translateY(-2px);
-      box-shadow: 
-        0 12px 30px rgba(0,0,0,0.15),
-        inset 0 0 30px rgba(255,255,255,0.1);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15), inset 0 0 30px rgba(255,255,255,0.1);
     }
 
     .user-avatar {
@@ -207,6 +199,7 @@
       letter-spacing: 0.3px;
       color: var(--text-color);
     }
+
     /* Premium System Widgets */
     .system-widgets {
       position: fixed;
@@ -225,10 +218,7 @@
       border: 1px solid var(--glass-border);
       border-radius: var(--window-radius);
       padding: 32px;
-      box-shadow: 
-        var(--glass-shadow),
-        0 0 50px rgba(0,0,0,0.15),
-        inset 0 0 30px rgba(255,255,255,0.05);
+      box-shadow: var(--glass-shadow), 0 0 50px rgba(0,0,0,0.15), inset 0 0 30px rgba(255,255,255,0.05);
       position: relative;
       overflow: hidden;
       animation: widgetAppear 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -239,10 +229,7 @@
 
     .widget:hover {
       transform: translateY(-5px);
-      box-shadow: 
-        var(--glass-shadow),
-        0 15px 60px rgba(0,0,0,0.25),
-        inset 0 0 40px rgba(255,255,255,0.08);
+      box-shadow: var(--glass-shadow), 0 15px 60px rgba(0,0,0,0.25), inset 0 0 40px rgba(255,255,255,0.08);
     }
 
     @keyframes widgetAppear {
@@ -307,17 +294,13 @@
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
-      box-shadow: 
-        0 8px 20px rgba(0,0,0,0.1),
-        inset 0 0 20px rgba(255,255,255,0.05);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1), inset 0 0 20px rgba(255,255,255,0.05);
     }
 
     .quick-link:hover {
       background: rgba(255, 255, 255, 0.12);
       transform: translateX(8px);
-      box-shadow: 
-        0 12px 30px rgba(0,0,0,0.15),
-        inset 0 0 30px rgba(255,255,255,0.1);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15), inset 0 0 30px rgba(255,255,255,0.1);
     }
 
     .quick-link i {
@@ -350,10 +333,7 @@
       padding: var(--dock-padding);
       display: flex;
       gap: 24px;
-      box-shadow: 
-        var(--glass-shadow),
-        0 0 60px rgba(0,0,0,0.2),
-        inset 0 0 30px rgba(255,255,255,0.05);
+      box-shadow: var(--glass-shadow), 0 0 60px rgba(0,0,0,0.2), inset 0 0 30px rgba(255,255,255,0.05);
       position: relative;
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       transform-style: preserve-3d;
@@ -361,10 +341,7 @@
 
     .dock:hover {
       transform: translateY(-10px) rotateX(8deg);
-      box-shadow: 
-        var(--glass-shadow),
-        0 20px 70px rgba(0,0,0,0.35),
-        inset 0 0 40px rgba(255,255,255,0.12);
+      box-shadow: var(--glass-shadow), 0 20px 70px rgba(0,0,0,0.35), inset 0 0 40px rgba(255,255,255,0.12);
     }
 
     .dock::before {
@@ -396,13 +373,11 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.15s ease;
       position: relative;
       overflow: hidden;
       background: rgba(255, 255, 255, 0.08);
-      box-shadow: 
-        0 8px 20px rgba(0,0,0,0.2),
-        inset 0 0 20px rgba(255,255,255,0.05);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2), inset 0 0 20px rgba(255,255,255,0.05);
     }
 
     .dock-item::before {
@@ -412,13 +387,9 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(
-        to bottom,
-        rgba(255,255,255,0.15),
-        transparent 60%
-      );
+      background: linear-gradient(to bottom, rgba(255,255,255,0.15), transparent 60%);
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.15s ease;
     }
 
     .dock-item:hover::before { 
@@ -430,7 +401,7 @@
       color: #fff;
       filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
       margin-bottom: 6px;
-      transition: all 0.3s ease;
+      transition: inherit;
     }
 
     .dock-item span {
@@ -439,10 +410,10 @@
       color: #fff;
       opacity: 0;
       transform: translateY(15px);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: opacity 0.15s ease, transform 0.15s ease;
       text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
-    /* Added hover state to reveal text with proper size */
+
     .dock-item:hover span {
       opacity: 1;
       transform: translateY(0);
@@ -489,17 +460,13 @@
       background: rgba(255, 255, 255, 0.08);
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 
-        0 8px 20px rgba(0,0,0,0.15),
-        inset 0 0 20px rgba(255,255,255,0.05);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15), inset 0 0 20px rgba(255,255,255,0.05);
     }
 
     .quick-action-btn:hover {
       background: rgba(255, 255, 255, 0.15);
       transform: scale(1.15) translateX(5px);
-      box-shadow: 
-        0 12px 30px rgba(0,0,0,0.2),
-        inset 0 0 30px rgba(255,255,255,0.1);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.2), inset 0 0 30px rgba(255,255,255,0.1);
     }
 
     .quick-action-btn i {
@@ -530,7 +497,7 @@
     </div>
     <div class="clock-widget">
       <i class="fas fa-clock"></i>
-      <span id="utcClock">2025-02-09 18:33:14</span>
+      <span id="utcClock">Loading...</span>
     </div>
     <div id="quickThemeToggle" class="quick-action-btn">
       <i class="fas fa-moon"></i>
@@ -545,16 +512,13 @@
       </div>
       <div class="widget-content">
         <button class="quick-link" onclick="window.open('https://protocols-one.vercel.app/', '_blank')">
-          <i class="fas fa-shield-alt"></i>
-          Protocols
+          <i class="fas fa-shield-alt"></i> Protocols
         </button>
         <button class="quick-link" onclick="window.open('https://searchbar-five-beta.vercel.app/', '_blank')">
-          <i class="fas fa-list"></i>
-          The List
+          <i class="fas fa-list"></i> The List
         </button>
         <button class="quick-link" id="pricesButton">
-          <i class="fas fa-tags"></i>
-          Prices
+          <i class="fas fa-tags"></i> Prices
         </button>
       </div>
     </div>
@@ -592,16 +556,26 @@
   </div>
 
   <script>
-    // Simple Clock Update
+    // Update Clock for Cairo, Egypt in 12-hour format
     function updateClock() {
+      const options = {
+        timeZone: 'Africa/Cairo',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: true,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      };
       const now = new Date();
-      const utcString = now.toISOString().replace('T', ' ').split('.')[0];
-      document.getElementById('utcClock').textContent = utcString;
+      const timeString = now.toLocaleString('en-US', options);
+      document.getElementById('utcClock').textContent = timeString;
     }
     updateClock();
     setInterval(updateClock, 1000);
 
-    // Original Particle Effects
+    // Particle Effects
     function createParticles() {
       const particlesContainer = document.getElementById('particles');
       particlesContainer.innerHTML = "";
@@ -615,7 +589,6 @@
         const size = isLightMode ? Math.random() * 6 + 4 : Math.random() * 6 + 2;
         particle.style.width = size + 'px';
         particle.style.height = size + 'px';
-
         particle.style.left = Math.random() * 100 + 'vw';
         particle.style.top = Math.random() * 100 + 'vh';
         
@@ -635,7 +608,6 @@
           color = `rgba(${colorTint}, ${colorTint}, ${colorTint}, 0.8)`;
         }
         particle.style.background = color;
-
         particlesContainer.appendChild(particle);
 
         gsap.to(particle, {
@@ -698,22 +670,38 @@
     document.getElementById('exitButton').addEventListener('click', exitSystem);
     document.getElementById('quickExit').addEventListener('click', exitSystem);
 
-    // Premium Dock Animations (snappier and faster)
-    document.querySelectorAll('.dock-item').forEach(item => {
-      item.addEventListener('mouseenter', () => {
+    // MacOS-like Dock Magnification Effect (Adjusted max scale to prevent overlap)
+    const dockContainer = document.querySelector('.dock-container');
+    const dockItems = document.querySelectorAll('.dock-item');
+
+    dockContainer.addEventListener('mousemove', (e) => {
+      const rect = dockContainer.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const threshold = 100; // pixel range for max effect
+      const maxScale = 1.5;  // reduced max scale to prevent overlapping
+
+      dockItems.forEach(item => {
+        const itemRect = item.getBoundingClientRect();
+        // Calculate center of the dock item relative to the container
+        const itemCenterX = (itemRect.left + itemRect.right) / 2 - rect.left;
+        const distance = Math.abs(mouseX - itemCenterX);
+        let scale = 1;
+        if (distance < threshold) {
+          scale = 1 + (maxScale - 1) * (1 - distance / threshold);
+        }
         gsap.to(item, {
-          scale: 1.2,
-          y: -15,
-          duration: 0.15,
+          scale: scale,
+          duration: 0.2,
           ease: "power2.out"
         });
       });
-      
-      item.addEventListener('mouseleave', () => {
+    });
+
+    dockContainer.addEventListener('mouseleave', () => {
+      dockItems.forEach(item => {
         gsap.to(item, {
           scale: 1,
-          y: 0,
-          duration: 0.15,
+          duration: 0.2,
           ease: "power2.out"
         });
       });
@@ -722,27 +710,10 @@
     // Entrance Animations
     window.addEventListener('load', () => {
       const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
-      
-      tl.from(".top-bar", {
-        y: -100,
-        opacity: 0,
-        duration: 0.8
-      })
-      .from(".dock-container", {
-        y: 100,
-        opacity: 0,
-        duration: 0.8
-      }, "-=0.6")
-      .from(".quick-actions", {
-        x: -100,
-        opacity: 0,
-        duration: 0.8
-      }, "-=0.6")
-      .from("#quickLinksWidget", {
-        x: 100,
-        opacity: 0,
-        duration: 0.8
-      }, "-=0.6");
+      tl.from(".top-bar", { y: -100, opacity: 0, duration: 0.8 })
+        .from(".dock-container", { y: 100, opacity: 0, duration: 0.8 }, "-=0.6")
+        .from(".quick-actions", { x: -100, opacity: 0, duration: 0.8 }, "-=0.6")
+        .from("#quickLinksWidget", { x: 100, opacity: 0, duration: 0.8 }, "-=0.6");
     });
   </script>
 </body>
