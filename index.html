@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LinkExpress Desktop - Ultimate Edition</title>
+  <title>LinkExpress Desktop</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
   <!-- Dependencies -->
@@ -32,6 +31,7 @@
       --gradient-purple: linear-gradient(135deg, #bf5af2, #9f4dd6);
       --gradient-green: linear-gradient(135deg, #30d158, #28b945);
       --gradient-red: linear-gradient(135deg, #ff453a, #d83a31);
+      --gradient-orange: linear-gradient(135deg, #ff9f0a, #df8500);
 
       /* Enhanced Glass Effects */
       --glass-bg-dark: rgba(20, 20, 28, 0.85);
@@ -428,6 +428,10 @@
       background: var(--gradient-purple);
       box-shadow: 0 8px 25px rgba(191, 90, 242, 0.3);
     }
+    .dock-item.settings { 
+      background: var(--gradient-orange);
+      box-shadow: 0 8px 25px rgba(255, 159, 10, 0.3);
+    }
     .dock-item.exit { 
       background: var(--gradient-red);
       box-shadow: 0 8px 25px rgba(255, 69, 58, 0.3);
@@ -533,6 +537,9 @@
     <div class="quick-action-btn" onclick="window.open('https://dashboard2-iota.vercel.app/', '_blank')">
       <i class="fas fa-compass"></i>
     </div>
+    <div class="quick-action-btn" onclick="window.open('https://josn.vercel.app/', '_blank')">
+      <i class="fas fa-folder-open"></i>
+    </div>
     <div class="quick-action-btn" id="quickExit">
       <i class="fas fa-sign-out-alt"></i>
     </div>
@@ -548,6 +555,10 @@
       <div class="dock-item continue" onclick="window.open('https://dashboard2-iota.vercel.app/', '_blank')">
         <i class="fas fa-compass"></i>
         <span>Load</span>
+      </div>
+      <div class="dock-item settings" onclick="window.open('https://josn.vercel.app/', '_blank')">
+        <i class="fas fa-folder-open"></i>
+        <span>upload</span>
       </div>
       <div class="dock-item exit" id="exitButton">
         <i class="fas fa-sign-out-alt"></i>
