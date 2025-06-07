@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LinkExpress Desktop - Apex Edition</title>
+  <title>LinkExpress Desktop</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -17,40 +16,31 @@
       --surface-dark: rgba(18, 20, 30, 0.85);
       --text-dark: #f0f2f5;
       --text-secondary-dark: rgba(220, 225, 235, 0.6);
-
       --surface-light: rgba(252, 253, 255, 0.88);
       --text-light: #101623;
       --text-secondary-light: rgba(20, 30, 50, 0.6);
-
       --gradient-blue: linear-gradient(145deg, #0a95ff 0%, #007aff 40%, #0062d9 70%, #0047a3 100%);
       --gradient-purple: linear-gradient(145deg, #bf5af2 0%, #af52de 40%, #9145c2 70%, #7d3bb8 100%);
       --gradient-green: linear-gradient(145deg, #32d759 0%, #2ec451 40%, #28b045 70%, #1da13a 100%);
       --gradient-red: linear-gradient(145deg, #ff453a 0%, #ff3b30 40%, #e0281e 70%, #c41f16 100%);
       --gradient-orange: linear-gradient(145deg, #ff9f0a 0%, #ff9500 40%, #e08300 70%, #c77100 100%);
-      
       --glass-bg-dark: rgba(22, 25, 38, 0.6);
       --glass-border-dark: rgba(255, 255, 255, 0.08);
       --glass-shadow-dark: 0 20px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255,255,255,0.04) inset;
-      
       --glass-bg-light: rgba(255, 255, 255, 0.65);
       --glass-border-light: rgba(0, 0, 0, 0.08);
       --glass-shadow-light: 0 20px 55px rgba(60, 70, 100, 0.15), 0 0 0 1px rgba(0,0,0,0.03) inset;
-
       --widget-inset-glow-dark: inset 0 0 35px rgba(255,255,255,0.03), inset 0 1px 1px rgba(255,255,255,0.06);
       --widget-highlight-dark: rgba(255,255,255,0.08);
-
       --widget-inset-glow-light: inset 0 0 30px rgba(80,100,140,0.04), inset 0 1px 1px rgba(0,0,0,0.04);
       --widget-highlight-light: rgba(180, 200, 255, 0.2);
-      
       --spotlight-color-dark: rgba(0, 122, 255, 0.25);
       --spotlight-color-light: rgba(100, 180, 255, 0.35);
-
       --dock-padding: 14px;
       --dock-icon-size: 76px;
       --window-radius: 28px;
       --blur-intensity: 40px;
     }
-
     [data-theme="light"] {
       --bg-color: linear-gradient(170deg, #ffffff 0%, #f9fbff 25%, #f0f6ff 50%, #fff9fc 75%, #ffffff 100%);
       --surface-color: var(--surface-light);
@@ -75,223 +65,83 @@
       --widget-highlight: var(--widget-highlight-dark);
       --spotlight-color: var(--spotlight-color-dark);
     }
-
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      user-select: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
-      text-rendering: optimizeLegibility;
-    }
-
-    body {
-      min-height: 100vh; background: var(--bg-color); color: var(--text-color);
-      overflow: hidden; position: relative;
-      transition: background 1s cubic-bezier(0.4, 0, 0.2, 1), color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+    body { min-height: 100vh; background: var(--bg-color); color: var(--text-color); overflow: hidden; position: relative; transition: background 1s cubic-bezier(0.4, 0, 0.2, 1), color 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
     @keyframes animatedBgDark { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
     @keyframes animatedBgLight { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 0%; } }
-
-    .desktop {
-      position: fixed; inset: 0; background: var(--bg-color);
-      z-index: -3; background-size: 300% 300%; 
-      transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+    .desktop { position: fixed; inset: 0; background: var(--bg-color); z-index: -3; background-size: 300% 300%; transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
     [data-theme="dark"] .desktop { animation: animatedBgDark 45s ease infinite; }
     [data-theme="light"] .desktop { animation: animatedBgLight 50s ease infinite; }
-
-    .cursor-light {
-      position: fixed; width: 800px; height: 800px; border-radius: 50%;
-      background: var(--spotlight-color); filter: blur(250px);
-      z-index: -2; pointer-events: none; transform: translate(-50%, -50%);
-      transition: background 0.6s ease;
-    }
-
+    .cursor-light { position: fixed; width: 800px; height: 800px; border-radius: 50%; background: var(--spotlight-color); filter: blur(250px); z-index: -2; pointer-events: none; transform: translate(-50%, -50%); transition: background 0.6s ease; }
     .particles { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
     .particle { position: absolute; border-radius: 50%; opacity: 0; }
-
-    .top-bar {
-      position: fixed; top: 0; left: 0; right: 0; height: 72px; padding: 0 40px;
-      background: var(--glass-bg); backdrop-filter: blur(var(--blur-intensity));
-      -webkit-backdrop-filter: blur(var(--blur-intensity)); border-bottom: 1px solid var(--glass-border);
-      display: flex; justify-content: space-between; align-items: center; z-index: 1000;
-      transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
-    }
-
-    .top-bar-item {
-      padding: 10px 20px; border-radius: 18px; font-size: 16px; font-weight: 500; color: var(--text-color);
-      display: flex; align-items: center; gap: 12px;
-      transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; overflow: hidden;
-      background: rgba(255, 255, 255, 0.04); box-shadow: 0 5px 15px rgba(0,0,0,0.1), inset 0 0 10px rgba(255,255,255,0.02);
-    }
-    .top-bar-item::before {
-        content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-        background: linear-gradient(90deg, transparent, var(--widget-highlight), transparent);
-        transition: left 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
+    .top-bar { position: fixed; top: 0; left: 0; right: 0; height: 72px; padding: 0 40px; background: var(--glass-bg); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity)); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; z-index: 1000; transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease; }
+    .top-bar-item { padding: 10px 20px; border-radius: 18px; font-size: 16px; font-weight: 500; color: var(--text-color); display: flex; align-items: center; gap: 12px; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; overflow: hidden; background: rgba(255, 255, 255, 0.04); box-shadow: 0 5px 15px rgba(0,0,0,0.1), inset 0 0 10px rgba(255,255,255,0.02); }
+    .top-bar-item::before { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, var(--widget-highlight), transparent); transition: left 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .top-bar-item:not(.theme-toggle-container):hover::before { left: 100%; }
-    
     [data-theme="light"] .top-bar-item { background: rgba(255, 255, 255, 0.25); box-shadow: 0 5px 15px rgba(100, 116, 139, 0.06), inset 0 0 8px rgba(0,0,0,0.01); }
     .top-bar-item:hover { transform: translateY(-3px) scale(1.03); }
     [data-theme="dark"] .top-bar-item:hover { background: rgba(255, 255, 255, 0.07); box-shadow: 0 8px 22px rgba(0,0,0,0.15), inset 0 0 15px rgba(255,255,255,0.04); }
     [data-theme="light"] .top-bar-item:hover { background: rgba(255, 255, 255, 0.35); box-shadow: 0 8px 22px rgba(100, 116, 139, 0.1), inset 0 0 12px rgba(0,0,0,0.02); }
     .top-bar-item:active { transform: translateY(0) scale(1); transition-duration: 0.1s; }
-
     .user-profile { padding: 8px 16px 8px 10px; gap: 15px; }
-    .user-avatar {
-      width: 44px; height: 44px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: white; font-weight: 700; font-size: 18px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
-      transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-      background: var(--gradient-purple); border: 2px solid rgba(255, 255, 255, 0.12);
-    }
+    .user-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28); transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); background: var(--gradient-purple); border: 2px solid rgba(255, 255, 255, 0.12); }
     [data-theme="light"] .user-avatar { background: linear-gradient(135deg, #e9d8ff, #d7baff); color: #5e2a80; border: 2px solid rgba(0,0,0,0.05); box-shadow: 0 6px 18px rgba(100,116,139,0.15); }
     .user-profile:hover .user-avatar { transform: scale(1.1) rotate(5deg); }
     .user-name { font-size: 16px; font-weight: 600; letter-spacing: 0.4px; color: var(--text-color); }
-    
-    .theme-toggle-container {
-        padding: 10px 15px;
-        cursor: default;
-    }
-    .theme-toggle-container i {
-        font-size: 16px;
-        transition: color 0.4s ease, text-shadow 0.4s ease;
-        color: var(--text-secondary);
-    }
+    .theme-toggle-container { padding: 10px 15px; cursor: default; }
+    .theme-toggle-container i { font-size: 16px; transition: color 0.4s ease, text-shadow 0.4s ease; color: var(--text-secondary); }
     [data-theme="light"] .theme-toggle-container .fa-sun { color: #ffc53e; text-shadow: 0 0 10px #ffc53e80; }
     [data-theme="dark"] .theme-toggle-container .fa-moon { color: #a7c7ff; text-shadow: 0 0 10px #a7c7ff80; }
-
     .theme-switch { position: relative; display: inline-block; width: 48px; height: 26px; }
     .theme-switch input { display: none; }
     .slider { position: absolute; cursor: pointer; inset: 0; border-radius: 26px; transition: background-color .4s ease; }
     [data-theme="light"] .slider { background-color: rgba(0,0,0,0.1); }
     [data-theme="dark"] .slider { background-color: rgba(255,255,255,0.1); }
-    .slider:before {
-        position: absolute; content: "";
-        height: 20px; width: 20px; left: 3px; bottom: 3px;
-        border-radius: 50%; transition: all .4s cubic-bezier(0.2, 1, 0.3, 1);
-        box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-    }
+    .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; border-radius: 50%; transition: all .4s cubic-bezier(0.2, 1, 0.3, 1); box-shadow: 0 3px 6px rgba(0,0,0,0.2); }
     [data-theme="light"] .slider:before { background-color: #fff; }
     [data-theme="dark"] .slider:before { background-color: #d0d7e5; }
     input:checked + .slider:before { transform: translateX(22px); }
-
     .system-widgets { position: fixed; top: 102px; right: 40px; width: 400px; display: flex; flex-direction: column; gap: 30px; z-index: 100; }
-
-    .widget {
-      background: var(--glass-bg); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity));
-      border: 1px solid var(--glass-border); border-radius: var(--window-radius); padding: 40px;
-      box-shadow: var(--current-glass-shadow), var(--widget-inset-glow);
-      position: relative; overflow: hidden;
-      animation: widgetAppear 1s cubic-bezier(0.2, 1, 0.3, 1) forwards;
-      opacity: 0; transform: translateY(30px) scale(0.96);
-      transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
+    .widget { background: var(--glass-bg); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity)); border: 1px solid var(--glass-border); border-radius: var(--window-radius); padding: 40px; box-shadow: var(--current-glass-shadow), var(--widget-inset-glow); position: relative; overflow: hidden; animation: widgetAppear 1s cubic-bezier(0.2, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(30px) scale(0.96); transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .widget:hover { transform: translateY(-8px) scale(1.02); box-shadow: var(--current-glass-shadow), 0 25px 75px rgba(0,0,0,0.15), var(--widget-inset-glow); }
     [data-theme="light"] .widget:hover { box-shadow: var(--current-glass-shadow), 0 25px 75px rgba(80,90,120,0.2), var(--widget-inset-glow); }
     @keyframes widgetAppear { to { opacity: 1; transform: translateY(0) scale(1); } }
-
-    .widget::before {
-      content: ""; position: absolute;
-      top: var(--y, -50%); left: var(--x, -50%);
-      width: 200%; height: 200%;
-      background: radial-gradient(circle, var(--widget-highlight), transparent 50%);
-      transition: top 0.6s ease-out, left 0.6s ease-out, background 0.5s ease;
-      z-index: 0;
-    }
-
-    .widget-header {
-      font-size: 24px; font-weight: 700; margin-bottom: 30px;
-      display: flex; align-items: center; justify-content: space-between;
-      color: var(--text-color); position: relative; z-index: 1;
-    }
+    .widget::before { content: ""; position: absolute; top: var(--y, -50%); left: var(--x, -50%); width: 200%; height: 200%; background: radial-gradient(circle, var(--widget-highlight), transparent 50%); transition: top 0.6s ease-out, left 0.6s ease-out, background 0.5s ease; z-index: 0; }
+    .widget-header { font-size: 24px; font-weight: 700; margin-bottom: 30px; display: flex; align-items: center; justify-content: space-between; color: var(--text-color); position: relative; z-index: 1; }
     .widget-header i { font-size: 26px; color: var(--text-secondary); transition: all 0.4s ease; }
     .widget:hover .widget-header i { transform: scale(1.15) rotate(8deg); color: var(--text-color); }
     .widget-content { display: flex; flex-direction: column; gap: 24px; position: relative; z-index: 1; }
-
-    .quick-link {
-      display: flex; align-items: center; padding: 22px 28px; border: none; border-radius: 22px;
-      font-size: 17.5px; font-weight: 600; color: var(--text-color);
-      cursor: pointer; position: relative; overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-      background: rgba(255, 255, 255, 0.035);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.1), inset 0 0 12px rgba(255,255,255,0.015);
-    }
+    .quick-link { display: flex; align-items: center; padding: 22px 28px; border: none; border-radius: 22px; font-size: 17.5px; font-weight: 600; color: var(--text-color); cursor: pointer; position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); background: rgba(255, 255, 255, 0.035); box-shadow: 0 6px 16px rgba(0,0,0,0.1), inset 0 0 12px rgba(255,255,255,0.015); }
     .quick-link::after { content: ''; position: absolute; bottom: 10px; left: 28px; width: 0; height: 2px; background: var(--text-color); transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .quick-link:hover::after { width: calc(100% - 56px); }
-
     [data-theme="light"] .quick-link { background: rgba(255, 255, 255, 0.5); box-shadow: 0 6px 16px rgba(100, 116, 139, 0.07), inset 0 0 8px rgba(0,0,0,0.008); }
     .quick-link:hover { transform: translateX(12px) scale(1.025); }
     [data-theme="dark"] .quick-link:hover { background: rgba(255, 255, 255, 0.05); box-shadow: 0 9px 22px rgba(0,0,0,0.15), inset 0 0 18px rgba(255,255,255,0.03); }
     [data-theme="light"] .quick-link:hover { background: rgba(255, 255, 255, 0.65); box-shadow: 0 9px 22px rgba(100, 116, 139, 0.11), inset 0 0 12px rgba(0,0,0,0.015); }
     .quick-link i { margin-right: 20px; font-size: 24px; color: var(--text-secondary); transition: all 0.4s ease; }
     .quick-link:hover i { color: var(--text-color); transform: scale(1.15) rotate(-3deg); }
-
     .dock-container { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); z-index: 1000; perspective: 1500px; }
-    .dock {
-      background: var(--glass-bg); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity));
-      border: 1px solid var(--glass-border); border-radius: 38px;
-      padding: var(--dock-padding) calc(var(--dock-padding) + 8px); display: flex; gap: 22px;
-      box-shadow: var(--current-glass-shadow), 0 0 80px rgba(0,0,0,0.12), var(--widget-inset-glow);
-      position: relative; transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transform-style: preserve-3d;
-    }
+    .dock { background: var(--glass-bg); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity)); border: 1px solid var(--glass-border); border-radius: 38px; padding: var(--dock-padding) calc(var(--dock-padding) + 8px); display: flex; gap: 22px; box-shadow: var(--current-glass-shadow), 0 0 80px rgba(0,0,0,0.12), var(--widget-inset-glow); position: relative; transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); transform-style: preserve-3d; }
     .dock:hover { transform: translateY(-15px) rotateX(6deg) scale(1.03); box-shadow: var(--current-glass-shadow), 0 25px 80px rgba(0,0,0,0.18), var(--widget-inset-glow); }
-     [data-theme="light"] .dock:hover { box-shadow: var(--current-glass-shadow), 0 25px 80px rgba(80,90,120,0.22), var(--widget-inset-glow); }
-
-    .dock-item {
-      width: var(--dock-icon-size); height: var(--dock-icon-size); border-radius: 24px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; position: relative; overflow: visible; transform-style: preserve-3d;
-      transition: transform 0.2s cubic-bezier(0, 0, 0.2, 1), box-shadow 0.25s ease, background 0.3s ease;
-      box-shadow: 0 7px 20px rgba(0,0,0,0.15), inset 0 0 15px rgba(255,255,255,0.03);
-    }
-     [data-theme="light"] .dock-item { box-shadow: 0 7px 20px rgba(100,116,139,0.08), inset 0 0 15px rgba(0,0,0,0.015); }
-    .dock-item::before {
-      content: ''; position: absolute; top: 5%; left: 10%; width: 80%; height: 40%;
-      border-radius: 18px 18px 50% 50% / 12px 12px 30% 30%;
-      opacity: 0; transition: opacity 0.25s ease;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent 80%);
-    }
+    [data-theme="light"] .dock:hover { box-shadow: var(--current-glass-shadow), 0 25px 80px rgba(80,90,120,0.22), var(--widget-inset-glow); }
+    .dock-item { width: var(--dock-icon-size); height: var(--dock-icon-size); border-radius: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: visible; transform-style: preserve-3d; transition: transform 0.2s cubic-bezier(0, 0, 0.2, 1), box-shadow 0.25s ease, background 0.3s ease; box-shadow: 0 7px 20px rgba(0,0,0,0.15), inset 0 0 15px rgba(255,255,255,0.03); }
+    [data-theme="light"] .dock-item { box-shadow: 0 7px 20px rgba(100,116,139,0.08), inset 0 0 15px rgba(0,0,0,0.015); }
+    .dock-item::before { content: ''; position: absolute; top: 5%; left: 10%; width: 80%; height: 40%; border-radius: 18px 18px 50% 50% / 12px 12px 30% 30%; opacity: 0; transition: opacity 0.25s ease; background: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent 80%); }
     [data-theme="light"] .dock-item::before { background: linear-gradient(to bottom, rgba(255,255,255,0.6), transparent 80%); }
     .dock-item:hover::before { opacity: 1; }
-
     .dock-item i { font-size: 30px; color: #fff; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4)); margin-bottom: 8px; transition: transform 0.2s ease; transform: translateZ(10px); }
     .dock-item:hover i { transform: translateZ(15px) scale(1.05); }
     .dock-item span { font-size: 13.5px; font-weight: 600; color: #fff; opacity: 0; transform: translateY(20px) translateZ(5px); transition: opacity 0.2s ease 0.05s, transform 0.2s ease 0.05s; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
     .dock-item:hover span { opacity: 1; transform: translateY(0) translateZ(5px); }
-    
-    .active-indicator { position: absolute; bottom: -12px; width: 6px; height: 6px; border-radius: 50%; background-color: #fff; box-shadow: 0 0 8px 2px #fff; transform: scale(0); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .active-indicator { position: absolute; bottom: -12px; width: 6px; height: 6px; border-radius: 50%; background-color: #fff; box-shadow: 0 0 8px 2px #fff; transform: scale(0); transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .dock-item.active .active-indicator { transform: scale(1); }
-
-    .dock-item.adventure { background: var(--gradient-blue); }
-    .dock-item.continue { background: var(--gradient-purple); }
-    .dock-item.settings { background: var(--gradient-orange); }
-    .dock-item.exit { background: var(--gradient-red); }
-
-    [data-theme="dark"] .dock-item.adventure, [data-theme="dark"] .dock-item.continue, [data-theme="dark"] .dock-item.settings, [data-theme="dark"] .dock-item.exit { box-shadow: 0 12px 35px rgba(0,0,0,0.3); }
-    [data-theme="dark"] .dock-item.adventure:hover { box-shadow: 0 15px 40px rgba(10, 132, 255, 0.55); }
-    [data-theme="dark"] .dock-item.continue:hover { box-shadow: 0 15px 40px rgba(191, 90, 242, 0.55); }
-    [data-theme="dark"] .dock-item.settings:hover { box-shadow: 0 15px 40px rgba(255, 159, 10, 0.55); }
-    [data-theme="dark"] .dock-item.exit:hover { box-shadow: 0 15px 40px rgba(255, 69, 58, 0.55); }
-
-    [data-theme="light"] .dock-item.adventure, [data-theme="light"] .dock-item.continue, [data-theme="light"] .dock-item.settings, [data-theme="light"] .dock-item.exit { box-shadow: 0 12px 35px rgba(0,0,0,0.12); }
-    [data-theme="light"] .dock-item.adventure:hover { box-shadow: 0 15px 40px rgba(10, 132, 255, 0.4); }
-    [data-theme="light"] .dock-item.continue:hover { box-shadow: 0 15px 40px rgba(191, 90, 242, 0.4); }
-    [data-theme="light"] .dock-item.settings:hover { box-shadow: 0 15px 40px rgba(255, 159, 10, 0.4); }
-    [data-theme="light"] .dock-item.exit:hover { box-shadow: 0 15px 40px rgba(255, 69, 58, 0.4); }
-
-    .quick-actions {
-      position: fixed; top: 50%; left: 40px; transform: translateY(-50%);
-      background: var(--glass-bg); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity));
-      border: 1px solid var(--glass-border); border-radius: var(--window-radius); padding: 28px;
-      display: flex; flex-direction: column; gap: 24px; box-shadow: var(--current-glass-shadow); z-index: 900;
-      transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
-    }
-    .quick-action-btn {
-      width: 66px; height: 66px; border-radius: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
+    [data-theme="light"] .active-indicator { background-color: #007aff; box-shadow: 0 0 10px 2px rgba(0, 122, 255, 0.7); }
+    .dock-item.adventure { background: var(--gradient-blue); } .dock-item.continue { background: var(--gradient-purple); } .dock-item.settings { background: var(--gradient-orange); } .dock-item.exit { background: var(--gradient-red); }
+    [data-theme="dark"] .dock-item.adventure:hover { box-shadow: 0 15px 40px rgba(10, 132, 255, 0.55); } [data-theme="dark"] .dock-item.continue:hover { box-shadow: 0 15px 40px rgba(191, 90, 242, 0.55); } [data-theme="dark"] .dock-item.settings:hover { box-shadow: 0 15px 40px rgba(255, 159, 10, 0.55); } [data-theme="dark"] .dock-item.exit:hover { box-shadow: 0 15px 40px rgba(255, 69, 58, 0.55); }
+    [data-theme="light"] .dock-item.adventure:hover { box-shadow: 0 15px 40px rgba(10, 132, 255, 0.4); } [data-theme="light"] .dock-item.continue:hover { box-shadow: 0 15px 40px rgba(191, 90, 242, 0.4); } [data-theme="light"] .dock-item.settings:hover { box-shadow: 0 15px 40px rgba(255, 159, 10, 0.4); } [data-theme="light"] .dock-item.exit:hover { box-shadow: 0 15px 40px rgba(255, 69, 58, 0.4); }
+    .quick-actions { position: fixed; top: 50%; left: 40px; transform: translateY(-50%); background: var(--glass-bg); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity)); border: 1px solid var(--glass-border); border-radius: var(--window-radius); padding: 28px; display: flex; flex-direction: column; gap: 24px; box-shadow: var(--current-glass-shadow); z-index: 900; transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease; }
+    .quick-action-btn { width: 66px; height: 66px; border-radius: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
     [data-theme="dark"] .quick-actions .quick-action-btn { background: rgba(255, 255, 255, 0.045); box-shadow: 0 8px 20px rgba(0,0,0,0.2), inset 0 0 18px rgba(255,255,255,0.025); }
     [data-theme="light"] .quick-actions .quick-action-btn { background: rgba(255, 255, 255, 0.6); box-shadow: 0 8px 20px rgba(100, 116, 139, 0.12), inset 0 0 12px rgba(0,0,0,0.012); }
     .quick-actions .quick-action-btn:hover { transform: scale(1.2) translateX(8px) rotate(4deg); }
@@ -301,7 +151,33 @@
     .quick-actions .quick-action-btn i { font-size: 26px; color: var(--text-color); transition: all 0.4s ease; }
     .quick-actions .quick-action-btn:hover i { transform: scale(1.15); filter: drop-shadow(0 4px 12px rgba(0,0,0,0.35)); }
     [data-theme="light"] .quick-actions .quick-action-btn:hover i { filter: drop-shadow(0 4px 12px rgba(80,90,120,0.3)); }
-
+    .desktop-shortcut { position: fixed; top: 110px; left: 40px; display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; z-index: 500; }
+    .desktop-shortcut .icon-container { width: 80px; height: 80px; background: var(--glass-bg); backdrop-filter: blur(var(--blur-intensity)); border: 1px solid var(--glass-border); border-radius: 24px; box-shadow: var(--current-glass-shadow); display: flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .desktop-shortcut .icon-container i { font-size: 32px; color: var(--text-color); transition: all 0.3s ease; }
+    .desktop-shortcut span { font-size: 14px; font-weight: 600; color: var(--text-color); text-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .desktop-shortcut:hover .icon-container { transform: scale(1.1) translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+    [data-theme="light"] .desktop-shortcut:hover .icon-container { box-shadow: 0 20px 40px rgba(80,90,120,0.2); }
+    .desktop-shortcut:hover .icon-container i { transform: scale(1.1); }
+    .app-window { position: fixed; top: 50%; left: 50%; width: 60vw; max-width: 800px; height: 65vh; background: var(--glass-bg); backdrop-filter: blur(var(--blur-intensity)); border: 1px solid var(--glass-border); border-radius: var(--window-radius); box-shadow: var(--current-glass-shadow); z-index: 950; display: flex; flex-direction: column; overflow: hidden; transform: translate(-50%, -50%) scale(0.95); opacity: 0; pointer-events: none; }
+    .app-window.visible { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
+    .app-window.minimized { pointer-events: none; transform: translate(-50%, 120vh) scale(0.5) rotate(-15deg) !important; opacity: 0 !important; transition: transform 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.5s ease !important; }
+    .window-title-bar { display: flex; align-items: center; padding: 0 20px; height: 55px; flex-shrink: 0; border-bottom: 1px solid var(--glass-border); cursor: default; }
+    .window-controls { display: flex; gap: 8px; margin-right: 15px; }
+    .window-controls .control-btn { width: 14px; height: 14px; border-radius: 50%; cursor: pointer; transition: transform 0.2s ease, filter 0.2s ease; }
+    .window-controls .control-btn:hover { transform: scale(1.15); }
+    .window-controls .control-btn:active { transform: scale(1.05); filter: brightness(0.9); }
+    .control-btn.close { background-color: #ff5f56; }
+    .control-btn.minimize { background-color: #ffbd2e; }
+    .window-title { font-size: 16px; font-weight: 600; color: var(--text-color); }
+    .window-content { flex-grow: 1; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .preview-placeholder { display: flex; flex-direction: column; align-items: center; text-align: center; color: var(--text-secondary); opacity: 1; transition: opacity 0.3s ease; position: absolute; }
+    .preview-placeholder i { font-size: 48px; margin-bottom: 16px; display: block; }
+    .preview-placeholder span { font-size: 18px; font-weight: 500; }
+    .window-content iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; background-color: transparent; opacity: 0; transition: opacity 0.3s ease; }
+    .exit-confirmation { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; color: var(--text-color); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .exit-confirmation i { font-size: 64px; color: #ff453a; filter: drop-shadow(0 4px 15px rgba(255, 69, 58, 0.4)); }
+    .exit-confirmation span { font-size: 22px; font-weight: 600; }
+    .exit-confirmation p { font-size: 16px; color: var(--text-secondary); font-weight: 500; }
   </style>
 </head>
 <body data-theme="dark">
@@ -310,265 +186,165 @@
   <div class="particles" id="particles"></div>
 
   <div class="top-bar">
-    <div class="user-profile top-bar-item">
-      <div class="user-avatar"><span>AD</span></div>
-      <div class="user-name">Admin</div>
-    </div>
-    <div class="clock-widget top-bar-item">
-      <i class="fas fa-clock"></i>
-      <span id="utcClock">Loading...</span>
-    </div>
-    <div class="theme-toggle-container top-bar-item">
-      <i class="fas fa-sun"></i>
-      <label class="theme-switch" for="theme-checkbox">
-        <input type="checkbox" id="theme-checkbox" />
-        <div class="slider"></div>
-      </label>
-      <i class="fas fa-moon"></i>
-    </div>
+      <div class="user-profile top-bar-item"><div class="user-avatar"><span>AD</span></div><div class="user-name">Admin</div></div>
+      <div class="clock-widget top-bar-item"><i class="fas fa-clock"></i><span id="utcClock">Loading...</span></div>
+      <div class="theme-toggle-container top-bar-item"><i class="fas fa-sun"></i><label class="theme-switch" for="theme-checkbox"><input type="checkbox" id="theme-checkbox" /><div class="slider"></div></label><i class="fas fa-moon"></i></div>
   </div>
 
   <div class="system-widgets">
-    <div class="widget" id="quickLinksWidget">
-      <div class="widget-header">
-        Quick Links <i class="fas fa-link"></i>
-      </div>
-      <div class="widget-content">
-        <button class="quick-link" onclick="window.open('https://protocols-one.vercel.app/', '_blank')">
-          <i class="fas fa-shield-alt"></i> Protocols
-        </button>
-        <button class="quick-link" onclick="window.open('https://searchbar-five-beta.vercel.app/', '_blank')">
-          <i class="fas fa-list"></i> The List
-        </button>
-        <button class="quick-link" id="pricesButton">
-          <i class="fas fa-dollar-sign"></i> Prices
-        </button>
-      </div>
-    </div>
+      <div class="widget" id="quickLinksWidget"><div class="widget-header">Quick Links <i class="fas fa-link"></i></div><div class="widget-content"><button class="quick-link" onclick="window.open('https://protocols-one.vercel.app/', '_blank')"><i class="fas fa-shield-alt"></i> Protocols</button><button class="quick-link" onclick="window.open('https://searchbar-five-beta.vercel.app/', '_blank')"><i class="fas fa-list"></i> The List</button><button class="quick-link" id="pricesButton"><i class="fas fa-dollar-sign"></i> Prices</button></div></div>
   </div>
 
   <div class="quick-actions">
-    <div class="quick-action-btn" onclick="window.open('https://finalapp-nine.vercel.app/', '_blank')">
-      <i class="fas fa-rocket"></i>
-    </div>
-    <div class="quick-action-btn" onclick="window.open('https://dashboard2-iota.vercel.app/', '_blank')">
-      <i class="fas fa-compass"></i>
-    </div>
-    <div class="quick-action-btn" onclick="window.open('https://josn.vercel.app/', '_blank')">
-      <i class="fas fa-folder-open"></i>
-    </div>
-    <div class="quick-action-btn" id="quickExit">
-      <i class="fas fa-sign-out-alt"></i>
-    </div>
+      <div class="quick-action-btn" onclick="window.open('https://finalapp-nine.vercel.app/', '_blank')"><i class="fas fa-rocket"></i></div>
+      <div class="quick-action-btn" onclick="window.open('https://dashboard2-iota.vercel.app/', '_blank')"><i class="fas fa-compass"></i></div>
+      <div class="quick-action-btn" onclick="window.open('https://josn.vercel.app/', '_blank')"><i class="fas fa-folder-open"></i></div>
+      <div class="quick-action-btn" id="quickExit"><i class="fas fa-sign-out-alt"></i></div>
   </div>
 
   <div class="dock-container">
     <div class="dock">
-      <div class="dock-item adventure" data-app="new">
-        <i class="fas fa-rocket"></i>
-        <span>New</span>
-        <div class="active-indicator"></div>
-      </div>
-      <div class="dock-item continue" data-app="load">
-        <i class="fas fa-compass"></i>
-        <span>Load</span>
-        <div class="active-indicator"></div>
-      </div>
-      <div class="dock-item settings" data-app="upload">
-        <i class="fas fa-folder-open"></i>
-        <span>Upload</span>
-        <div class="active-indicator"></div>
-      </div>
-      <div class="dock-item exit" id="exitButton">
-        <i class="fas fa-sign-out-alt"></i>
-        <span>Exit</span>
-        <div class="active-indicator"></div>
-      </div>
+      <div class="dock-item adventure" data-app="new" data-name="New Adventure" data-url="https://finalapp-nine.vercel.app/"><i class="fas fa-rocket"></i><span>New</span><div class="active-indicator"></div></div>
+      <div class="dock-item continue" data-app="load" data-name="Load Dashboard" data-url="https://dashboard2-iota.vercel.app/"><i class="fas fa-compass"></i><span>Load</span><div class="active-indicator"></div></div>
+      <div class="dock-item settings" data-app="upload" data-name="Upload Files" data-url="https://josn.vercel.app/"><i class="fas fa-folder-open"></i><span>Upload</span><div class="active-indicator"></div></div>
+      <div class="dock-item exit" id="exitButton" data-app="exit" data-name="Exit System"><i class="fas fa-sign-out-alt"></i><span>Exit</span><div class="active-indicator"></div></div>
     </div>
+  </div>
+
+  <div class="desktop-shortcut" id="previewShortcut">
+      <div class="icon-container"><i class="fas fa-display"></i></div>
+      <span>Preview</span>
+  </div>
+
+  <div class="app-window" id="previewWindow">
+      <div class="window-title-bar">
+          <div class="window-controls">
+              <div class="control-btn close" id="previewCloseBtn"></div>
+              <div class="control-btn minimize" id="previewMinimizeBtn"></div>
+          </div>
+          <div class="window-title" id="previewTitle">Preview</div>
+      </div>
+      <div class="window-content">
+          <div class="preview-placeholder"><i class="fas fa-hand-pointer"></i><span>Hover over a dock app to preview</span></div>
+          <div class="exit-confirmation">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Exit System?</span>
+            <p>Click the dock icon to confirm</p>
+          </div>
+          <iframe src="about:blank" id="previewIframe"></iframe>
+      </div>
   </div>
 
   <script>
     gsap.registerPlugin(MotionPathPlugin);
 
-    function updateClock() {
-      const options = {
-        timeZone: 'Africa/Cairo', day: '2-digit', month: '2-digit', year: 'numeric',
-        hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true,
-      };
-      document.getElementById('utcClock').textContent = new Date().toLocaleString('en-GB', options);
-    }
+    function updateClock() { const options = { timeZone: 'Africa/Cairo', day: '2-digit', month: '2-digit', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true }; document.getElementById('utcClock').textContent = new Date().toLocaleString('en-GB', options); }
     updateClock(); setInterval(updateClock, 1000);
-
-    function createParticles() {
-      const particlesContainer = document.getElementById('particles');
-      particlesContainer.innerHTML = "";
-      const particleCount = navigator.hardwareConcurrency && navigator.hardwareConcurrency > 4 ? 120 : 70;
-      const isLightMode = document.body.getAttribute('data-theme') === 'light';
-
-      for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        let size, color, particleOpacity, blurSize;
-
-        if (isLightMode) {
-          size = Math.random() * 2.5 + 0.8;
-          const baseGray = Math.floor(Math.random() * 15 + 235);
-          const alpha = Math.random() * 0.5 + 0.3;
-          color = `rgba(${baseGray}, ${baseGray + 5}, ${baseGray + 10}, ${alpha})`;
-          particleOpacity = Math.random() * 0.5 + 0.35;
-          blurSize = Math.random() * 1.2 + 0.3;
-          particle.style.filter = `blur(${blurSize}px)`;
-        } else {
-          size = Math.random() * 3.5 + 1;
-          const colorTint = Math.floor(Math.random() * 30 + 225);
-          const alpha = Math.random() * 0.5 + 0.15;
-          color = `rgba(${colorTint}, ${colorTint}, ${colorTint}, ${alpha})`;
-          particleOpacity = Math.random() * 0.3 + 0.1;
-        }
-
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
-        particle.style.left = Math.random() * 100 + 'vw';
-        particle.style.top = Math.random() * 100 + 'vh';
-        particle.style.background = color;
-        particle.dataset.opacity = particleOpacity;
-        
-        particlesContainer.appendChild(particle);
-
-        gsap.to(particle, {
-          duration: Math.random() * 35 + 30,
-          x: (Math.random() - 0.5) * (window.innerWidth / 3),
-          y: (Math.random() - 0.5) * (window.innerHeight / 3),
-          scale: Math.random() * 0.7 + 0.5,
-          opacity: particleOpacity,
-          ease: "sine.inOut",
-          repeat: -1, yoyo: true, delay: Math.random() * 10
-        });
-      }
-    }
+    function createParticles() { const particlesContainer = document.getElementById('particles'); particlesContainer.innerHTML = ""; const particleCount = navigator.hardwareConcurrency && navigator.hardwareConcurrency > 4 ? 120 : 70; const isLightMode = document.body.getAttribute('data-theme') === 'light'; for (let i = 0; i < particleCount; i++) { const particle = document.createElement('div'); particle.className = 'particle'; let size, color, particleOpacity, blurSize; if (isLightMode) { size = Math.random() * 2.5 + 0.8; const baseGray = Math.floor(Math.random() * 15 + 235); const alpha = Math.random() * 0.5 + 0.3; color = `rgba(${baseGray}, ${baseGray + 5}, ${baseGray + 10}, ${alpha})`; particleOpacity = Math.random() * 0.5 + 0.35; blurSize = Math.random() * 1.2 + 0.3; particle.style.filter = `blur(${blurSize}px)`; } else { size = Math.random() * 3.5 + 1; const colorTint = Math.floor(Math.random() * 30 + 225); const alpha = Math.random() * 0.5 + 0.15; color = `rgba(${colorTint}, ${colorTint}, ${colorTint}, ${alpha})`; particleOpacity = Math.random() * 0.3 + 0.1; } particle.style.width = size + 'px'; particle.style.height = size + 'px'; particle.style.left = Math.random() * 100 + 'vw'; particle.style.top = Math.random() * 100 + 'vh'; particle.style.background = color; particle.dataset.opacity = particleOpacity; particlesContainer.appendChild(particle); gsap.to(particle, { duration: Math.random() * 35 + 30, x: (Math.random() - 0.5) * (window.innerWidth / 3), y: (Math.random() - 0.5) * (window.innerHeight / 3), scale: Math.random() * 0.7 + 0.5, opacity: particleOpacity, ease: "sine.inOut", repeat: -1, yoyo: true, delay: Math.random() * 10 }); } }
     createParticles();
-    let resizeTimer;
-    window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(createParticles, 300); });
-
+    let resizeTimer; window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(createParticles, 300); });
     const priceLinks = ["https://newlist-eta.vercel.app/", "https://newlist2.vercel.app/"];
     document.getElementById("pricesButton").addEventListener("click", () => window.open(priceLinks[Math.floor(Math.random() * priceLinks.length)], "_blank"));
+    const body = document.body; const themeCheckbox = document.getElementById('theme-checkbox');
+    const handleThemeChange = () => { const newTheme = themeCheckbox.checked ? 'dark' : 'light'; body.setAttribute('data-theme', newTheme); gsap.to("#particles .particle", { opacity: 0, duration: 0.5, stagger: 0.005, onComplete: () => { createParticles(); gsap.fromTo("#particles .particle", { opacity: 0, scale: 0.3 }, { opacity: (i, target) => parseFloat(target.dataset.opacity), scale: 1, duration: 1.2, stagger: 0.008, ease: "power2.out" }); } }); };
+    if (body.getAttribute('data-theme') === 'dark') { themeCheckbox.checked = true; } themeCheckbox.addEventListener('change', handleThemeChange);
+    function exitSystem() { const tl = gsap.timeline({ defaults: { ease: "expo.in", duration: 0.7 } }); tl.to(['.dock-container', '.app-window'], { y: '+=200', opacity: 0 }).to(['.quick-actions', '.desktop-shortcut'], { x: -200, opacity: 0 }, "-=0.5").to('.system-widgets', { x: 200, opacity: 0 }, "-=0.5").to('.top-bar', { y: -150, opacity: 0 }, "-=0.5").to('.particle', { opacity: 0, duration: 0.5, stagger: 0.003 }, "-=0.5").to('.cursor-light', { opacity: 0, scale: 0.2, duration: 0.6 }, "-=0.7").to('body', { opacity: 0, scale: 0.95, duration: 0.8, onComplete: () => { window.close(); setTimeout(() => { if (!window.closed) { try { window.location.href = 'about:blank'; } catch (e) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:white;display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:24px;">Exited. You may close this tab.</div>'; } } }, 150); } }, "-=0.2"); }
+    document.getElementById('exitButton').addEventListener('click', exitSystem); document.getElementById('quickExit').addEventListener('click', exitSystem);
+    const dockContainer = document.querySelector('.dock-container'); const dockItems = document.querySelectorAll('.dock-item');
+    const DOCK_EFFECT_RADIUS = 120; const MAX_SCALE = 1.7; const MAX_Y_SHIFT = -25;
+    dockContainer.addEventListener('mousemove', (e) => { const dockRect = dockContainer.getBoundingClientRect(); const mouseXInDock = e.clientX - dockRect.left; dockItems.forEach(item => { const itemRect = item.getBoundingClientRect(); const itemCenterXInDock = (itemRect.left - dockRect.left) + (itemRect.width / 2); const distance = Math.abs(mouseXInDock - itemCenterXInDock); let scale = 1, yShift = 0; if (distance < DOCK_EFFECT_RADIUS) { const proximityFactor = 1 - (distance / DOCK_EFFECT_RADIUS); const easedProximity = Math.pow(proximityFactor, 2.5); scale = 1 + (MAX_SCALE - 1) * easedProximity; yShift = MAX_Y_SHIFT * easedProximity; } gsap.to(item, { scale, y: yShift, duration: 0.18, ease: "power1.out" }); }); });
+    dockContainer.addEventListener('mouseleave', () => { gsap.to(dockItems, { scale: 1, y: 0, duration: 0.35, ease: "elastic.out(1, 0.6)" }); });
+    dockItems.forEach(item => { if (item.dataset.app && item.dataset.app !== 'exit') { item.addEventListener('click', () => { window.open(item.dataset.url, '_blank'); dockItems.forEach(i => i.classList.remove('active')); item.classList.add('active'); }); } });
+    const cursorLight = document.querySelector('.cursor-light'); const widgets = document.querySelectorAll('.widget');
+    window.addEventListener('mousemove', e => { gsap.to(cursorLight, { duration: 0.8, x: e.clientX, y: e.clientY, ease: "power2.out" }); widgets.forEach(widget => { const rect = widget.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; widget.style.setProperty('--x', `${x}px`); widget.style.setProperty('--y', `${y}px`); }); });
+    window.addEventListener('load', () => { const tl = gsap.timeline({ defaults: { ease: "expo.out", duration: 1.4 } }); tl.from(".desktop", { opacity: 0, duration: 0.1 }).from(".top-bar", { y: -120, opacity: 0, delay: 0.2, ease: "back.out(1.2)" }).from(".dock-container", { y: 200, opacity: 0, ease: "elastic.out(1, 0.6)", duration: 1.6 }, "-=1.1").from([".quick-actions", ".desktop-shortcut"], { x: -180, opacity: 0, ease: "back.out(1.4)", stagger: 0.1 }, "-=1.3").from("#quickLinksWidget", { x: 180, opacity: 0, duration: 1.2, ease: "back.out(1.4)" }, "-=1.2").fromTo("#particles .particle", { opacity: 0, scale: 0.3 }, { opacity: (i, target) => parseFloat(target.dataset.opacity), scale: 1, duration: 1.5, stagger: 0.008, ease: "power2.out" }, "-=1.0"); });
 
-    const body = document.body;
-    const themeCheckbox = document.getElementById('theme-checkbox');
-    
-    const handleThemeChange = () => {
-        const newTheme = themeCheckbox.checked ? 'dark' : 'light';
-        body.setAttribute('data-theme', newTheme);
-        gsap.to("#particles .particle", {
-            opacity: 0, duration: 0.5, stagger: 0.005,
-            onComplete: () => {
-                createParticles();
-                gsap.fromTo("#particles .particle", 
-                    { opacity: 0, scale: 0.3 }, 
-                    { opacity: (i, target) => parseFloat(target.dataset.opacity),
-                      scale: 1, duration: 1.2, stagger: 0.008, ease: "power2.out" }
-                );
-            }
+    const previewShortcut = document.getElementById('previewShortcut');
+    const previewWindow = document.getElementById('previewWindow');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewCloseBtn = document.getElementById('previewCloseBtn');
+    const previewMinimizeBtn = document.getElementById('previewMinimizeBtn');
+    const previewIframe = document.getElementById('previewIframe');
+    const previewPlaceholder = previewWindow.querySelector('.preview-placeholder');
+    const exitConfirmationScreen = previewWindow.querySelector('.exit-confirmation');
+
+    function resetPreviewToPlaceholder() {
+        previewTitle.textContent = 'Preview';
+        if (previewIframe.src !== 'about:blank') {
+            previewIframe.src = 'about:blank';
+        }
+        previewPlaceholder.style.opacity = '1';
+        previewIframe.style.opacity = '0';
+        exitConfirmationScreen.style.opacity = '0';
+    }
+
+    function openPreviewWindow() {
+        if (previewWindow.classList.contains('visible')) {
+            return;
+        }
+        previewWindow.classList.remove('minimized');
+        resetPreviewToPlaceholder(); 
+        
+        gsap.to(previewWindow, {
+            opacity: 1, 
+            scale: 1, 
+            duration: 0.4, 
+            ease: 'expo.out',
+            onStart: () => previewWindow.classList.add('visible'),
+            transform: 'translate(-50%, -50%) scale(1)'
         });
-    };
-    
-    if (body.getAttribute('data-theme') === 'dark') {
-        themeCheckbox.checked = true;
     }
-    themeCheckbox.addEventListener('change', handleThemeChange);
 
-    function exitSystem() {
-      const tl = gsap.timeline({ defaults: { ease: "expo.in", duration: 0.7 } });
-      tl.to('.dock-container', { y: 200, opacity: 0 })
-        .to('.quick-actions', { x: -200, opacity: 0 }, "-=0.5")
-        .to('.system-widgets', { x: 200, opacity: 0 }, "-=0.5")
-        .to('.top-bar', { y: -150, opacity: 0 }, "-=0.5")
-        .to('.particle', { opacity: 0, duration: 0.5, ease: "expo.in", stagger: 0.003 }, "-=0.5")
-        .to('.cursor-light', { opacity: 0, scale: 0.2, duration: 0.6, ease: "expo.in" }, "-=0.7")
-        .to('body', {
-          opacity: 0, scale: 0.95, duration: 0.8, ease: "expo.in",
-          onComplete: () => {
-            window.close(); 
-            setTimeout(() => {
-                if (!window.closed) {
-                  try { window.location.href = 'about:blank'; }
-                  catch (e) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#000;color:white;display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:24px;">Exited. You may close this tab.</div>'; }
+    function closePreviewWindow() {
+        gsap.to(previewWindow, {
+            opacity: 0, 
+            scale: 0.95, 
+            duration: 0.3, 
+            ease: 'expo.in',
+            onComplete: () => previewWindow.classList.remove('visible'),
+            transform: 'translate(-50%, -50%) scale(0.95)'
+        });
+    }
+
+    dockItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            if (!previewWindow.classList.contains('visible') || !item.dataset.app) return;
+            
+            if (item.dataset.app === 'exit') {
+                previewTitle.textContent = item.dataset.name;
+                previewPlaceholder.style.opacity = '0';
+                previewIframe.style.opacity = '0';
+                if (previewIframe.src !== 'about:blank') {
+                    previewIframe.src = 'about:blank';
                 }
-            }, 150);
-          }
-        }, "-=0.2");
-    }
-    document.getElementById('exitButton').addEventListener('click', exitSystem);
-    document.getElementById('quickExit').addEventListener('click', exitSystem);
-
-    const dockContainer = document.querySelector('.dock-container');
-    const dockItems = document.querySelectorAll('.dock-item');
-    const DOCK_EFFECT_RADIUS = 120;
-    const MAX_SCALE = 1.7;
-    const MAX_Y_SHIFT = -25;
-    
-    dockContainer.addEventListener('mousemove', (e) => {
-        const dockRect = dockContainer.getBoundingClientRect();
-        const mouseXInDock = e.clientX - dockRect.left;
-        dockItems.forEach(item => {
-            const itemRect = item.getBoundingClientRect();
-            const itemCenterXInDock = (itemRect.left - dockRect.left) + (itemRect.width / 2);
-            const distance = Math.abs(mouseXInDock - itemCenterXInDock);
-            let scale = 1, yShift = 0;
-            if (distance < DOCK_EFFECT_RADIUS) {
-                const proximityFactor = 1 - (distance / DOCK_EFFECT_RADIUS);
-                const easedProximity = Math.pow(proximityFactor, 2.5);
-                scale = 1 + (MAX_SCALE - 1) * easedProximity;
-                yShift = MAX_Y_SHIFT * easedProximity;
+                exitConfirmationScreen.style.opacity = '1';
+            } 
+            else if (item.dataset.url) {
+                if (previewIframe.src === item.dataset.url) return;
+                
+                previewTitle.textContent = item.dataset.name;
+                previewIframe.src = item.dataset.url;
+                previewPlaceholder.style.opacity = '0';
+                exitConfirmationScreen.style.opacity = '0';
+                previewIframe.style.opacity = '1';
             }
-            gsap.to(item, { scale, y: yShift, duration: 0.18, ease: "power1.out" });
         });
     });
 
     dockContainer.addEventListener('mouseleave', () => {
-        gsap.to(dockItems, { scale: 1, y: 0, duration: 0.35, ease: "elastic.out(1, 0.6)" });
-    });
-    
-    dockItems.forEach(item => {
-        if(item.dataset.app) {
-            item.addEventListener('click', () => {
-                const urlMap = {
-                    new: 'https://finalapp-nine.vercel.app/',
-                    load: 'https://dashboard2-iota.vercel.app/',
-                    upload: 'https://josn.vercel.app/'
-                };
-                window.open(urlMap[item.dataset.app], '_blank');
-                dockItems.forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-            });
+        if (previewWindow.classList.contains('visible')) {
+            resetPreviewToPlaceholder();
         }
     });
 
-    const cursorLight = document.querySelector('.cursor-light');
-    const widgets = document.querySelectorAll('.widget');
-    window.addEventListener('mousemove', e => {
-        gsap.to(cursorLight, { duration: 0.8, x: e.clientX, y: e.clientY, ease: "power2.out" });
-        widgets.forEach(widget => {
-            const rect = widget.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            widget.style.setProperty('--x', `${x}px`);
-            widget.style.setProperty('--y', `${y}px`);
-        });
+    previewShortcut.addEventListener('click', openPreviewWindow);
+    previewCloseBtn.addEventListener('click', (e) => { e.stopPropagation(); closePreviewWindow(); });
+    previewMinimizeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        previewWindow.classList.add('minimized');
+        previewWindow.classList.remove('visible');
     });
 
-    window.addEventListener('load', () => {
-      const tl = gsap.timeline({ defaults: { ease: "expo.out", duration: 1.4 } });
-      tl.from(".desktop", {opacity:0, duration: 0.1})
-        .from(".top-bar", { y: -120, opacity: 0, delay: 0.2, ease: "back.out(1.2)" })
-        .from(".dock-container", { y: 200, opacity: 0, ease: "elastic.out(1, 0.6)", duration: 1.6 }, "-=1.1")
-        .from(".quick-actions", { x: -180, opacity: 0, ease: "back.out(1.4)" }, "-=1.3")
-        .from("#quickLinksWidget", { x: 180, opacity: 0, duration:1.2, ease:"back.out(1.4)" }, "-=1.2")
-        .fromTo("#particles .particle", 
-            { opacity: 0, scale: 0.3 }, 
-            { opacity: (i, target) => parseFloat(target.dataset.opacity),
-              scale: 1, duration: 1.5, stagger: 0.008, ease: "power2.out" }, "-=1.0");
-    });
   </script>
 </body>
 </html>
