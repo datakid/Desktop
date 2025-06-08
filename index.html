@@ -260,7 +260,15 @@
     dockItems.forEach(item => { if (item.dataset.app && item.dataset.app !== 'exit') { item.addEventListener('click', () => { window.open(item.dataset.url, '_blank'); dockItems.forEach(i => i.classList.remove('active')); item.classList.add('active'); }); } });
     const cursorLight = document.querySelector('.cursor-light'); const widgets = document.querySelectorAll('.widget');
     window.addEventListener('mousemove', e => { gsap.to(cursorLight, { duration: 0.8, x: e.clientX, y: e.clientY, ease: "power2.out" }); widgets.forEach(widget => { const rect = widget.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; widget.style.setProperty('--x', `${x}px`); widget.style.setProperty('--y', `${y}px`); }); });
-    window.addEventListener('load', () => { const tl = gsap.timeline({ defaults: { ease: "expo.out", duration: 1.4 } }); tl.from(".desktop", { opacity: 0, duration: 0.1 }).from(".desktop-title", { opacity: 0, y: "3vh", duration: 1.8, ease: "expo.out" }, 0.2).from(".top-bar", { y: -120, opacity: 0, delay: 0.2, ease: "back.out(1.2)" }).from(".dock-container", { y: 200, opacity: 0, ease: "elastic.out(1, 0.6)", duration: 1.6 }, "-=1.1").from([".quick-actions", ".desktop-shortcut"], { x: -180, opacity: 0, ease: "back.out(1.4)", stagger: 0.1 }, "-=1.3").from("#quickLinksWidget", { x: 180, opacity: 0, duration: 1.2, ease: "back.out(1.4)" }, "-=1.2").fromTo("#particles .particle", { opacity: 0, scale: 0.3 }, { opacity: (i, target) => parseFloat(target.dataset.opacity), scale: 1, duration: 1.5, stagger: 0.008, ease: "power2.out" }, "-=1.0"); });
+    window.addEventListener('load', () => {
+        const tl = gsap.timeline({ defaults: { ease: "expo.out", duration: 1.2 } });
+        tl.from(".desktop-title", { opacity: 0, y: "3vh", duration: 1.6 }, 0.1)
+          .from(".top-bar", { y: -120, opacity: 0, ease: "back.out(1.2)" }, 0.3)
+          .from(".dock-container", { y: 200, opacity: 0, ease: "elastic.out(1, 0.6)", duration: 1.6 }, 0.4)
+          .from([".quick-actions", ".desktop-shortcut"], { x: -180, opacity: 0, ease: "back.out(1.4)", stagger: 0.1 }, 0.5)
+          .from("#quickLinksWidget", { x: 180, opacity: 0, ease: "back.out(1.4)" }, 0.5)
+          .fromTo("#particles .particle", { opacity: 0, scale: 0.3 }, { opacity: (i, target) => parseFloat(target.dataset.opacity), scale: 1, duration: 1.5, stagger: 0.008, ease: "power2.out" }, 0.6);
+    });
     const previewShortcut = document.getElementById('previewShortcut');
     const previewWindow = document.getElementById('previewWindow');
     const previewTitle = document.getElementById('previewTitle');
