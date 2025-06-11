@@ -36,9 +36,9 @@
       --widget-highlight-light: rgba(180, 200, 255, 0.2);
       --spotlight-color-dark: rgba(0, 122, 255, 0.25);
       --spotlight-color-light: rgba(100, 180, 255, 0.35);
-      --dock-padding: 14px;
-      --dock-icon-size: 76px;
-      --window-radius: 28px;
+      --dock-padding: clamp(10px, 1vw, 14px);
+      --dock-icon-size: clamp(52px, 5vw, 76px);
+      --window-radius: clamp(20px, 1.8vw, 28px);
       --blur-intensity: 40px;
     }
     [data-theme="light"] {
@@ -181,6 +181,65 @@
     .exit-confirmation i { font-size: 64px; color: #ff453a; filter: drop-shadow(0 4px 15px rgba(255, 69, 58, 0.4)); }
     .exit-confirmation span { font-size: 22px; font-weight: 600; }
     .exit-confirmation p { font-size: 16px; color: var(--text-secondary); font-weight: 500; }
+
+    @media (max-width: 1600px) {
+      .system-widgets { right: 30px; width: 380px; }
+      .quick-actions, .desktop-shortcut { left: 30px; }
+      .top-bar { padding: 0 30px; }
+      .app-window { width: 58vw; max-width: 800px; }
+    }
+    @media (max-width: 1440px) {
+      .system-widgets { right: 20px; width: 340px; padding: 35px; }
+      .quick-actions, .desktop-shortcut { left: 20px; }
+      .app-window { width: 60vw; max-width: 650px; }
+      .dock { gap: 18px; }
+    }
+    @media (max-width: 1200px) {
+      .system-widgets { width: 300px; padding: 30px; }
+      .widget-header { font-size: 22px; }
+      .quick-link { font-size: 16px; padding: 18px 22px; }
+      .app-window { width: 65vw; max-width: 540px; }
+      .desktop-title { font-size: 16vw; }
+    }
+    @media (max-width: 1024px) {
+      body { overflow-x: hidden; }
+      .top-bar { padding: 0 15px; height: 64px; }
+      .top-bar-item { padding: 8px 15px; font-size: 14px; }
+      .user-avatar { width: 38px; height: 38px; }
+      .system-widgets { top: 84px; right: 15px; width: 280px; gap: 20px; }
+      .quick-actions { left: 15px; padding: 20px; gap: 18px; }
+      .quick-action-btn { width: 54px; height: 54px; }
+      .desktop-shortcut { display: none; }
+      .app-window { width: 90vw; max-width: 480px; }
+      .dock-container { bottom: 20px; }
+      .dock { gap: 15px; border-radius: 30px; }
+    }
+    @media (max-width: 768px) {
+      .desktop-title { font-size: clamp(60px, 20vw, 110px); top: 50%; }
+      .top-bar { flex-wrap: wrap; height: auto; padding: 10px; justify-content: center; gap: 10px; }
+      .system-widgets { display: none; }
+      .quick-actions { top: auto; bottom: 100px; left: auto; right: 15px; transform: translateY(0); flex-direction: row; padding: 12px; width: auto; border-radius: 20px; }
+      .quick-action-btn { width: 48px; height: 48px; border-radius: 16px; }
+      .quick-action-btn i { font-size: 20px; }
+      .app-window { width: 92vw; height: 70vh; max-width: 92%; top: 50%; border-radius: var(--window-radius); }
+      .window-title-bar { height: 45px; }
+      .dock-container { bottom: 15px; width: 95vw; }
+      .dock { justify-content: space-around; padding: var(--dock-padding); }
+      .dock-item span { display: none; }
+      .dock-item i { font-size: 24px; margin-bottom: 0; }
+      .active-indicator { bottom: -8px; }
+    }
+    @media (max-height: 750px) {
+        .dock-container { bottom: 20px; }
+        .system-widgets { transform: scale(0.9); transform-origin: top right; }
+        .widget:hover { transform: scale(0.92) translateY(-8px); }
+        .desktop-title { font-size: 13vw; }
+        .app-window { height: 75vh; }
+    }
+    @media (max-height: 650px) {
+        .system-widgets { display: none; }
+        .app-window { height: 80vh; }
+    }
   </style>
 </head>
 <body data-theme="dark">
