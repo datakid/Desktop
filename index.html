@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title> </title>
+  <title>LinkExpress Dashboard</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -182,7 +182,6 @@
     .exit-confirmation span { font-size: 22px; font-weight: 600; }
     .exit-confirmation p { font-size: 16px; color: var(--text-secondary); font-weight: 500; }
 
-
 @media (max-width: 1600px) {
   .system-widgets { right: 30px; width: 380px; }
   .quick-actions, .desktop-shortcut { left: 30px; }
@@ -191,66 +190,23 @@
 }
 
 @media (max-width: 1440px) and (max-height: 800px) {
-  .system-widgets { 
-    right: 20px; 
-    width: 320px; 
-    top: 90px;
-    gap: 20px;
-  }
-  .widget { 
-    padding: 25px; 
-    transform: scale(0.9);
-    transform-origin: top right;
-  }
-  .widget:hover { 
-    transform: scale(0.92) translateY(-6px); 
-  }
-  .widget-header { 
-    font-size: 20px; 
-    margin-bottom: 20px;
-  }
-  .quick-link { 
-    padding: 16px 20px; 
-    font-size: 15px;
-  }
-  .quick-actions { 
-    left: 20px; 
-    padding: 20px;
-    gap: 16px;
-  }
-  .quick-action-btn { 
-    width: 56px; 
-    height: 56px;
-  }
-  .quick-action-btn i { 
-    font-size: 22px;
-  }
-  .desktop-shortcut { 
-    top: 95px; 
-    left: 20px;
-  }
-  .desktop-shortcut .icon-container { 
-    width: 70px; 
-    height: 70px;
-  }
-  .desktop-shortcut .icon-container i { 
-    font-size: 28px;
-  }
-  .desktop-title { 
-    font-size: 12vw;
-  }
-  .dock-container { 
-    bottom: 25px;
-  }
-  .dock { 
-    gap: 16px;
-    padding: 8px 12px;
-  }
-  .app-window { 
-    width: 65vw; 
-    max-width: 700px;
-    height: 60vh;
-  }
+  .system-widgets { right: 20px; width: 320px; top: 90px; gap: 20px; }
+  .widget { padding: 25px; }
+  .widget:hover { transform: translateY(-6px) scale(1.01); }
+  .widget-header { font-size: 20px; margin-bottom: 20px; }
+  .widget-content { gap: 18px; }
+  .quick-link { padding: 16px 20px; font-size: 15px; border-radius: 18px;}
+  .quick-link i { margin-right: 15px; font-size: 22px; }
+  .quick-actions { left: 20px; padding: 20px; gap: 16px; }
+  .quick-action-btn { width: 56px; height: 56px; border-radius: 20px; }
+  .quick-action-btn i { font-size: 22px; }
+  .desktop-shortcut { top: 95px; left: 20px; }
+  .desktop-shortcut .icon-container { width: 70px; height: 70px; border-radius: 22px; }
+  .desktop-shortcut .icon-container i { font-size: 28px; }
+  .desktop-title { font-size: 12vw; }
+  .dock-container { bottom: 25px; }
+  .dock { gap: 16px; padding: 8px 12px; --dock-icon-size: clamp(48px, 4.8vw, 72px); }
+  .app-window { width: 65vw; max-width: 700px; height: 60vh; }
 }
 
 @media (max-width: 1440px) and (min-height: 801px) {
@@ -269,32 +225,13 @@
 }
 
 @media (max-height: 768px) and (min-width: 1200px) {
-  .system-widgets { 
-    top: 80px;
-    transform: scale(0.85);
-    transform-origin: top right;
-    gap: 15px;
-  }
-  .widget:hover { 
-    transform: scale(0.87) translateY(-5px); 
-  }
-  .quick-actions { 
-    transform: scale(0.9) translateY(-50%);
-    transform-origin: left center;
-  }
-  .desktop-shortcut { 
-    top: 85px;
-    transform: scale(0.9);
-  }
-  .dock-container { 
-    bottom: 15px;
-  }
-  .desktop-title { 
-    font-size: 10vw;
-  }
-  .app-window { 
-    height: 70vh;
-  }
+  .system-widgets { top: 80px; transform: scale(0.85); transform-origin: top right; gap: 15px; }
+  .widget:hover { transform: scale(0.87) translateY(-5px); }
+  .quick-actions { transform: scale(0.9) translateY(-50%); transform-origin: left center; }
+  .desktop-shortcut { top: 85px; transform: scale(0.9); }
+  .dock-container { bottom: 15px; }
+  .desktop-title { font-size: 10vw; }
+  .app-window { height: 70vh; }
 }
 
 @media (max-width: 1024px) {
@@ -305,10 +242,13 @@
   .system-widgets { top: 84px; right: 15px; width: 280px; gap: 20px; }
   .quick-actions { left: 15px; padding: 20px; gap: 18px; }
   .quick-action-btn { width: 54px; height: 54px; }
-  .desktop-shortcut { display: none; }
-  .app-window { width: 90vw; max-width: 480px; }
+  .desktop-shortcut { top: 90px; left: 15px; }
+  .desktop-shortcut .icon-container { width: 64px; height: 64px; border-radius: 20px;}
+  .desktop-shortcut .icon-container i { font-size: 26px; }
+  .desktop-shortcut span { font-size: 13px; }
+  .app-window { width: 70vw; max-width: 560px; height: 60vh; }
   .dock-container { bottom: 20px; }
-  .dock { gap: 15px; border-radius: 30px; }
+  .dock { gap: 15px; border-radius: 30px; --dock-icon-size: clamp(44px, 6vw, 64px); }
 }
 
 @media (max-width: 768px) {
@@ -318,6 +258,7 @@
   .quick-actions { top: auto; bottom: 100px; left: auto; right: 15px; transform: translateY(0); flex-direction: row; padding: 12px; width: auto; border-radius: 20px; }
   .quick-action-btn { width: 48px; height: 48px; border-radius: 16px; }
   .quick-action-btn i { font-size: 20px; }
+  .desktop-shortcut { display: none; }
   .app-window { width: 92vw; height: 70vh; max-width: 92%; top: 50%; border-radius: var(--window-radius); }
   .window-title-bar { height: 45px; }
   .dock-container { bottom: 15px; width: 95vw; }
@@ -339,7 +280,6 @@
   .system-widgets { display: none; }
   .app-window { height: 80vh; }
 }
-
 </style>
 </head>
 <body data-theme="dark">
