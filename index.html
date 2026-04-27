@@ -205,9 +205,7 @@ background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);
 }
 [data-theme="light"] .dock::before{background:linear-gradient(90deg,transparent,rgba(255,255,255,0.9),transparent);}
 .di{
---sz: var(--dock-sz);
---isz: 26px;
-width:var(--sz);height:var(--sz);border-radius:16px;
+width:var(--dock-sz);height:var(--dock-sz);border-radius:16px;
 display:flex;align-items:center;justify-content:center;
 cursor:pointer;position:relative;margin:0 var(--dock-gap);
 z-index:1;flex-shrink:0;
@@ -219,7 +217,7 @@ content:'';position:absolute;inset:0;border-radius:inherit;
 background:linear-gradient(155deg,rgba(255,255,255,0.3) 0%,transparent 50%);
 pointer-events:none;z-index:2;
 }
-.di i{font-size:var(--isz);color:#fff;position:relative;z-index:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));pointer-events:none;}
+.di i{font-size:26px;color:#fff;position:relative;z-index:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));pointer-events:none;will-change:transform;}
 .di.adv{background:linear-gradient(145deg,#3b9eff,#0047d4);}
 .di.dash{background:linear-gradient(145deg,#bf5ff0,#6b20b5);}
 .di.cmp{background:linear-gradient(145deg,#22d3ee,#0077a3);}
@@ -245,6 +243,7 @@ box-shadow:var(--gshadow);
 white-space:nowrap;transform:translateX(-50%);
 opacity:0;
 letter-spacing:-0.01em;
+will-change:left,top,opacity,transform;
 }
 .dlabel::after{
 content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
@@ -257,16 +256,17 @@ background:var(--gbg);backdrop-filter:var(--gblur);-webkit-backdrop-filter:var(-
 border:0.5px solid var(--gborder);border-radius:24px;
 box-shadow:var(--gshadow);
 z-index:950;display:flex;flex-direction:column;overflow:hidden;
-transform:translate(-50%,-50%) scale(0.9);opacity:0;pointer-events:none;
-transition:transform 0.5s var(--spring),opacity 0.4s ease;will-change:transform,opacity;
+opacity:0;pointer-events:none;transform:translate(-50%,-50%);
+will-change:transform,opacity,left,top;
+}
+.win.visible{
+pointer-events:auto;
 }
 .win::before{
 content:'';position:absolute;inset:0 0 auto 0;height:1px;
 background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);pointer-events:none;z-index:10;
 }
 [data-theme="light"] .win::before{background:linear-gradient(90deg,transparent,rgba(255,255,255,0.8),transparent);}
-.win.visible{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:auto;}
-.win.min{transform:translate(-50%,130vh) scale(0.3);opacity:0;pointer-events:none;transition:all 0.6s var(--expo);}
 .tb{
 height:54px;display:flex;align-items:center;padding:0 20px;flex-shrink:0;
 border-bottom:0.5px solid var(--gborder);position:relative;
@@ -300,15 +300,17 @@ font-size:13.5px;font-weight:700;color:var(--txt);opacity:0.8;letter-spacing:-0.
 .spot{
 position:fixed;inset:0;z-index:2000;display:flex;align-items:flex-start;justify-content:center;
 padding-top:16vh;opacity:0;visibility:hidden;
-transition:opacity 0.25s ease,visibility 0.25s;
+transition:opacity 0.3s ease,visibility 0.3s;
 }
 .spot.open{opacity:1;visibility:visible;}
 .spot-bg{
 position:absolute;inset:0;
 background:rgba(6,6,18,0.55);
 backdrop-filter:blur(36px) saturate(180%);-webkit-backdrop-filter:blur(36px) saturate(180%);
+opacity:0;transition:opacity 0.3s ease;
 }
 [data-theme="light"] .spot-bg{background:rgba(210,215,240,0.45);}
+.spot.open .spot-bg{opacity:1;}
 .spot-box{
 position:relative;width:640px;max-width:92vw;
 background:var(--gbg);
@@ -317,15 +319,15 @@ border:0.5px solid var(--gborder);
 border-radius:24px;
 box-shadow:var(--gshadow);
 overflow:hidden;
-transform:scale(0.92) translateY(-12px);
-transition:transform 0.4s var(--spring);
+transform:scale(0.96) translateY(-20px);
+transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);
 }
+.spot.open .spot-box{transform:scale(1) translateY(0);}
 .spot-box::before{
 content:'';position:absolute;inset:0 0 auto 0;height:1px;
 background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);pointer-events:none;
 }
 [data-theme="light"] .spot-box::before{background:linear-gradient(90deg,transparent,rgba(255,255,255,0.8),transparent);}
-.spot.open .spot-box{transform:scale(1) translateY(0);}
 .spot-accent{
 height:3px;
 background:linear-gradient(90deg,#2563eb,#7c3aed,#0891b2);
@@ -383,7 +385,7 @@ font-size:13px;color:#3b82f6;margin-left:auto;flex-shrink:0;
 opacity:0;transform:translateX(-6px);transition:opacity 0.2s ease,transform 0.2s ease;
 }
 @media(min-width:769px){
-.mob-only,.mob-status,.mob-home,.mob-dock{display:none!important;}
+.mob-only,.mob-status,.mob-home{display:none!important;}
 }
 @media(max-width:768px){
 .menubar,.lsb,.widgets,.dt,.win,.dock-wrap,.dlabel,.spot{display:none!important;}
@@ -398,7 +400,7 @@ background:linear-gradient(to bottom,rgba(0,0,0,0.35),transparent);
 .mob-icons{display:flex;align-items:center;gap:7px;color:var(--txt);}
 .mob-icons i{font-size:14px;opacity:0.9;}
 .mob-home{
-position:fixed;inset:0;top:52px;bottom:110px;
+position:fixed;inset:0;top:52px;bottom:24px;
 display:flex;flex-direction:column;align-items:center;justify-content:center;
 padding:0 24px;gap:40px;
 }
@@ -412,24 +414,18 @@ justify-items:center;
 .mob-app{
 display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;
 -webkit-tap-highlight-color:transparent;
-transform-style:preserve-3d;perspective:800px;
 }
-@keyframes mobFloat {
-0%,100% {transform:translateY(0);}
-50% {transform:translateY(-6px);}
-}
-.mob-app:nth-child(1) .aic{animation:mobFloat 4.2s ease-in-out infinite;}
-.mob-app:nth-child(2) .aic{animation:mobFloat 3.8s ease-in-out infinite 0.5s;}
-.mob-app:nth-child(3) .aic{animation:mobFloat 4.5s ease-in-out infinite 1s;}
-.mob-app:nth-child(4) .aic{animation:mobFloat 4.0s ease-in-out infinite 1.5s;}
-.mob-app:nth-child(5) .aic{animation:mobFloat 4.3s ease-in-out infinite 0.2s;}
-.mob-app:nth-child(6) .aic{animation:mobFloat 3.9s ease-in-out infinite 0.8s;}
 .mob-app .aic{
 width:76px;height:76px;border-radius:22px;
 display:flex;align-items:center;justify-content:center;
 box-shadow:0 16px 36px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.3);
 position:relative;overflow:hidden;
-will-change:transform;transform-origin:center;
+transition:transform 0.4s cubic-bezier(0.16,1,0.3,1), filter 0.4s ease;
+}
+.mob-app:active .aic{
+transform:scale(0.82);
+filter:brightness(0.7);
+transition:transform 0.1s ease-out, filter 0.1s ease-out;
 }
 .mob-app .aic::before{
 content:'';position:absolute;inset:0;
@@ -444,42 +440,9 @@ background:linear-gradient(155deg,rgba(255,255,255,0.35) 0%,transparent 50%);
 .mob-app.upl .aic{background:linear-gradient(145deg,#f59e0b,#b45309);}
 .mob-app.prot .aic{background:linear-gradient(145deg,#34d399,#059669);}
 .mob-app.list .aic{background:linear-gradient(145deg,#f472b6,#be185d);}
-.mob-dock{
-position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:100;
-background:var(--gbg);backdrop-filter:var(--gblur);-webkit-backdrop-filter:var(--gblur);
-border:0.5px solid var(--gborder);border-radius:36px;
-padding:16px 20px;display:flex;align-items:center;gap:16px;
-box-shadow:var(--gshadow);
-}
-.mob-dock::before{
-content:'';position:absolute;top:0;left:20px;right:20px;height:1px;
-background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);pointer-events:none;
-}
-[data-theme="light"] .mob-dock::before{background:linear-gradient(90deg,transparent,rgba(255,255,255,0.8),transparent);}
-.mob-dock-item{
-width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;
-cursor:pointer;position:relative;overflow:hidden;
-box-shadow:0 12px 32px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.25);
--webkit-tap-highlight-color:transparent;will-change:transform;
-}
-.mob-dock-item::before{
-content:'';position:absolute;inset:0;
-background:linear-gradient(155deg,rgba(255,255,255,0.35) 0%,transparent 50%);
-}
-.mob-dock-item i{font-size:28px;color:#fff;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4));position:relative;z-index:1;}
-.mob-dock-item.adv{background:linear-gradient(145deg,#3b9eff,#0047d4);}
-.mob-dock-item.dash{background:linear-gradient(145deg,#bf5ff0,#6b20b5);}
-.mob-dock-item.cmp{background:linear-gradient(145deg,#22d3ee,#0077a3);}
-.mob-dock-item.upl{background:linear-gradient(145deg,#f59e0b,#b45309);}
-.mob-themetog{
-width:46px;height:46px;border-radius:50%;
-background:rgba(255,255,255,0.1);border:0.5px solid var(--gborder);
-display:flex;align-items:center;justify-content:center;cursor:pointer;
-color:var(--txt);font-size:18px;
--webkit-tap-highlight-color:transparent;will-change:transform;
-box-shadow:0 8px 24px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.15);
-}
-[data-theme="light"] .mob-themetog{background:rgba(0,0,0,0.06);color:#000;}
+.mob-app.theme .aic{background:linear-gradient(145deg,#6b7280,#374151);}
+[data-theme="light"] .mob-app.theme .aic{background:linear-gradient(145deg,#e5e7eb,#9ca3af); color:#000;}
+[data-theme="light"] .mob-app.theme .aic i{color:#000;}
 }
 </style>
 </head>
@@ -507,38 +470,35 @@ box-shadow:0 8px 24px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.15);
 <div class="num" id="mobDate">27</div>
 </div>
 <div class="mob-grid">
-<div class="mob-app adv" data-url="https://finalapp-nine.vercel.app/">
+<div class="mob-app adv" onclick="setTimeout(()=>window.open('https://finalapp-nine.vercel.app/','_blank'), 150)">
 <div class="aic"><i class="fas fa-rocket"></i></div>
 <span class="al">Adventure</span>
 </div>
-<div class="mob-app dash" data-url="https://dashboard2-iota.vercel.app/">
+<div class="mob-app dash" onclick="setTimeout(()=>window.open('https://dashboard2-iota.vercel.app/','_blank'), 150)">
 <div class="aic"><i class="fas fa-compass"></i></div>
 <span class="al">Dashboard</span>
 </div>
-<div class="mob-app cmp" data-url="https://dashboard-yearly.vercel.app/">
+<div class="mob-app cmp" onclick="setTimeout(()=>window.open('https://dashboard-yearly.vercel.app/','_blank'), 150)">
 <div class="aic"><i class="fas fa-chart-line"></i></div>
 <span class="al">Compare</span>
 </div>
-<div class="mob-app upl" data-url="https://josn.vercel.app/">
+<div class="mob-app upl" onclick="setTimeout(()=>window.open('https://josn.vercel.app/','_blank'), 150)">
 <div class="aic"><i class="fas fa-folder-open"></i></div>
 <span class="al">Files</span>
 </div>
-<div class="mob-app prot" data-url="https://protocols-one.vercel.app/">
+<div class="mob-app prot" onclick="setTimeout(()=>window.open('https://protocols-one.vercel.app/','_blank'), 150)">
 <div class="aic"><i class="fas fa-shield-halved"></i></div>
 <span class="al">Protocols</span>
 </div>
-<div class="mob-app list" data-url="https://searchbar-five-beta.vercel.app/">
+<div class="mob-app list" onclick="setTimeout(()=>window.open('https://searchbar-five-beta.vercel.app/','_blank'), 150)">
 <div class="aic"><i class="fas fa-list-ul"></i></div>
 <span class="al">The List</span>
 </div>
+<div class="mob-app theme" id="mobThemeGrid">
+<div class="aic"><i class="fas fa-moon"></i></div>
+<span class="al">Theme</span>
 </div>
 </div>
-<div class="mob-dock">
-<div class="mob-dock-item adv" data-url="https://finalapp-nine.vercel.app/"><i class="fas fa-rocket"></i></div>
-<div class="mob-dock-item dash" data-url="https://dashboard2-iota.vercel.app/"><i class="fas fa-compass"></i></div>
-<div class="mob-dock-item cmp" data-url="https://dashboard-yearly.vercel.app/"><i class="fas fa-chart-line"></i></div>
-<div class="mob-dock-item upl" data-url="https://josn.vercel.app/"><i class="fas fa-folder-open"></i></div>
-<div class="mob-themetog" id="mobTheme"><i class="fas fa-moon"></i></div>
 </div>
 <div class="menubar">
 <div class="ml">
@@ -556,7 +516,7 @@ File
 View
 <div class="dd">
 <div class="ddi" onclick="toggleTheme()">Toggle Dark Mode <i class="fas fa-moon"></i></div>
-<div class="ddi" onclick="document.getElementById('spot').classList.toggle('open')">Spotlight… <i class="fas fa-magnifying-glass"></i></div>
+<div class="ddi" onclick="openSpot()">Spotlight… <i class="fas fa-magnifying-glass"></i></div>
 <div class="ddi" onclick="toggleWidgets()">Toggle Widgets <i class="fas fa-grip"></i></div>
 </div>
 </div>
@@ -686,6 +646,17 @@ Help
 (function(){
 const body = document.body;
 const flashEl = document.getElementById('flash');
+const win = document.getElementById('win');
+const wTitle = document.getElementById('wTitle');
+const wFrame = document.getElementById('wFrame');
+const ph = win.querySelector('.ph');
+const ec = win.querySelector('.ec');
+const spotEl = document.getElementById('spot');
+const spotInput = document.getElementById('spotInput');
+const dock = document.getElementById('dock');
+const dis = dock.querySelectorAll('.di');
+const dlabel = document.getElementById('dlabel');
+let pstate = null;
 
 function tick(){
 const now = new Date();
@@ -709,13 +680,14 @@ function toggleTheme(){
 gsap.to(flashEl,{opacity:0.25,duration:0.12,ease:'power2.in',onComplete:()=>{
 const next = body.getAttribute('data-theme')==='dark'?'light':'dark';
 body.setAttribute('data-theme',next);
-const mi = document.getElementById('mobTheme');
-if(mi) mi.querySelector('i').className = next==='dark'?'fas fa-moon':'fas fa-sun';
+const mobThemeGrid = document.getElementById('mobThemeGrid');
+if(mobThemeGrid) mobThemeGrid.querySelector('i').className = next==='dark'?'fas fa-moon':'fas fa-sun';
 gsap.to(flashEl,{opacity:0,duration:0.4,ease:'power2.out'});
 }});
 }
-
 document.getElementById('tog').addEventListener('click',toggleTheme);
+const mobThemeGrid = document.getElementById('mobThemeGrid');
+if(mobThemeGrid) mobThemeGrid.addEventListener('click', () => setTimeout(toggleTheme, 150));
 
 function toggleWidgets(){
 const w = document.getElementById('wgc');
@@ -762,82 +734,68 @@ window.exitSys = exitSys;
 document.getElementById('extBtn').addEventListener('click',exitSys);
 document.getElementById('qExit').addEventListener('click',exitSys);
 
-const dock = document.getElementById('dock');
-const dis = dock.querySelectorAll('.di');
-const dlabel = document.getElementById('dlabel');
-const maxScale = 1.8;
-const range = 160;
-const baseSz = 56;
-const baseIco = 26;
-let labelVisible = false;
+const baseSize = 56;
+const maxSize = 92;
+const range = 140;
+let mouseX = null;
+let isHovering = false;
 let lastHoveredName = null;
 
-dock.addEventListener('mousemove',e=>{
-const mx = e.clientX;
-dis.forEach(item=>{
-const r = item.getBoundingClientRect();
-const cx = r.left + r.width/2;
-const dist = Math.abs(mx - cx);
-let scale = 1;
-if(dist < range) {
-scale = 1 + (maxScale - 1) * Math.pow(Math.cos((dist / range) * (Math.PI / 2)), 2);
+function renderDock() {
+let nearest = null;
+let nearestDist = Infinity;
+dis.forEach(item => {
+let targetSize = baseSize;
+if (isHovering && mouseX !== null) {
+const rect = item.getBoundingClientRect();
+const cx = rect.left + rect.width / 2;
+const dist = Math.abs(mouseX - cx);
+if (dist < range) {
+targetSize = baseSize + (maxSize - baseSize) * Math.pow(Math.cos((dist / range) * (Math.PI / 2)), 2);
 }
-gsap.to(item, {
-'--sz': `${baseSz * scale}px`,
-'--isz': `${baseIco * scale}px`,
-duration: 0.15,
-ease: 'power2.out',
-overwrite: 'auto'
+if (dist < nearestDist && dist < range * 0.7) {
+nearestDist = dist;
+nearest = item;
+}
+}
+item._currentSize = item._currentSize || baseSize;
+item._currentSize += (targetSize - item._currentSize) * 0.22;
+item.style.width = item._currentSize + 'px';
+item.style.height = item._currentSize + 'px';
+const icon = item.querySelector('i');
+if (icon) {
+const scale = item._currentSize / baseSize;
+icon.style.transform = `scale(${scale})`;
+}
 });
-});
-
-let nearest = null, nearestDist = Infinity;
-dis.forEach(item=>{
-const r = item.getBoundingClientRect();
-const cx = r.left + r.width/2;
-const d = Math.abs(mx - cx);
-if(d < nearestDist && d < range * 0.7){nearestDist=d;nearest=item;}
-});
-
-if(nearest && nearest.dataset.name){
-const r = nearest.getBoundingClientRect();
+if (isHovering && nearest && nearest.dataset.name) {
+const name = nearest.dataset.name;
+const rect = nearest.getBoundingClientRect();
 const dockR = dock.getBoundingClientRect();
-dlabel.textContent = nearest.dataset.name;
-const labelX = r.left + r.width/2;
-
-if(nearest.dataset.name !== lastHoveredName){
+const labelX = rect.left + rect.width / 2;
+dlabel.textContent = name;
+if (name !== lastHoveredName) {
+dlabel.style.transition = 'opacity 0.1s ease, transform 0.2s var(--spring)';
 dlabel.style.left = labelX + 'px';
 dlabel.style.top = (dockR.top - 54) + 'px';
-dlabel.style.transition = 'opacity 0.12s ease, transform 0.2s cubic-bezier(0.22,1,0.36,1)';
 dlabel.style.opacity = '1';
 dlabel.style.transform = 'translateX(-50%) translateY(0)';
-lastHoveredName = nearest.dataset.name;
+lastHoveredName = name;
 } else {
-dlabel.style.transition = 'opacity 0.12s ease, left 0.15s power2.out';
+dlabel.style.transition = 'opacity 0.1s ease, left 0.12s var(--spring)';
 dlabel.style.left = labelX + 'px';
 }
-} else {
+} else if (!isHovering || !nearest) {
 dlabel.style.opacity = '0';
 dlabel.style.transform = 'translateX(-50%) translateY(6px)';
 lastHoveredName = null;
 }
-});
+requestAnimationFrame(renderDock);
+}
+requestAnimationFrame(renderDock);
 
-dock.addEventListener('mouseleave',()=>{
-dis.forEach(item=>{
-gsap.to(item, {
-'--sz': `${baseSz}px`,
-'--isz': `${baseIco}px`,
-duration: 0.6,
-ease: 'elastic.out(1, 0.4)',
-overwrite: 'auto'
-});
-});
-dlabel.style.opacity = '0';
-dlabel.style.transform = 'translateX(-50%) translateY(6px)';
-lastHoveredName = null;
-labelVisible = false;
-});
+dock.addEventListener('mousemove', e => { mouseX = e.clientX; isHovering = true; });
+dock.addEventListener('mouseleave', () => { isHovering = false; mouseX = null; });
 
 dis.forEach(item=>{
 if(item.id==='extBtn') return;
@@ -845,18 +803,9 @@ item.addEventListener('click',()=>{
 if(item.dataset.url) window.open(item.dataset.url,'_blank');
 dis.forEach(i=>i.classList.remove('running'));
 item.classList.add('running');
-const tl = gsap.timeline();
-tl.to(item,{y:-32,duration:0.25,ease:'power2.out'})
-.to(item,{y:0,duration:0.6,ease:'bounce.out'});
+gsap.timeline().to(item,{y:-32,duration:0.25,ease:'power2.out'}).to(item,{y:0,duration:0.6,ease:'bounce.out'});
 });
 });
-
-const win = document.getElementById('win');
-const wTitle = document.getElementById('wTitle');
-const wFrame = document.getElementById('wFrame');
-const ph = win.querySelector('.ph');
-const ec = win.querySelector('.ec');
-let pstate = null;
 
 function resetPrev(){
 if(pstate==='ph') return;
@@ -866,14 +815,43 @@ wFrame.src='about:blank';
 ph.style.opacity='1';wFrame.style.opacity='0';ec.style.opacity='0';
 }
 
-document.getElementById('prevShortcut').addEventListener('click',()=>{
-if(win.classList.contains('visible')) return;
-win.classList.remove('min');
-resetPrev();
+function openWin(){
+if (win.classList.contains('visible')) return;
 win.classList.add('visible');
+resetPrev();
+gsap.fromTo(win,
+{ left: '50%', top: '50%', xPercent: -50, yPercent: -50, scale: 0.95, opacity: 0 },
+{ scale: 1, opacity: 1, duration: 0.5, ease: 'expo.out' }
+);
+}
+
+function closeWin(){
+if (!win.classList.contains('visible')) return;
+win.classList.remove('visible');
+gsap.to(win, { scale: 0.95, opacity: 0, duration: 0.4, ease: 'expo.in' });
+}
+
+function minWin(){
+if (!win.classList.contains('visible')) return;
+win.classList.remove('visible');
+const target = document.getElementById('prevShortcut').getBoundingClientRect();
+const targetX = target.left + target.width / 2;
+const targetY = target.top + target.height / 2;
+gsap.to(win, {
+left: targetX,
+top: targetY,
+xPercent: -50,
+yPercent: -50,
+scale: 0.05,
+opacity: 0,
+duration: 0.6,
+ease: 'power3.inOut'
 });
-document.getElementById('wClose').addEventListener('click',()=>win.classList.remove('visible'));
-document.getElementById('wMin').addEventListener('click',()=>{win.classList.add('min');win.classList.remove('visible');});
+}
+
+document.getElementById('prevShortcut').addEventListener('click', openWin);
+document.getElementById('wClose').addEventListener('click', closeWin);
+document.getElementById('wMin').addEventListener('click', minWin);
 
 dis.forEach(item=>{
 item.addEventListener('mouseenter',()=>{
@@ -899,77 +877,25 @@ if(!win.classList.contains('visible')) return;
 if(e.target===dock||e.target.classList.contains('dsep')) resetPrev();
 });
 
-const spotEl = document.getElementById('spot');
-const spotBg = document.getElementById('spotBg');
-const spotInput = document.getElementById('spotInput');
-const spotBtn = document.getElementById('spotBtn');
-
 function openSpot(){
 spotEl.classList.add('open');
-setTimeout(()=>spotInput.focus(),100);
+setTimeout(() => spotInput.focus(), 100);
 }
+
 function closeSpot(){
 spotEl.classList.remove('open');
-spotInput.value='';
+setTimeout(() => { spotInput.value = ''; }, 300);
 }
+
+window.openSpot = openSpot;
 window.closeSpot = closeSpot;
 
-spotBtn.addEventListener('click',openSpot);
-spotBg.addEventListener('click',closeSpot);
+document.getElementById('spotBtn').addEventListener('click', openSpot);
+document.getElementById('spotBg').addEventListener('click', closeSpot);
 document.addEventListener('keydown',e=>{
-if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSpot();}
+if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault(); openSpot();}
 if(e.key==='Escape') closeSpot();
 });
-
-document.querySelectorAll('.mob-app').forEach(app=>{
-const aic = app.querySelector('.aic');
-app.addEventListener('touchstart', (e) => {
-gsap.to(aic, { scale: 0.82, duration: 0.4, ease: 'expo.out', overwrite: 'auto' });
-});
-app.addEventListener('touchmove', (e) => {
-const touch = e.touches[0];
-const rect = aic.getBoundingClientRect();
-const nx = ((touch.clientX - rect.left) / rect.width) - 0.5;
-const ny = ((touch.clientY - rect.top) / rect.height) - 0.5;
-const cx = Math.max(-0.5, Math.min(0.5, nx));
-const cy = Math.max(-0.5, Math.min(0.5, ny));
-gsap.to(aic, { rotateX: -cy * 30, rotateY: cx * 30, duration: 0.1, overwrite: 'auto' });
-});
-app.addEventListener('touchend', () => {
-gsap.to(aic, { scale: 1, rotateX: 0, rotateY: 0, duration: 0.7, ease: 'elastic.out(1, 0.4)', overwrite: 'auto' });
-if (app.dataset.url) setTimeout(() => window.open(app.dataset.url, '_blank'), 150);
-});
-});
-
-document.querySelectorAll('.mob-dock-item').forEach(item=>{
-item.addEventListener('touchstart', () => {
-gsap.to(item, { scale: 0.82, duration: 0.4, ease: 'expo.out', overwrite: 'auto' });
-});
-item.addEventListener('touchmove', (e) => {
-const touch = e.touches[0];
-const rect = item.getBoundingClientRect();
-const nx = ((touch.clientX - rect.left) / rect.width) - 0.5;
-const ny = ((touch.clientY - rect.top) / rect.height) - 0.5;
-const cx = Math.max(-0.5, Math.min(0.5, nx));
-const cy = Math.max(-0.5, Math.min(0.5, ny));
-gsap.to(item, { rotateX: -cy * 30, rotateY: cx * 30, duration: 0.1, overwrite: 'auto' });
-});
-item.addEventListener('touchend', () => {
-gsap.to(item, { scale: 1, rotateX: 0, rotateY: 0, duration: 0.7, ease: 'elastic.out(1, 0.4)', overwrite: 'auto' });
-if (item.dataset.url) setTimeout(() => window.open(item.dataset.url, '_blank'), 150);
-});
-});
-
-const mobThemeBtn = document.getElementById('mobTheme');
-if(mobThemeBtn){
-mobThemeBtn.addEventListener('touchstart', () => {
-gsap.to(mobThemeBtn, { scale: 0.8, duration: 0.4, ease: 'expo.out', overwrite: 'auto' });
-});
-mobThemeBtn.addEventListener('touchend', () => {
-gsap.to(mobThemeBtn, { scale: 1, duration: 0.7, ease: 'elastic.out(1, 0.4)', overwrite: 'auto' });
-setTimeout(toggleTheme, 100);
-});
-}
 
 window.addEventListener('load',()=>{
 const tl = gsap.timeline({defaults:{ease:'expo.out',duration:1.5}});
@@ -979,9 +905,7 @@ tl.from('.blob',{scale:0,opacity:0,stagger:0.1},0.1)
 .from('.dock-wrap',{y:120,opacity:0,ease:'elastic.out(1,0.6)',duration:2.2},0.5)
 .from('.lsb',{x:-80,opacity:0,ease:'back.out(1.5)',duration:1.4},0.7)
 .from('.widgets',{x:80,opacity:0,ease:'back.out(1.5)',duration:1.4},0.7)
-.from('.mob-app',{scale:0.5,opacity:0,stagger:0.08,ease:'back.out(1.8)',duration:1},0.5)
-.from('.mob-dock',{y:100,opacity:0,ease:'elastic.out(1,0.6)',duration:2},0.6)
-.from('.mob-dock-item, .mob-themetog',{scale:0,opacity:0,stagger:0.06,ease:'back.out(2)',duration:0.8},0.9);
+.from('.mob-app',{scale:0.5,opacity:0,stagger:0.08,ease:'back.out(1.8)',duration:1},0.5);
 });
 })();
 </script>
