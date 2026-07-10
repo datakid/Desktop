@@ -154,7 +154,8 @@ body{
 .tb:active{cursor:grabbing;}
 .wctrl{display:flex;gap:8px;align-items:center;}
 .mac-ctrl{display:flex;gap:8px;}
-.cbtn{width:13px;height:13px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:filter .15s;border:none;}
+.cbtn{width:13px;height:13px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:filter .15s;border:none;position:relative;}
+.cbtn::after{content:'';position:absolute;inset:-8px;}
 .cbtn i{font-size:7px;color:transparent;transition:color .15s;}
 .tb:hover .cbtn i{color:rgba(0,0,0,.55);}
 .cl{background:#ff5f57;}
@@ -589,7 +590,6 @@ dis.forEach(item=>{
   });
 });
 
-/* ── preview panel: cached iframe pool, hover-intent debounce, instant repeat views ── */
 const frameCache=new Map();
 let hoverTimer=null,activeUrl=null,pstate=null;
 
