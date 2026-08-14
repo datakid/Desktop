@@ -229,14 +229,14 @@ h1,h2,h3,.display{letter-spacing:var(--tr-display)}
   width:32px; height:32px; border-radius:var(--r-2);
   display:flex; align-items:center; justify-content:center;
   color:var(--tx-2);
-  transition:background var(--t-2) var(--e-out), color var(--t-2) var(--e-out);
+  transition:background var(--t-2) var(--e-out), color var(--t-2) var(--e-out), transform var(--t-1) var(--e-out);
 }
 .topbar-btn:hover{background:var(--bg-hover); color:var(--tx-1)}
-.topbar-btn:active{background:var(--bg-press)}
+.topbar-btn:active{background:var(--bg-press); transform:scale(.92)}
 .topbar-btn .icon{width:17px; height:17px}
 .topbar-live{
   width:6px; height:6px; border-radius:50%;
-  background:var(--tx-3); transition:background var(--t-2) var(--e-out);
+  background:var(--tx-3); transition:background var(--t-2) var(--e-out), box-shadow var(--t-2) var(--e-out);
 }
 .topbar-live.is-live{ background:var(--live); box-shadow:0 0 0 3px var(--sig-dim) }
 
@@ -292,11 +292,15 @@ html.booting .substrate{ transform:none }
   transition:transform var(--t-1) var(--e-out), border-color var(--t-1);
 }
 .swatch:hover{ transform:scale(1.1) }
+.swatch:active{ transform:scale(.95) }
 .swatch.is-active{ border-color:var(--sig) }
 .wallpaper-swatch{
   width:44px; height:30px; border-radius:var(--r-1); border:2px solid transparent;
   box-shadow:inset 0 0 0 1px var(--line-2); overflow:hidden;
+  transition:transform var(--t-1) var(--e-out), border-color var(--t-1);
 }
+.wallpaper-swatch:hover{ transform:scale(1.04) }
+.wallpaper-swatch:active{ transform:scale(.96) }
 .wallpaper-swatch.is-active{ border-color:var(--sig) }
 .settings-toggle input{ width:36px; height:20px; appearance:none; background:var(--bg-hover); border-radius:var(--r-f); position:relative; cursor:pointer; border:var(--hair) solid var(--line-2) }
 .settings-toggle input::after{
@@ -320,9 +324,10 @@ html.booting .substrate{ transform:none }
   display:flex; align-items:center; gap:var(--s-2);
   padding:var(--s-2) var(--s-4); border-radius:var(--r-2);
   background:var(--sig); color:var(--sig-ink); font-size:var(--fs-13); font-weight:600;
-  transition:filter var(--t-1) var(--e-out);
+  transition:filter var(--t-1) var(--e-out), transform var(--t-1) var(--e-out);
 }
 .btn-sig:hover{ filter:brightness(1.06) }
+.btn-sig:active{ transform:scale(.97); filter:brightness(.98) }
 .btn-sig .icon{ width:15px; height:15px }
 
 .spinner{
@@ -356,9 +361,10 @@ html.booting .substrate{ transform:none }
   color:var(--tx-1);
   transform-origin:50% 100%;
   touch-action:none;
+  transition:background var(--t-2) var(--e-out), border-color var(--t-2) var(--e-out);
 }
 .dock.is-animating .dock-tile{ will-change:transform }
-.dock-tile .icon{ width:22px; height:22px; stroke-width:1.5 }
+.dock-tile .icon{ width:22px; height:22px; stroke-width:1.5; transition:color var(--t-2) var(--e-out) }
 .dock-tile.is-focused{ background:var(--sig-dim); border-color:transparent }
 .dock-tile.is-focused .icon{ color:var(--sig) }
 .dock-tile.is-dragging{ opacity:.85; z-index:5 }
@@ -390,6 +396,7 @@ html.booting .substrate{ transform:none }
   border:var(--hair) solid var(--line-1);
   box-shadow:var(--e1), var(--edge);
   contain:layout style;
+  transform-origin:0 0;
   transition:box-shadow var(--t-3) var(--e-out), border-color var(--t-3) var(--e-out), filter var(--t-3) var(--e-out);
 }
 .win.is-focused{ border-color:var(--line-2); box-shadow:var(--e3), var(--edge) }
@@ -411,9 +418,10 @@ html.booting .substrate{ transform:none }
 .win-name{
   font-size:var(--fs-13); font-weight:550; color:var(--tx-1);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  transition:color var(--t-3) var(--e-out);
 }
 .win.is-unfocused .win-name{ color:var(--tx-2) }
-.live-dot{ width:6px; height:6px; border-radius:50%; background:var(--tx-3); flex-shrink:0 }
+.live-dot{ width:6px; height:6px; border-radius:50%; background:var(--tx-3); flex-shrink:0; transition:background var(--t-2) var(--e-out) }
 .live-dot.is-live{ background:var(--live) }
 
 .win-tabs{ display:flex; gap:var(--s-1); overflow-x:auto; max-width:40%; touch-action:none }
@@ -428,9 +436,10 @@ html.booting .substrate{ transform:none }
 .win-tab-close{
   display:flex; align-items:center; justify-content:center;
   width:14px; height:14px; border-radius:50%; opacity:.5; flex-shrink:0;
-  transition:opacity var(--t-1) var(--e-out), background var(--t-1) var(--e-out);
+  transition:opacity var(--t-1) var(--e-out), background var(--t-1) var(--e-out), transform var(--t-1) var(--e-out);
 }
 .win-tab-close:hover{ opacity:1; background:var(--dngr); color:#fff }
+.win-tab-close:active{ transform:scale(.85) }
 
 .win-tb.is-drop-target{ background:var(--sig-dim) }
 
@@ -439,10 +448,11 @@ html.booting .substrate{ transform:none }
   width:26px; height:26px; border-radius:var(--r-1);
   display:flex; align-items:center; justify-content:center;
   color:var(--tx-3);
-  transition:color var(--t-1) var(--e-out), background var(--t-1) var(--e-out);
+  transition:color var(--t-1) var(--e-out), background var(--t-1) var(--e-out), transform var(--t-1) var(--e-out);
 }
 .wc .icon{ width:13px; height:13px }
 .wc:hover{ color:var(--tx-1); background:var(--bg-hover) }
+.wc:active{ transform:scale(.9) }
 .wc-close:hover{ color:#fff; background:var(--dngr) }
 
 .win-body{
@@ -1889,15 +1899,13 @@ class WindowManager extends EventTarget{
       const dy = from.top - to.top;
       const sx = Math.max(from.width, 1) / Math.max(to.width, 1);
       const sy = Math.max(from.height, 1) / Math.max(to.height, 1);
-      const tilt = (dx > 0 ? -1 : 1) * 3;
       const anim = withWillChange(win.el, 'transform, opacity', () => animate(win.el, [
-        { transform:`translate(${dx}px,${dy}px) rotate(0deg) scale(${sx},${sy})`, opacity:1, offset:0 },
-        { transform:`translate(${dx * 0.22}px,${dy * 0.3}px) rotate(${tilt}deg) scale(${1 + (sx - 1) * 0.22},${1 + (sy - 1) * 0.3})`, opacity:1, offset:0.62 },
-        { transform:'translate(0,0) rotate(0deg) scale(1,1)', opacity:0, offset:1 }
-      ], { duration:300, easing:EASE.io }));
+        { transform:`translate(${dx}px,${dy}px) scale(${sx},${sy})`, opacity:1, offset:0 },
+        { transform:'translate(0,0) scale(1,1)', opacity:0, offset:1 }
+      ], { duration:240, easing:EASE.in }));
       (anim.finished || Promise.resolve()).then(finish).catch(finish);
     }else{
-      animate(win.el, [{ opacity:1, transform:'scale(1)' }, { opacity:0, transform:'scale(.96)' }], { duration:150 })
+      animate(win.el, [{ opacity:1, transform:'scale(1)' }, { opacity:0, transform:'scale(.97)' }], { duration:160, easing:EASE.in })
         .finished?.then(finish).catch(finish) ?? finish();
     }
   }
