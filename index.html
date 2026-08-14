@@ -476,6 +476,23 @@ html.booting .substrate{ transform:none }
 .win-escape .icon{ width:12px; height:12px }
 .win-escape:hover{ opacity:1; color:var(--tx-1) }
 
+.ctx-menu{
+  position:fixed; z-index:var(--z-toast); min-width:180px;
+  background:var(--bg-float); border:var(--hair) solid var(--line-1); border-radius:var(--r-2);
+  box-shadow:var(--e3), var(--edge); padding:var(--s-1);
+  opacity:0; transform:scale(.96); transform-origin:top left;
+  transition:opacity var(--t-1) var(--e-out), transform var(--t-1) var(--e-out);
+}
+.ctx-menu.is-open{ opacity:1; transform:scale(1) }
+.ctx-item{
+  display:flex; align-items:center; gap:var(--s-2); width:100%;
+  padding:var(--s-2) var(--s-3); border-radius:var(--r-1);
+  font-size:var(--fs-13); color:var(--tx-1); text-align:left;
+  transition:background var(--t-1) var(--e-out);
+}
+.ctx-item:hover, .ctx-item:focus-visible{ background:var(--bg-hover); outline:none }
+.ctx-item .icon{ width:14px; height:14px; color:var(--tx-3) }
+
 .rh{ position:absolute; z-index:3; touch-action:none }
 .rh-n{ top:-3px; left:8px; right:8px; height:6px; cursor:ns-resize }
 .rh-s{ bottom:-3px; left:8px; right:8px; height:6px; cursor:ns-resize }
@@ -575,6 +592,17 @@ html.booting .substrate{ transform:none }
 .palette-name mark{ background:none; color:var(--sig); font-weight:650 }
 .palette-sub{ font-size:var(--fs-12); color:var(--tx-3); margin-top:1px }
 .palette-hint{ font-size:var(--fs-11); color:var(--tx-3); flex-shrink:0 }
+.palette-escape{
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  width:24px; height:24px; border-radius:var(--r-1);
+  color:var(--tx-3); opacity:0;
+  transition:opacity var(--t-1) var(--e-out), background var(--t-1) var(--e-out), color var(--t-1) var(--e-out), transform var(--t-1) var(--e-out);
+}
+.palette-item:hover .palette-escape,
+.palette-item.is-active .palette-escape{ opacity:.6 }
+.palette-escape:hover{ opacity:1; background:var(--bg-hover); color:var(--tx-1) }
+.palette-escape:active{ transform:scale(.9) }
+.palette-escape .icon{ width:13px; height:13px }
 
 .palette-empty{
   padding:var(--s-8) var(--s-5); text-align:center;
@@ -609,6 +637,7 @@ html.booting .substrate{ transform:none }
     padding-top:env(safe-area-inset-top);
   }
   .palette.is-open .palette-box{ transform:none }
+  .palette-badge{ display:none }
 }
 
 .desktop{
@@ -1317,6 +1346,59 @@ function announce(msg){
   if(!liveEl) return;
   liveEl.textContent = '';
   requestAnimationFrame(() => { liveEl.textContent = msg; });
+}
+
+function openExternal(app){
+  window.open(app.url, '_blank', 'noopener,noreferrer');
+  announce(`Opening ${app.name} in a new tab`);
+}
+
+let activeCtxMenu = null;
+
+function closeCtxMenu(){
+  if(!activeCtxMenu) return;
+  activeCtxMenu.cleanup();
+  activeCtxMenu.el.remove();
+  activeCtxMenu = null;
+}
+
+function openCtxMenu(x, y, items){
+  closeCtxMenu();
+  const menu = document.createElement('div');
+  menu.className = 'ctx-menu';
+  menu.setAttribute('role', 'menu');
+  items.forEach(it => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ctx-item';
+    btn.setAttribute('role', 'menuitem');
+    btn.innerHTML = `<svg class="icon" aria-hidden="true"><use href="#i-${it.icon}"></use></svg><span>${esc(it.label)}</span>`;
+    btn.addEventListener('click', () => { closeCtxMenu(); it.action(); });
+    menu.appendChild(btn);
+  });
+  document.body.appendChild(menu);
+  const vw = innerWidth, vh = innerHeight;
+  const rect = menu.getBoundingClientRect();
+  const left = Math.max(8, Math.min(x, vw - rect.width - 8));
+  const top = Math.max(8, Math.min(y, vh - rect.height - 8));
+  menu.style.left = `${left}px`;
+  menu.style.top = `${top}px`;
+  requestAnimationFrame(() => menu.classList.add('is-open'));
+  const onDocDown = e => { if(!menu.contains(e.target)) closeCtxMenu(); };
+  const onKey = e => { if(e.key === 'Escape') closeCtxMenu(); };
+  const onBlur = () => closeCtxMenu();
+  document.addEventListener('pointerdown', onDocDown, true);
+  document.addEventListener('keydown', onKey, true);
+  addEventListener('scroll', onBlur, true);
+  addEventListener('blur', onBlur);
+  const cleanup = () => {
+    document.removeEventListener('pointerdown', onDocDown, true);
+    document.removeEventListener('keydown', onKey, true);
+    removeEventListener('scroll', onBlur, true);
+    removeEventListener('blur', onBlur);
+  };
+  activeCtxMenu = { el: menu, cleanup };
+  menu.querySelector('.ctx-item')?.focus();
 }
 
 const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),[tabindex]:not([tabindex="-1"])';
@@ -2455,6 +2537,17 @@ class Dock{
         if(app) this.onLaunch(app, tile.getBoundingClientRect());
       }
     });
+
+    this.el.addEventListener('contextmenu', e => {
+      const tile = e.target.closest('.dock-tile');
+      if(!tile) return;
+      e.preventDefault();
+      const app = this.apps.find(a => a.id === tile.dataset.app);
+      if(!app) return;
+      openCtxMenu(e.clientX, e.clientY, [
+        { icon:'external', label:'Open in New Tab', action:() => openExternal(app) }
+      ]);
+    });
   }
 }
 
@@ -2585,7 +2678,7 @@ class Palette{
     const { mode, q } = this.parseMode(raw);
     this.mode = mode;
     this.badge.classList.toggle('show', raw.length > 0);
-    this.badge.textContent = mode === 'cmd' ? 'Commands' : mode === 'app' ? 'Apps' : '↵ Open · ⌘↵ New window · ⇧↵ Preview';
+    this.badge.textContent = mode === 'cmd' ? 'Commands' : mode === 'app' ? 'Apps' : '↵ Open · ⌘↵ New window · ⇧↵ Preview · ⌥↵ New tab';
     this.list.innerHTML = '';
     this.results = this.gather(mode, q);
 
@@ -2621,7 +2714,16 @@ class Palette{
         row.innerHTML = `
           <div class="palette-icon"><svg class="icon"><use href="#i-${item.icon || 'search'}"></use></svg></div>
           <div class="palette-meta"><div class="palette-name">${highlight(item.name, r.indices)}</div><div class="palette-sub">${item.kind === 'app' ? 'App' : 'Command'}${item.group ? ' · ' + esc(item.group) : ''}</div></div>
+          ${item.kind === 'app' ? `<button type="button" class="palette-escape" data-escape tabindex="-1" aria-label="Open ${esc(item.name)} in a new tab, skipping preview"><svg class="icon"><use href="#i-external"></use></svg></button>` : ''}
           <div class="palette-hint mono">${item.accel ? esc(item.accel) : '↵'}</div>`;
+        const escapeBtn = row.querySelector('[data-escape]');
+        if(escapeBtn){
+          escapeBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            openExternal(item);
+            this.close();
+          });
+        }
       }
       row.addEventListener('pointerenter', () => this.setActive(i));
       row.addEventListener('click', () => { this.setActive(i); this.commit('open'); });
@@ -2688,6 +2790,7 @@ class Palette{
     const { item } = r;
     if(item.kind === 'app'){
       if(action === 'preview'){ this.showPreview(item); return; }
+      if(action === 'external'){ this.hidePreview(); openExternal(item); this.close(); return; }
       this.hidePreview();
       const dockRect = this.ctx.dock.rectFor(item.id);
       if(action === 'newwindow') this.ctx.wm.forceNew(item, dockRect);
@@ -2707,6 +2810,7 @@ class Palette{
       else if(e.key === 'Enter'){
         e.preventDefault();
         if(e.metaKey || e.ctrlKey) this.commit('newwindow');
+        else if(e.altKey) this.commit('external');
         else if(e.shiftKey) this.commit('preview');
         else this.commit('open');
       }else if(e.key === 'Escape'){
@@ -2774,6 +2878,12 @@ class Desktop{
       tile.className = 'jump-tile';
       tile.innerHTML = `<svg class="icon"><use href="#i-${app.icon}"></use></svg><span>${app.name}</span>`;
       tile.addEventListener('click', () => this.ctx.launch(app, tile));
+      tile.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        openCtxMenu(e.clientX, e.clientY, [
+          { icon:'external', label:'Open in New Tab', action:() => openExternal(app) }
+        ]);
+      });
       this.jumpEl.appendChild(tile);
     });
   }
@@ -2794,6 +2904,12 @@ class Desktop{
         <svg class="icon"><use href="#i-${app.icon}"></use></svg>
         <span>${app.name}</span>`;
       tile.addEventListener('click', () => this.ctx.launch(app, tile));
+      tile.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        openCtxMenu(e.clientX, e.clientY, [
+          { icon:'external', label:'Open in New Tab', action:() => openExternal(app) }
+        ]);
+      });
       this.bindDragReorder(tile);
       this.pinnedEl.appendChild(tile);
     });
