@@ -1735,6 +1735,18 @@ class EmbedManager extends EventTarget{
     }, LOAD_GRACE_MS);
   }
 
+  reset(appId){
+    const frame = this.frames.get(appId);
+    if(!frame) return;
+    clearTimeout(frame.timeout);
+    frame.shown = false;
+    frame.timeout = setTimeout(() => {
+      if(!frame.shown){
+        this.dispatchEvent(new CustomEvent('status', { detail:{ appId, status:'timeout' } }));
+      }
+    }, LOAD_GRACE_MS);
+  }
+
   touch(id){
     this.order = this.order.filter(x => x !== id);
     this.order.push(id);
@@ -1804,6 +1816,14 @@ function renderFallback(appEntry){
 
   const favicon = wrap.querySelector('[data-favicon]');
   favicon?.addEventListener('error', () => { favicon.style.display = 'none'; });
+  return wrap;
+}
+
+function renderPaneLoading(){
+  const wrap = document.createElement('div');
+  wrap.className = 'win-loading';
+  wrap.setAttribute('data-pane-loading', '');
+  wrap.innerHTML = '<span class="spinner" aria-hidden="true"></span>';
   return wrap;
 }
 
@@ -1991,16 +2011,20 @@ class WindowManager extends EventTarget{
     const win = this.findWin(appId);
     if(!win) return;
     const loading = win.el.querySelector('[data-loading]');
+    const paneLoading = win.panes.get(appId)?.querySelector('[data-pane-loading]');
     if(status === 'live'){
       loading?.remove();
+      paneLoading?.remove();
       this.setLive(appId, true);
       if(title && appId === win.activeTab){
         win.el.querySelector('.win-name').textContent = title;
       }
     }else if(status === 'shown'){
       loading?.remove();
+      paneLoading?.remove();
     }else if(status === 'timeout'){
       loading?.remove();
+      paneLoading?.remove();
       const pane = win.panes.get(appId);
       if(pane && !pane.querySelector('.fallback-card')){
         const appEntry = findById(appId);
@@ -2092,6 +2116,11 @@ class WindowManager extends EventTarget{
         target.panes.get(appId)?.remove();
       }
       if(pane){
+        const appEntry = findById(appId);
+        if(appEntry?.embed !== false && this.embed.frames.has(appId)){
+          this.embed.reset(appId);
+          pane.appendChild(renderPaneLoading());
+        }
         body.appendChild(pane);
         target.panes.set(appId, pane);
       }
