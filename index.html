@@ -35,8 +35,8 @@
   --e-io:cubic-bezier(.6,0,.2,1);
 
   --hair:1px;
-  --z-desktop:1; --z-dock:400; --z-topbar:500; --z-window:600;
-  --z-window-focus:700; --z-palette:900; --z-toast:950; --z-boot:1000;
+  --z-desktop:1; --z-window:300; --z-dock:500; --z-topbar:600;
+  --z-palette:800; --z-toast:900; --z-boot:1000;
 }
 
 [data-theme="dark"]{
@@ -55,6 +55,7 @@
   --e1:0 1px 1px rgba(0,0,0,.22), 0 2px 6px rgba(0,0,0,.18);
   --e2:0 2px 4px rgba(0,0,0,.24), 0 10px 26px rgba(0,0,0,.28);
   --e3:0 6px 12px rgba(0,0,0,.28), 0 28px 70px rgba(0,0,0,.44);
+  --e4:0 10px 20px rgba(0,0,0,.32), 0 42px 100px rgba(0,0,0,.52);
   color-scheme:dark;
 }
 
@@ -74,6 +75,7 @@
   --e1:0 1px 1px rgba(40,32,20,.05), 0 2px 6px rgba(40,32,20,.06);
   --e2:0 2px 4px rgba(40,32,20,.06), 0 10px 26px rgba(40,32,20,.09);
   --e3:0 6px 12px rgba(40,32,20,.08), 0 28px 70px rgba(40,32,20,.16);
+  --e4:0 10px 20px rgba(40,32,20,.10), 0 42px 100px rgba(40,32,20,.22);
   color-scheme:light;
 }
 
@@ -197,20 +199,19 @@ h1,h2,h3,.display{letter-spacing:var(--tr-display)}
     radial-gradient(circle at 50% 100%, rgba(255,176,31,.04), transparent 55%);
 }
 
-.grain{
-  position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.02;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
 .dot-grid{
-  position:fixed; inset:0; z-index:1; pointer-events:none;
+  position:fixed; top:0; left:0; z-index:1; pointer-events:none;
+  width:640px; height:640px;
   --cx:50vw; --cy:50vh;
   background-image:radial-gradient(circle, var(--line-2) 1px, transparent 1px);
   background-size:22px 22px;
-  -webkit-mask-image:radial-gradient(circle 320px at var(--cx) var(--cy), #000 0%, transparent 100%);
-  mask-image:radial-gradient(circle 320px at var(--cx) var(--cy), #000 0%, transparent 100%);
+  -webkit-mask-image:radial-gradient(circle 320px at 50% 50%, #000 0%, transparent 100%);
+  mask-image:radial-gradient(circle 320px at 50% 50%, #000 0%, transparent 100%);
   opacity:.55;
+  transform:translate3d(calc(var(--cx) - 320px), calc(var(--cy) - 320px), 0);
+  will-change:transform;
 }
+@media (max-width: 768px){ .dot-grid{ display:none } }
 
 .topbar{
   position:fixed; top:0; left:0; right:0; z-index:var(--z-topbar);
@@ -272,7 +273,7 @@ html.booting .substrate{ transform:none }
   padding:var(--s-4) var(--s-5);
   border-bottom:var(--hair) solid var(--line-1);
 }
-.settings-head h2{ font-size:var(--fs-16); font-weight:650 }
+.settings-head h2{ font-size:var(--fs-20); font-weight:650 }
 .settings-section{ padding:var(--s-4) var(--s-5); border-bottom:var(--hair) solid var(--line-1) }
 .settings-section:last-child{ border-bottom:none }
 .settings-section h3{
@@ -375,14 +376,23 @@ html.booting .substrate{ transform:none }
   transition:opacity var(--t-2) var(--e-out);
 }
 .dock-tile.has-window .dock-dot{ opacity:.85 }
-.dock-sep{
-  width:var(--hair); height:32px; align-self:center;
-  background:var(--line-2); margin:0 var(--s-1);
-}
+.dock-tile.has-window .dock-dot{ width:14px; border-radius:var(--r-f) }
 
 .jump-tile, .pin-tile, .dock-tile{
   -webkit-tap-highlight-color:transparent;
 }
+
+.dock-tooltip{
+  position:absolute; bottom:calc(100% + var(--s-3)); left:0;
+  padding:var(--s-1) var(--s-2); border-radius:var(--r-1);
+  background:var(--bg-float); border:var(--hair) solid var(--line-2); box-shadow:var(--e2), var(--edge);
+  font-size:var(--fs-12); color:var(--tx-1); white-space:nowrap; pointer-events:none;
+  opacity:0; transform:translate(-50%, 4px); transform-origin:50% 100%;
+  transition:opacity var(--t-2) var(--e-out), transform var(--t-2) var(--e-out);
+  z-index:1;
+}
+.dock-tooltip.is-visible{ opacity:1; transform:translate(-50%, 0) }
+@media (max-width: 768px){ .dock-tooltip{ display:none } }
 
 #window-layer{ position:fixed; inset:0; z-index:var(--z-window); pointer-events:none }
 
@@ -397,10 +407,11 @@ html.booting .substrate{ transform:none }
   box-shadow:var(--e1), var(--edge);
   contain:layout style;
   transform-origin:0 0;
-  transition:box-shadow var(--t-3) var(--e-out), border-color var(--t-3) var(--e-out), filter var(--t-3) var(--e-out);
+  transition:box-shadow var(--t-3) var(--e-out), border-color var(--t-3) var(--e-out);
 }
 .win.is-focused{ border-color:var(--line-2); box-shadow:var(--e3), var(--edge) }
-.win.is-unfocused{ filter:saturate(.92) }
+.win.is-unfocused{ border-color:var(--line-1); box-shadow:var(--e1), var(--edge) }
+.win.is-unfocused .win-tb{ background:var(--bg-base) }
 .win.is-minimized{ display:none }
 .win.is-maximized{ border-radius:var(--r-2) }
 
@@ -424,21 +435,33 @@ html.booting .substrate{ transform:none }
 .live-dot{ width:6px; height:6px; border-radius:50%; background:var(--tx-3); flex-shrink:0; transition:background var(--t-2) var(--e-out) }
 .live-dot.is-live{ background:var(--live) }
 
-.win-tabs{ display:flex; gap:var(--s-1); overflow-x:auto; max-width:40%; touch-action:none }
-.win-tab{
-  padding:var(--s-1) var(--s-2); border-radius:var(--r-1); font-size:var(--fs-12);
-  color:var(--tx-2); display:flex; align-items:center; gap:6px; flex-shrink:0;
-  transition:background var(--t-1) var(--e-out), color var(--t-1) var(--e-out);
+.win-tabs{
+  display:flex; gap:var(--s-1); overflow-x:auto; max-width:40%; touch-action:pan-x;
+  -webkit-mask-image:linear-gradient(to right, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
+  mask-image:linear-gradient(to right, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
 }
+.win-tab-wrap{
+  display:flex; align-items:center; flex-shrink:0;
+  border-radius:var(--r-1);
+  transition:background var(--t-1) var(--e-out);
+}
+.win-tab-wrap.is-active{ background:var(--bg-hover) }
+.win-tab{
+  display:flex; align-items:center; gap:6px;
+  padding:var(--s-1) 4px var(--s-1) var(--s-2);
+  font-size:var(--fs-12); color:var(--tx-2);
+  transition:color var(--t-1) var(--e-out);
+}
+.win-tab-wrap.is-active .win-tab{ color:var(--tx-1) }
 .win-tab .icon{ width:12px; height:12px }
-.win-tab.is-active{ background:var(--bg-hover); color:var(--tx-1) }
-.win-tab span:not(.win-tab-close){ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:96px }
+.win-tab span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:96px }
 .win-tab-close{
   display:flex; align-items:center; justify-content:center;
-  width:14px; height:14px; border-radius:50%; opacity:.5; flex-shrink:0;
-  transition:opacity var(--t-1) var(--e-out), background var(--t-1) var(--e-out), transform var(--t-1) var(--e-out);
+  width:16px; height:16px; margin-right:4px; border-radius:50%; opacity:.5; flex-shrink:0; color:inherit;
+  transition:opacity var(--t-1) var(--e-out), background var(--t-1) var(--e-out), transform var(--t-1) var(--e-out), color var(--t-1) var(--e-out);
 }
-.win-tab-close:hover{ opacity:1; background:var(--dngr); color:#fff }
+.win-tab-close .icon{ width:9px; height:9px }
+.win-tab-close:hover, .win-tab-close:focus-visible{ opacity:1; background:var(--dngr); color:#fff }
 .win-tab-close:active{ transform:scale(.85) }
 
 .win-tb.is-drop-target{ background:var(--sig-dim) }
@@ -465,16 +488,14 @@ html.booting .substrate{ transform:none }
 .lx-frame{ position:absolute; inset:0; width:100%; height:100%; border:none }
 
 .win-escape{
-  position:absolute; top:6px; right:64px; z-index:4;
+  position:absolute; top:6px; right:98px; z-index:4;
   width:22px; height:22px; border-radius:var(--r-1);
   display:flex; align-items:center; justify-content:center;
   color:var(--tx-3); background:var(--bg-raise); border:var(--hair) solid var(--line-1);
-  opacity:0; transition:opacity var(--t-2) var(--e-out);
+  opacity:.7; transition:opacity var(--t-2) var(--e-out), color var(--t-2) var(--e-out), background var(--t-2) var(--e-out);
 }
-.win-tb:hover ~ .win-escape,
-.win:hover .win-escape{ opacity:.9 }
 .win-escape .icon{ width:12px; height:12px }
-.win-escape:hover{ opacity:1; color:var(--tx-1) }
+.win-escape:hover{ opacity:1; color:var(--tx-1); background:var(--bg-hover) }
 
 .ctx-menu{
   position:fixed; z-index:var(--z-toast); min-width:180px;
@@ -504,9 +525,9 @@ html.booting .substrate{ transform:none }
 .rh-sw{ bottom:-4px; left:-4px; width:12px; height:12px; cursor:nesw-resize }
 
 .snap-preview{
-  position:fixed; z-index:var(--z-window); pointer-events:none;
+  position:fixed; top:0; left:0; z-index:var(--z-window); pointer-events:none;
   background:var(--sig-dim); border:1.5px solid var(--sig); border-radius:var(--r-3);
-  opacity:0; transition:opacity 160ms var(--e-out), left 160ms var(--e-out), top 160ms var(--e-out), width 160ms var(--e-out), height 160ms var(--e-out);
+  opacity:0; transition:opacity 160ms var(--e-out);
 }
 
 .resize-ghost{
@@ -516,7 +537,12 @@ html.booting .substrate{ transform:none }
 }
 
 .win.is-drag-live{ will-change:transform }
-.win.is-resize-live{ opacity:.55; transition:opacity 80ms var(--e-out) }
+.win.is-resize-live .win-body{ pointer-events:none }
+.resize-snapshot{
+  position:absolute; inset:0; z-index:3;
+  background:var(--bg-base) center/cover no-repeat;
+  filter:saturate(.7) brightness(.85);
+}
 
 @media (max-width: 768px){
   .win{ position:fixed !important; inset:0 !important; left:0 !important; top:0 !important; width:100% !important; height:100% !important; border-radius:0 !important; }
@@ -541,7 +567,7 @@ html.booting .substrate{ transform:none }
   background:var(--bg-float);
   border:var(--hair) solid var(--line-2);
   border-radius:var(--r-4);
-  box-shadow:var(--e3), var(--edge);
+  box-shadow:var(--e4), var(--edge);
   opacity:0; transform:translateY(-8px) scale(.98);
   transition:opacity var(--t-3) var(--e-out), transform var(--t-3) var(--e-out);
 }
@@ -625,9 +651,76 @@ html.booting .substrate{ transform:none }
   padding-top:var(--s-4); padding-bottom:var(--s-4);
   border-top-width:var(--hair);
 }
-.palette-preview-poster{ width:96px; border-radius:var(--r-2); border:var(--hair) solid var(--line-1) }
-.palette-preview-name{ font-size:var(--fs-14); color:var(--tx-1); font-weight:600 }
-.palette-preview-url{ font-size:var(--fs-11); color:var(--tx-3); margin-top:2px }
+.palette-preview-media{ width:64px; flex-shrink:0 }
+.palette-preview-art{ width:100%; display:block; border-radius:var(--r-2); border:var(--hair) solid var(--line-1) }
+.palette-preview-body{ min-width:0; flex:1 }
+.palette-preview-name{
+  font-size:var(--fs-16); color:var(--tx-1); font-weight:600; letter-spacing:var(--tr-display); line-height:1.25;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.palette-preview-id{ display:flex; align-items:center; gap:6px; min-width:0; margin-top:3px }
+.palette-preview-favicon{ width:13px; height:13px; border-radius:3px; flex-shrink:0 }
+.palette-preview-host{ font-size:var(--fs-11); color:var(--tx-3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.palette-preview-meta{ display:none }
+.palette-preview-actions{ display:none }
+
+@media (min-width: 900px){
+  .palette-box{
+    display:grid; grid-template-columns:minmax(0,1fr) 240px; grid-template-rows:auto 1fr;
+    max-height:60vh;
+  }
+  .palette-search{ grid-column:1; grid-row:1 }
+  .palette-list{ grid-column:1; grid-row:2; padding-bottom:var(--s-2) }
+  .palette-preview{
+    grid-column:2; grid-row:1 / span 2;
+    display:flex !important; flex-direction:column; align-items:flex-start;
+    gap:0;
+    max-height:none !important; height:100% !important; padding:var(--s-5) !important;
+    border-top-width:0 !important; border-left:var(--hair) solid var(--line-1);
+    opacity:1; visibility:visible;
+  }
+  .palette-preview[hidden]{ display:flex !important }
+  .palette-preview:empty::before{
+    content:'Highlight an app to preview it';
+    color:var(--tx-3); font-size:var(--fs-12);
+  }
+  .palette-preview-media{ width:100% }
+  .palette-preview-art{ border-radius:var(--r-3) }
+  .palette-preview-body{ width:100%; margin-top:var(--s-4) }
+  .palette-preview-name{ font-size:var(--fs-20); white-space:normal }
+  .palette-preview-id{ margin-top:4px }
+  .palette-preview-meta{ display:flex; flex-wrap:wrap; align-items:center; gap:var(--s-2); margin-top:var(--s-3) }
+  .palette-preview-tag{
+    display:inline-flex; align-items:center;
+    padding:2px var(--s-2); border-radius:var(--r-f);
+    background:var(--bg-raise); border:var(--hair) solid var(--line-1);
+    font-size:var(--fs-11); color:var(--tx-2); font-weight:650;
+    text-transform:uppercase; letter-spacing:.06em;
+  }
+  .palette-preview-status{ display:inline-flex; align-items:center; gap:6px; font-size:var(--fs-11); color:var(--tx-2) }
+  .palette-preview-key{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:18px; height:18px; padding:0 5px;
+    border-radius:var(--r-1); border:var(--hair) solid var(--line-2);
+    background:var(--bg-raise); color:var(--tx-3);
+    font-family:var(--f-mono); font-size:10px;
+  }
+  .palette-preview-actions{
+    display:flex; flex-direction:column; gap:var(--s-2);
+    width:100%; margin-top:auto; padding-top:var(--s-5);
+  }
+  .palette-preview-actions .btn-sig{ width:100%; justify-content:center }
+  .palette-preview-btn{
+    display:flex; align-items:center; justify-content:center; gap:var(--s-2); width:100%;
+    padding:var(--s-2) var(--s-4); border-radius:var(--r-2);
+    border:var(--hair) solid var(--line-2); color:var(--tx-2);
+    font-size:var(--fs-13); font-weight:600;
+    transition:background var(--t-1) var(--e-out), color var(--t-1) var(--e-out), transform var(--t-1) var(--e-out);
+  }
+  .palette-preview-btn:hover{ background:var(--bg-hover); color:var(--tx-1) }
+  .palette-preview-btn:active{ transform:scale(.97) }
+  .palette-preview-btn .icon{ width:14px; height:14px }
+}
 
 @media (max-width: 768px){
   .palette{ padding-top:0; align-items:stretch }
@@ -664,16 +757,16 @@ html.booting .substrate{ transform:none }
   box-shadow:var(--e1), var(--edge);
   color:var(--tx-3);
   margin-bottom:var(--s-8);
-  cursor:text;
+  cursor:pointer;
+  text-align:left;
   transition:border-color var(--t-2) var(--e-out), box-shadow var(--t-2) var(--e-out);
 }
 .desktop-search:hover{ border-color:var(--line-2) }
 .desktop-search .icon{ width:16px; height:16px; flex-shrink:0 }
-.desktop-search input{
-  flex:1; background:none; border:none; outline:none; font-size:var(--fs-14); color:var(--tx-1);
-  cursor:text;
+.desktop-search-placeholder{
+  flex:1; font-size:var(--fs-14); color:var(--tx-3);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
-.desktop-search input::placeholder{ color:var(--tx-3) }
 .desktop-search .mono{ font-size:var(--fs-11); color:var(--tx-3) }
 
 .jump-wrap{ width:min(680px, 92vw); margin-bottom:var(--s-6) }
@@ -698,12 +791,15 @@ html.booting .substrate{ transform:none }
   display:flex; flex-direction:column; align-items:center; gap:var(--s-2);
   padding:var(--s-4) var(--s-2);
   border-radius:var(--r-3);
+  background:var(--bg-raise); border:var(--hair) solid var(--line-1); box-shadow:var(--e1);
   color:var(--tx-2); font-size:var(--fs-12);
-  transition:background var(--t-1) var(--e-out), color var(--t-1) var(--e-out);
+  transition:background var(--t-2) var(--e-out), color var(--t-2) var(--e-out), border-color var(--t-2) var(--e-out), box-shadow var(--t-2) var(--e-out), transform var(--t-2) var(--e-out);
 }
-.pin-tile:hover{ background:var(--bg-hover); color:var(--tx-1) }
+.pin-tile:hover{ background:var(--bg-float); color:var(--tx-1); border-color:var(--line-2); box-shadow:var(--e2); transform:translateY(-2px) }
+.pin-tile:hover .icon{ color:var(--sig) }
+.pin-tile:active{ transform:translateY(0) scale(.98) }
 .pin-tile.is-dragging{ opacity:.4 }
-.pin-tile .icon{ width:24px; height:24px }
+.pin-tile .icon{ width:24px; height:24px; transition:color var(--t-2) var(--e-out) }
 .pin-tile span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100% }
 
 @media (max-width: 768px){
@@ -775,6 +871,13 @@ html.booting .substrate{ transform:none }
     root.setAttribute('data-accent', 'amber');
     root.setAttribute('data-wallpaper', 'mesh-1');
   }
+  try{
+    var alreadyBooted = sessionStorage.getItem('lxos:booted');
+  }catch(err){
+    var alreadyBooted = null;
+  }
+  var reducedMotionPref = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!alreadyBooted && !reducedMotionPref) root.classList.add('booting');
 })();
 </script>
 </head>
@@ -889,7 +992,6 @@ html.booting .substrate{ transform:none }
 </noscript>
 
 <div class="substrate"></div>
-<div class="grain" aria-hidden="true"></div>
 <div class="dot-grid" data-cursor-grid aria-hidden="true"></div>
 
 <header class="topbar chrome">
@@ -920,11 +1022,11 @@ html.booting .substrate{ transform:none }
     <div class="desktop-clock mono" data-clock>--:--</div>
     <div class="desktop-date" data-date></div>
   </div>
-  <div class="desktop-search chrome" data-search-wrap>
+  <button type="button" class="desktop-search chrome" data-search aria-label="Open command palette">
     <svg class="icon"><use href="#i-search"></use></svg>
-    <input type="text" placeholder="Search apps and commands" readonly data-search aria-label="Open command palette" />
+    <span class="desktop-search-placeholder">Search apps and commands</span>
     <span class="mono">⌘K</span>
-  </div>
+  </button>
   <div class="jump-wrap" data-jump-wrap hidden>
     <div class="jump-label">Jump back in</div>
     <div class="jump-row" data-jump></div>
@@ -943,7 +1045,7 @@ html.booting .substrate{ transform:none }
   <div class="palette-box">
     <div class="palette-search">
       <svg class="icon"><use href="#i-search"></use></svg>
-      <input type="text" data-input placeholder="Search, or type &gt; for commands, / for apps" aria-label="Search apps and commands" role="combobox" aria-expanded="true" aria-controls="palette-list" autocomplete="off" spellcheck="false" />
+      <input type="text" data-input placeholder="Search, or type &gt; for commands, / for apps" aria-label="Search apps and commands" role="combobox" aria-expanded="false" aria-controls="palette-list" autocomplete="off" spellcheck="false" />
       <span class="palette-badge mono" data-badge></span>
     </div>
     <div class="palette-list" data-list role="listbox" id="palette-list"></div>
@@ -1002,48 +1104,46 @@ html.booting .substrate{ transform:none }
 
 
 <script type="module">
-
-/* ---- js/registry.js ---- */
 const APPS = [
   {
     id:'form', name:'Form', kind:'app', group:'Workspace',
     url:'https://finalapp-nine.vercel.app/', icon:'form',
-    embed:'auto', poster:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NDAgNDAwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZy1mb3JtIiBjeD0iMjQlIiBjeT0iMTglIiByPSI5MCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMjAyNDJBIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzEyMTQxNyIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSI0MDAiIGZpbGw9InVybCgjZy1mb3JtKSIvPgogIDxyZWN0IHdpZHRoPSI2NDAiIGhlaWdodD0iNDAwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyQTJFMzUiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI4MCwxMTYpIiBzdHJva2U9IiNGRkIwMUYiIHN0cm9rZS13aWR0aD0iMS42IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgPGcgdHJhbnNmb3JtPSJzY2FsZSg0KSI+CiAgICAgIDxyZWN0IHg9IjQuNSIgeT0iMy41IiB3aWR0aD0iMTUiIGhlaWdodD0iMTciIHJ4PSIxLjYiLz4KICAgICAgPHBhdGggZD0iTTggOC40aDhNOCAxMmg4TTggMTUuNmg1Ii8+CiAgICAgIDxwYXRoIGQ9Ik02LjYgOC40aC4wMU02LjYgMTJoLjAxTTYuNiAxNS42aC4wMSIgc3Ryb2tlLXdpZHRoPSIyLjQiLz4KICAgIDwvZz4KICA8L2c+CiAgPHRleHQgeD0iMzIwIiB5PSIzMzAiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iNjAwIiBmaWxsPSIjRURFRkYyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5Gb3JtPC90ZXh0PgogIDx0ZXh0IHg9IjMyMCIgeT0iMzU4IiBmb250LWZhbWlseT0idWktbW9ub3NwYWNlLCBtb25vc3BhY2UiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2Qzc0ODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiPmZpbmFsYXBwLW5pbmUudmVyY2VsLmFwcDwvdGV4dD4KPC9zdmc+',
+    embed:true, poster:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgNDgwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZy1mb3JtIiBjeD0iMjQlIiBjeT0iMTglIiByPSI5MCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMjAyNDJBIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzEyMTQxNyIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjQ4MCIgaGVpZ2h0PSI0ODAiIGZpbGw9InVybCgjZy1mb3JtKSIvPgogIDxyZWN0IHdpZHRoPSI0ODAiIGhlaWdodD0iNDgwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyQTJFMzUiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE4MCwxODApIiBzdHJva2U9IiNGRkIwMUYiIHN0cm9rZS13aWR0aD0iMS42IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgPGcgdHJhbnNmb3JtPSJzY2FsZSg1KSI+CiAgICAgIDxyZWN0IHg9IjQuNSIgeT0iMy41IiB3aWR0aD0iMTUiIGhlaWdodD0iMTciIHJ4PSIxLjYiLz4KICAgICAgPHBhdGggZD0iTTggOC40aDhNOCAxMmg4TTggMTUuNmg1Ii8+CiAgICAgIDxwYXRoIGQ9Ik02LjYgOC40aC4wMU02LjYgMTJoLjAxTTYuNiAxNS42aC4wMSIgc3Ryb2tlLXdpZHRoPSIyLjQiLz4KICAgIDwvZz4KICA8L2c+PC9zdmc+',
     keywords:['new','create','submit','entry','input'], accel:'1'
   },
   {
     id:'dashboard', name:'Dashboard', kind:'app', group:'Workspace',
     url:'https://dashboard2-iota.vercel.app/', icon:'compass',
-    embed:'auto', poster:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NDAgNDAwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZy1kYXNoYm9hcmQiIGN4PSIyNCUiIGN5PSIxOCUiIHI9IjkwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMyMDI0MkEiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTIxNDE3Ii8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iNjQwIiBoZWlnaHQ9IjQwMCIgZmlsbD0idXJsKCNnLWRhc2hib2FyZCkiLz4KICA8cmVjdCB3aWR0aD0iNjQwIiBoZWlnaHQ9IjQwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMkEyRTM1IiBzdHJva2Utd2lkdGg9IjEiLz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNzIsMTMyKSIgc3Ryb2tlPSIjRkZCMDFGIiBzdHJva2Utd2lkdGg9IjEuNiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KICAgIDxnIHRyYW5zZm9ybT0ic2NhbGUoNCkiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjkiLz48cGF0aCBkPSJtMTQuOCA5LjItMS45IDUuNi01LjYgMS45IDEuOS01LjYgNS42LTEuOVoiLz48L2c+CiAgPC9nPgogIDx0ZXh0IHg9IjMyMCIgeT0iMzMwIiBmb250LWZhbWlseT0iSGVsdmV0aWNhLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9IjYwMCIgZmlsbD0iI0VERUZGMiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RGFzaGJvYXJkPC90ZXh0PgogIDx0ZXh0IHg9IjMyMCIgeT0iMzU4IiBmb250LWZhbWlseT0idWktbW9ub3NwYWNlLCBtb25vc3BhY2UiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2Qzc0ODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiPmRhc2hib2FyZDItaW90YS52ZXJjZWwuYXBwPC90ZXh0Pgo8L3N2Zz4=',
+    embed:true, poster:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgNDgwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZy1kYXNoYm9hcmQiIGN4PSIyNCUiIGN5PSIxOCUiIHI9IjkwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMyMDI0MkEiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTIxNDE3Ii8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iNDgwIiBoZWlnaHQ9IjQ4MCIgZmlsbD0idXJsKCNnLWRhc2hib2FyZCkiLz4KICA8cmVjdCB3aWR0aD0iNDgwIiBoZWlnaHQ9IjQ4MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMkEyRTM1IiBzdHJva2Utd2lkdGg9IjEiLz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxODAsMTgwKSIgc3Ryb2tlPSIjRkZCMDFGIiBzdHJva2Utd2lkdGg9IjEuNiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KICAgIDxnIHRyYW5zZm9ybT0ic2NhbGUoNSkiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjkiLz48cGF0aCBkPSJtMTQuOCA5LjItMS45IDUuNi01LjYgMS45IDEuOS01LjYgNS42LTEuOVoiLz48L2c+CiAgPC9nPjwvc3ZnPg==',
     keywords:['overview','home','stats'], accel:'2'
   },
   {
     id:'compare', name:'Compare', kind:'app', group:'Workspace',
     url:'https://dashboard-yearly.vercel.app/', icon:'activity',
-    embed:'auto', poster:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NDAgNDAwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZy1jb21wYXJlIiBjeD0iMjQlIiBjeT0iMTglIiByPSI5MCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMjAyNDJBIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzEyMTQxNyIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSI0MDAiIGZpbGw9InVybCgjZy1jb21wYXJlKSIvPgogIDxyZWN0IHdpZHRoPSI2NDAiIGhlaWdodD0iNDAwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyQTJFMzUiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI3MiwxMzIpIiBzdHJva2U9IiNGRkIwMUYiIHN0cm9rZS13aWR0aD0iMS42IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgPGcgdHJhbnNmb3JtPSJzY2FsZSg0KSI+PHBhdGggZD0iTTMgMTcuNSA4LjIgOWw0IDYgMy40LTkuNUwyMC41IDkuNSIvPjxwYXRoIGQ9Ik0xNS42IDUuNWg0Ljl2NC45Ii8+PC9nPgogIDwvZz4KICA8dGV4dCB4PSIzMjAiIHk9IjMzMCIgZm9udC1mYW1pbHk9IkhlbHZldGljYSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiNFREVGRjIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkNvbXBhcmU8L3RleHQ+CiAgPHRleHQgeD0iMzIwIiB5PSIzNTgiIGZvbnQtZmFtaWx5PSJ1aS1tb25vc3BhY2UsIG1vbm9zcGFjZSIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZDNzQ4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+ZGFzaGJvYXJkLXllYXJseS52ZXJjZWwuYXBwPC90ZXh0Pgo8L3N2Zz4=',
+    embed:true, poster:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgNDgwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZy1jb21wYXJlIiBjeD0iMjQlIiBjeT0iMTglIiByPSI5MCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMjAyNDJBIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzEyMTQxNyIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjQ4MCIgaGVpZ2h0PSI0ODAiIGZpbGw9InVybCgjZy1jb21wYXJlKSIvPgogIDxyZWN0IHdpZHRoPSI0ODAiIGhlaWdodD0iNDgwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyQTJFMzUiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE4MCwxODApIiBzdHJva2U9IiNGRkIwMUYiIHN0cm9rZS13aWR0aD0iMS42IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgPGcgdHJhbnNmb3JtPSJzY2FsZSg1KSI+PHBhdGggZD0iTTMgMTcuNSA4LjIgOWw0IDYgMy40LTkuNUwyMC41IDkuNSIvPjxwYXRoIGQ9Ik0xNS42IDUuNWg0Ljl2NC45Ii8+PC9nPgogIDwvZz48L3N2Zz4=',
     keywords:['analytics','yearly','chart'], accel:'3'
   },
   {
     id:'files', name:'Files', kind:'app', group:'Workspace',
     url:'https://josn.vercel.app/', icon:'folder',
-    embed:'auto', poster:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NDAgNDAwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZy1maWxlcyIgY3g9IjI0JSIgY3k9IjE4JSIgcj0iOTAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzIwMjQyQSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjE0MTciLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI2NDAiIGhlaWdodD0iNDAwIiBmaWxsPSJ1cmwoI2ctZmlsZXMpIi8+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSI0MDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzJBMkUzNSIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjcyLDEzMikiIHN0cm9rZT0iI0ZGQjAxRiIgc3Ryb2tlLXdpZHRoPSIxLjYiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgICA8ZyB0cmFuc2Zvcm09InNjYWxlKDQpIj48cGF0aCBkPSJNMy41IDYuMmMwLS43LjYtMS4yIDEuMi0xLjJoNC42bDEuOCAyLjJoOC4yYy43IDAgMS4yLjYgMS4yIDEuMnY5LjRjMCAuNy0uNiAxLjItMS4yIDEuMkg0LjdjLS43IDAtMS4yLS42LTEuMi0xLjJaIi8+PC9nPgogIDwvZz4KICA8dGV4dCB4PSIzMjAiIHk9IjMzMCIgZm9udC1mYW1pbHk9IkhlbHZldGljYSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiNFREVGRjIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkZpbGVzPC90ZXh0PgogIDx0ZXh0IHg9IjMyMCIgeT0iMzU4IiBmb250LWZhbWlseT0idWktbW9ub3NwYWNlLCBtb25vc3BhY2UiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2Qzc0ODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiPmpvc24udmVyY2VsLmFwcDwvdGV4dD4KPC9zdmc+',
+    embed:true, poster:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgNDgwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZy1maWxlcyIgY3g9IjI0JSIgY3k9IjE4JSIgcj0iOTAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzIwMjQyQSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjE0MTciLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0ODAiIGhlaWdodD0iNDgwIiBmaWxsPSJ1cmwoI2ctZmlsZXMpIi8+CiAgPHJlY3Qgd2lkdGg9IjQ4MCIgaGVpZ2h0PSI0ODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzJBMkUzNSIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTgwLDE4MCkiIHN0cm9rZT0iI0ZGQjAxRiIgc3Ryb2tlLXdpZHRoPSIxLjYiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgICA8ZyB0cmFuc2Zvcm09InNjYWxlKDUpIj48cGF0aCBkPSJNMy41IDYuMmMwLS43LjYtMS4yIDEuMi0xLjJoNC42bDEuOCAyLjJoOC4yYy43IDAgMS4yLjYgMS4yIDEuMnY5LjRjMCAuNy0uNiAxLjItMS4yIDEuMkg0LjdjLS43IDAtMS4yLS42LTEuMi0xLjJaIi8+PC9nPgogIDwvZz48L3N2Zz4=',
     keywords:['upload','documents','storage'], accel:'4'
   },
   {
     id:'protocols', name:'Protocols', kind:'app', group:'Reference',
     url:'https://protocols-one.vercel.app/', icon:'shield',
-    embed:'auto', poster:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NDAgNDAwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZy1wcm90b2NvbHMiIGN4PSIyNCUiIGN5PSIxOCUiIHI9IjkwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMyMDI0MkEiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTIxNDE3Ii8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iNjQwIiBoZWlnaHQ9IjQwMCIgZmlsbD0idXJsKCNnLXByb3RvY29scykiLz4KICA8cmVjdCB3aWR0aD0iNjQwIiBoZWlnaHQ9IjQwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMkEyRTM1IiBzdHJva2Utd2lkdGg9IjEiLz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNzIsMTMyKSIgc3Ryb2tlPSIjRkZCMDFGIiBzdHJva2Utd2lkdGg9IjEuNiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KICAgIDxnIHRyYW5zZm9ybT0ic2NhbGUoNCkiPjxwYXRoIGQ9Ik0xMiAyLjcgMTkuNSA1LjV2NS42YzAgNS0zLjIgOC40LTcuNSAxMC4yLTQuMy0xLjgtNy41LTUuMi03LjUtMTAuMlY1LjVaIi8+PHBhdGggZD0ibTguOCAxMiAyLjMgMi4zIDQuMS00LjYiLz48L2c+CiAgPC9nPgogIDx0ZXh0IHg9IjMyMCIgeT0iMzMwIiBmb250LWZhbWlseT0iSGVsdmV0aWNhLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9IjYwMCIgZmlsbD0iI0VERUZGMiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UHJvdG9jb2xzPC90ZXh0PgogIDx0ZXh0IHg9IjMyMCIgeT0iMzU4IiBmb250LWZhbWlseT0idWktbW9ub3NwYWNlLCBtb25vc3BhY2UiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2Qzc0ODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiPnByb3RvY29scy1vbmUudmVyY2VsLmFwcDwvdGV4dD4KPC9zdmc+',
+    embed:true, poster:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgNDgwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZy1wcm90b2NvbHMiIGN4PSIyNCUiIGN5PSIxOCUiIHI9IjkwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMyMDI0MkEiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTIxNDE3Ii8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iNDgwIiBoZWlnaHQ9IjQ4MCIgZmlsbD0idXJsKCNnLXByb3RvY29scykiLz4KICA8cmVjdCB3aWR0aD0iNDgwIiBoZWlnaHQ9IjQ4MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMkEyRTM1IiBzdHJva2Utd2lkdGg9IjEiLz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxODAsMTgwKSIgc3Ryb2tlPSIjRkZCMDFGIiBzdHJva2Utd2lkdGg9IjEuNiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KICAgIDxnIHRyYW5zZm9ybT0ic2NhbGUoNSkiPjxwYXRoIGQ9Ik0xMiAyLjcgMTkuNSA1LjV2NS42YzAgNS0zLjIgOC40LTcuNSAxMC4yLTQuMy0xLjgtNy41LTUuMi03LjUtMTAuMlY1LjVaIi8+PHBhdGggZD0ibTguOCAxMiAyLjMgMi4zIDQuMS00LjYiLz48L2c+CiAgPC9nPjwvc3ZnPg==',
     keywords:['rules','security','policy'], accel:'5'
   },
   {
     id:'list', name:'List', kind:'app', group:'Reference',
     url:'https://searchbar-five-beta.vercel.app/', icon:'list',
-    embed:'auto', poster:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NDAgNDAwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZy1saXN0IiBjeD0iMjQlIiBjeT0iMTglIiByPSI5MCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMjAyNDJBIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzEyMTQxNyIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSI0MDAiIGZpbGw9InVybCgjZy1saXN0KSIvPgogIDxyZWN0IHdpZHRoPSI2NDAiIGhlaWdodD0iNDAwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyQTJFMzUiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI3MiwxMzIpIiBzdHJva2U9IiNGRkIwMUYiIHN0cm9rZS13aWR0aD0iMS42IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgPGcgdHJhbnNmb3JtPSJzY2FsZSg0KSI+PHBhdGggZD0iTTkgNi41aDExTTkgMTJoMTFNOSAxNy41aDExIi8+PGNpcmNsZSBjeD0iNC4zIiBjeT0iNi41IiByPSIxIi8+PGNpcmNsZSBjeD0iNC4zIiBjeT0iMTIiIHI9IjEiLz48Y2lyY2xlIGN4PSI0LjMiIGN5PSIxNy41IiByPSIxIi8+PC9nPgogIDwvZz4KICA8dGV4dCB4PSIzMjAiIHk9IjMzMCIgZm9udC1mYW1pbHk9IkhlbHZldGljYSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiNFREVGRjIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkxpc3Q8L3RleHQ+CiAgPHRleHQgeD0iMzIwIiB5PSIzNTgiIGZvbnQtZmFtaWx5PSJ1aS1tb25vc3BhY2UsIG1vbm9zcGFjZSIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZDNzQ4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+c2VhcmNoYmFyLWZpdmUtYmV0YS52ZXJjZWwuYXBwPC90ZXh0Pgo8L3N2Zz4=',
+    embed:true, poster:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgNDgwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZy1saXN0IiBjeD0iMjQlIiBjeT0iMTglIiByPSI5MCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMjAyNDJBIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzEyMTQxNyIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjQ4MCIgaGVpZ2h0PSI0ODAiIGZpbGw9InVybCgjZy1saXN0KSIvPgogIDxyZWN0IHdpZHRoPSI0ODAiIGhlaWdodD0iNDgwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyQTJFMzUiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE4MCwxODApIiBzdHJva2U9IiNGRkIwMUYiIHN0cm9rZS13aWR0aD0iMS42IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgPGcgdHJhbnNmb3JtPSJzY2FsZSg1KSI+PHBhdGggZD0iTTkgNi41aDExTTkgMTJoMTFNOSAxNy41aDExIi8+PGNpcmNsZSBjeD0iNC4zIiBjeT0iNi41IiByPSIxIi8+PGNpcmNsZSBjeD0iNC4zIiBjeT0iMTIiIHI9IjEiLz48Y2lyY2xlIGN4PSI0LjMiIGN5PSIxNy41IiByPSIxIi8+PC9nPgogIDwvZz48L3N2Zz4=',
     keywords:['index','search','directory'], accel:'6'
   }
 ];
 
-const PRICE_URLS = ['https://newlist-eta.vercel.app/', 'https://newlist2.vercel.app/'];
+const PRICE_URL = 'https://newlist-eta.vercel.app/';
 
 const COMMANDS = [
   {
@@ -1061,8 +1161,7 @@ const COMMANDS = [
   {
     id:'open-prices', name:'Open Prices', kind:'cmd', icon:'tag',
     run:()=>{
-      const url = PRICE_URLS[Math.floor(Math.random()*PRICE_URLS.length)];
-      window.open(url, '_blank', 'noopener,noreferrer');
+      window.open(PRICE_URL, '_blank', 'noopener,noreferrer');
     }, accel:null
   },
   {
@@ -1087,8 +1186,39 @@ function allEntries(){
   return [...APPS, ...COMMANDS];
 }
 
+const DEV = true;
 
-/* ---- js/store.js ---- */
+function invariantWarn(scope, msg){
+  if(DEV) console.warn(`[lx:invariant:${scope}]`, msg);
+}
+
+function esc(s){
+  return String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+
+class SafeHTML{
+  constructor(value){ this.value = value; }
+}
+
+function raw(value){
+  return new SafeHTML(String(value == null ? '' : value));
+}
+
+function html(strings, ...values){
+  let out = strings[0];
+  values.forEach((v, i) => {
+    const safe = v instanceof SafeHTML ? v.value : esc(v == null ? '' : v);
+    out += safe + strings[i + 1];
+  });
+  return out;
+}
+
+function isTypingTarget(el){
+  if(!el) return false;
+  const tag = el.tagName;
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || !!el.isContentEditable;
+}
+
 const NS = 'lxos';
 const SCHEMA_VERSION = 1;
 
@@ -1252,6 +1382,13 @@ class Store{
     this.set('windowGeometry', next);
   }
 
+  deleteGeometry(appId){
+    if(!(appId in this.data.windowGeometry)) return;
+    const next = { ...this.data.windowGeometry };
+    delete next[appId];
+    this.set('windowGeometry', next);
+  }
+
   recordRecent(id){
     const now = Date.now();
     const list = [...this.data.recents];
@@ -1283,33 +1420,84 @@ class Store{
 
 const store = new Store();
 
-
-/* ---- js/motion.js ---- */
-
 const EASE = {
   out: 'cubic-bezier(.2,.9,.25,1)',
   in: 'cubic-bezier(.5,0,.9,.3)',
   io: 'cubic-bezier(.6,0,.2,1)'
 };
 
+const SPRING = {
+  snappy: { duration:220, easing:EASE.out },
+  standard: { duration:320, easing:EASE.out },
+  gentle: { duration:480, easing:EASE.out }
+};
+
+const liveAnimations = new WeakMap();
+
+function trackAnim(el, anim){
+  if(!anim || typeof anim.cancel !== 'function') return anim;
+  const list = liveAnimations.get(el) || [];
+  list.push(anim);
+  liveAnimations.set(el, list);
+  const untrack = () => {
+    const cur = liveAnimations.get(el);
+    if(!cur) return;
+    const i = cur.indexOf(anim);
+    if(i !== -1) cur.splice(i, 1);
+  };
+  (anim.finished || Promise.resolve()).then(untrack).catch(untrack);
+  return anim;
+}
+
+function cancelSpringsFor(el){
+  const list = liveAnimations.get(el);
+  if(!list) return;
+  list.slice().forEach(a => { try{ a.cancel(); }catch(err){} });
+  liveAnimations.set(el, []);
+}
+
 function reduced(){
   return store.effectiveReduceMotion();
 }
 
 function animate(el, keyframes, opts = {}){
+  const last = Array.isArray(keyframes) ? keyframes[keyframes.length - 1] : keyframes;
+  const { offset, ...finalProps } = last;
+
   if(reduced()){
-    const last = Array.isArray(keyframes) ? keyframes[keyframes.length - 1] : keyframes;
-    Object.assign(el.style, last);
+    Object.assign(el.style, finalProps);
     return { finished: Promise.resolve(), cancel(){}, onfinish:null };
   }
-  const anim = el.animate(keyframes, { duration:170, easing:EASE.out, fill:'forwards', ...opts });
+
+  let anim;
+  try{
+    anim = el.animate(keyframes, { duration:170, easing:EASE.out, fill:'forwards', ...opts });
+  }catch(err){
+
+    Object.assign(el.style, finalProps);
+    return { finished: Promise.resolve(), cancel(){}, onfinish:null };
+  }
+
+  trackAnim(el, anim);
   anim.finished.then(() => {
     try{
-      if(typeof anim.commitStyles === 'function') anim.commitStyles();
       anim.cancel();
+
+      Object.assign(el.style, finalProps);
     }catch(err){}
-  }).catch(() => {});
+  }).catch(() => {
+
+    try{ Object.assign(el.style, finalProps); }catch(err){}
+  });
   return anim;
+}
+
+function springTo(el, props, token = 'standard'){
+  cancelSpringsFor(el);
+  const allowed = new Set(['transform', 'opacity', 'filter']);
+  const to = {};
+  Object.keys(props).forEach(k => { if(allowed.has(k)) to[k] = props[k]; });
+  return withWillChange(el, Object.keys(to).join(', '), () => animate(el, [to], SPRING[token] || SPRING.standard));
 }
 
 function withWillChange(el, props, run){
@@ -1321,24 +1509,6 @@ function withWillChange(el, props, run){
   return anim;
 }
 
-function rectOf(el){
-  return el.getBoundingClientRect();
-}
-
-function flipRun(el, from, to, opts = {}){
-  if(reduced()) return animate(el, [{ transform:'none' }], { duration:1 });
-  const dx = from.left - to.left;
-  const dy = from.top - to.top;
-  const sx = Math.max(from.width, 1) / Math.max(to.width, 1);
-  const sy = Math.max(from.height, 1) / Math.max(to.height, 1);
-  return withWillChange(el, 'transform, opacity', () => animate(el, [
-    { transform:`translate(${dx}px,${dy}px) scale(${sx},${sy})`, opacity: opts.fadeIn ? 0.4 : 1 },
-    { transform:'translate(0,0) scale(1,1)', opacity: 1 }
-  ], { duration:260, easing:EASE.out, ...opts }));
-}
-
-
-/* ---- js/a11y.js ---- */
 let liveEl = null;
 
 function announce(msg){
@@ -1372,7 +1542,7 @@ function openCtxMenu(x, y, items){
     btn.type = 'button';
     btn.className = 'ctx-item';
     btn.setAttribute('role', 'menuitem');
-    btn.innerHTML = `<svg class="icon" aria-hidden="true"><use href="#i-${it.icon}"></use></svg><span>${esc(it.label)}</span>`;
+    btn.innerHTML = html`<svg class="icon" aria-hidden="true"><use href="#i-${raw(it.icon)}"></use></svg><span>${it.label}</span>`;
     btn.addEventListener('click', () => { closeCtxMenu(); it.action(); });
     menu.appendChild(btn);
   });
@@ -1403,11 +1573,16 @@ function openCtxMenu(x, y, items){
 
 const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
+function isRendered(el){
+  return el.getClientRects().length > 0;
+}
+
 function trapFocus(container, opts = {}){
-  const restoreTo = opts.restoreFocusTo || document.activeElement;
+
+  const restoreTo = opts.restoreFocusTo || null;
 
   function getFocusable(){
-    return Array.from(container.querySelectorAll(FOCUSABLE)).filter(el => el.offsetParent !== null);
+    return Array.from(container.querySelectorAll(FOCUSABLE)).filter(isRendered);
   }
 
   function onKeydown(e){
@@ -1464,11 +1639,13 @@ function rovingTabindex(container, itemSelector, opts = {}){
   return { setActive, items };
 }
 
-
-/* ---- js/embed.js ---- */
-const HANDSHAKE_TIMEOUT = 3500;
-const MAX_CACHED_FRAMES = 3;
+const LOAD_GRACE_MS = 12000;
+const MAX_CACHED_FRAMES = APPS.length;
 const SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads';
+
+function originOf(url){
+  try{ return new URL(url).origin; }catch(err){ return null; }
+}
 
 class EmbedManager extends EventTarget{
   constructor(){
@@ -1485,6 +1662,10 @@ class EmbedManager extends EventTarget{
     const entry = [...this.frames.entries()].find(([, f]) => f.iframe.contentWindow === e.source);
     if(!entry) return;
     const [appId, frame] = entry;
+
+    const appEntry = findById(appId);
+    const expected = appEntry ? originOf(appEntry.url) : null;
+    if(!expected || e.origin !== expected) return;
     if(data.t === 'lx:ready'){
       frame.handshake = true;
       frame.ready = true;
@@ -1513,33 +1694,45 @@ class EmbedManager extends EventTarget{
     const iframe = document.createElement('iframe');
     iframe.className = 'lx-frame';
     iframe.loading = 'eager';
-    iframe.referrerPolicy = 'no-referrer-when-downgrade';
+
+    iframe.referrerPolicy = 'strict-origin-when-cross-origin';
     iframe.setAttribute('sandbox', SANDBOX);
+
+    iframe.setAttribute('allow', 'clipboard-read; clipboard-write; fullscreen');
     iframe.title = appEntry.name;
-    frame = { iframe, ready:false, handshake:false, id:appEntry.id, timeout:null };
+    frame = { iframe, ready:false, shown:false, handshake:false, id:appEntry.id, timeout:null, started:false };
 
     iframe.addEventListener('load', () => {
-      if(frame.ready) return;
-      frame.ready = true;
+      if(frame.shown) return;
+      frame.shown = true;
       clearTimeout(frame.timeout);
-      this.dispatchEvent(new CustomEvent('status', { detail:{ appId:appEntry.id, status:'live' } }));
+      this.dispatchEvent(new CustomEvent('status', { detail:{ appId:appEntry.id, status:'shown' } }));
     });
+
     iframe.addEventListener('error', () => {
-      if(frame.ready) return;
+      if(frame.shown) return;
       clearTimeout(frame.timeout);
       this.dispatchEvent(new CustomEvent('status', { detail:{ appId:appEntry.id, status:'timeout' } }));
     });
 
-    iframe.src = appEntry.url;
     container.appendChild(iframe);
-    frame.timeout = setTimeout(() => {
-      if(!frame.ready){
-        this.dispatchEvent(new CustomEvent('status', { detail:{ appId:appEntry.id, status:'timeout' } }));
-      }
-    }, HANDSHAKE_TIMEOUT);
     this.frames.set(appEntry.id, frame);
     this.order.push(appEntry.id);
+
+    this.activate(appEntry);
     return frame;
+  }
+
+  activate(appEntry){
+    const frame = this.frames.get(appEntry.id);
+    if(!frame || frame.started) return;
+    frame.started = true;
+    frame.iframe.src = appEntry.url;
+    frame.timeout = setTimeout(() => {
+      if(!frame.shown){
+        this.dispatchEvent(new CustomEvent('status', { detail:{ appId:appEntry.id, status:'timeout' } }));
+      }
+    }, LOAD_GRACE_MS);
   }
 
   touch(id){
@@ -1572,9 +1765,13 @@ class EmbedManager extends EventTarget{
   pushTheme(appId){
     const frame = this.frames.get(appId);
     if(!frame || !frame.iframe.contentWindow) return;
+    const appEntry = findById(appId);
+    const target = appEntry ? originOf(appEntry.url) : null;
+    if(!target) return;
     const theme = document.documentElement.getAttribute('data-theme');
     const accent = getComputedStyle(document.documentElement).getPropertyValue('--sig').trim();
-    frame.iframe.contentWindow.postMessage({ t:'lx:theme', theme, accent }, '*');
+
+    frame.iframe.contentWindow.postMessage({ t:'lx:theme', theme, accent }, target);
   }
 
   broadcastTheme(){
@@ -1589,14 +1786,13 @@ class EmbedManager extends EventTarget{
 function renderFallback(appEntry){
   const wrap = document.createElement('div');
   wrap.className = 'fallback-card';
-  let origin = '';
-  try{ origin = new URL(appEntry.url).origin; }catch(err){ origin = ''; }
+  const origin = originOf(appEntry.url) || '';
   const hostname = origin ? origin.replace(/^https?:\/\//, '') : appEntry.url;
-  wrap.innerHTML = `
+  wrap.innerHTML = html`
     <img class="fallback-poster" src="${appEntry.poster}" alt="" />
     <div class="fallback-body">
       <div class="fallback-id">
-        <img class="fallback-favicon" src="${origin}/favicon.ico" alt="" onerror="this.style.display='none'" />
+        <img class="fallback-favicon" data-favicon src="${origin}/favicon.ico" alt="" />
         <span class="mono fallback-host">${hostname}</span>
       </div>
       <p class="fallback-msg">This app can't be shown inline here.</p>
@@ -1605,11 +1801,11 @@ function renderFallback(appEntry){
         Open externally
       </a>
     </div>`;
+
+  const favicon = wrap.querySelector('[data-favicon]');
+  favicon?.addEventListener('error', () => { favicon.style.display = 'none'; });
   return wrap;
 }
-
-
-/* ---- js/wm.js ---- */
 
 const MIN_W = 340;
 const MIN_H = 220;
@@ -1624,6 +1820,12 @@ function clampGeo(geo){
   return { x, y, w, h };
 }
 
+function applyFrameStyles(el, frame){
+  el.style.transform = `translate3d(${frame.x}px, ${frame.y}px, 0)`;
+  el.style.width = frame.w + 'px';
+  el.style.height = frame.h + 'px';
+}
+
 class WindowManager extends EventTarget{
   constructor(root, embed){
     super();
@@ -1634,7 +1836,11 @@ class WindowManager extends EventTarget{
     this.zBase = 20;
     this.openCount = 0;
     this.embed.addEventListener('status', e => this.onEmbedStatus(e.detail));
-    this.embed.isProtected = id => !!this.findWin(id);
+
+    this.embed.isProtected = id => {
+      const win = this.findWin(id);
+      return !!win && !win.minimized;
+    };
     window.addEventListener('resize', () => this.wins.forEach((w, id) => this.reflow(id)));
   }
 
@@ -1651,11 +1857,27 @@ class WindowManager extends EventTarget{
     return this.wins.get(appId) || [...this.wins.values()].find(w => w.tabs.includes(appId)) || null;
   }
 
+  raise(id){
+    const i = this.order.indexOf(id);
+    if(i !== -1) this.order.splice(i, 1);
+    this.order.push(id);
+  }
+
+  normalizeSavedGeometry(saved){
+    if(!saved) return null;
+    if(saved.frame) return saved;
+    if(typeof saved.x === 'number'){
+
+      return { frame:{ x:saved.x, y:saved.y, w:saved.w, h:saved.h }, restoreFrame:null, maximized: !!saved.maximized };
+    }
+    return null;
+  }
+
   open(appEntry, opts = {}){
     let win = this.findWin(appEntry.id);
     if(win){
-      this.focus(win.id);
       if(win.minimized) this.restore(win.id);
+      else this.focus(win.id);
       if(win.activeTab !== appEntry.id) this.showTab(win, appEntry.id);
       store.recordRecent(appEntry.id);
       return win;
@@ -1666,29 +1888,26 @@ class WindowManager extends EventTarget{
   }
 
   create(appEntry, flipFrom){
-    const saved = store.geometry(appEntry.id);
-    const base = saved || {
+    const saved = this.normalizeSavedGeometry(store.geometry(appEntry.id));
+    const base = saved ? saved.frame : {
       x: Math.round(innerWidth / 2 - 440 + (this.openCount % 6) * CASCADE),
       y: Math.round(innerHeight / 2 - 300 + (this.openCount % 6) * CASCADE),
       w: Math.min(880, innerWidth - 80),
-      h: Math.min(600, innerHeight - 140),
-      maximized:false
+      h: Math.min(600, innerHeight - 140)
     };
     this.openCount++;
-    const geo = clampGeo(base);
+    const frame = clampGeo(base);
 
     const el = document.createElement('section');
     el.className = 'win';
     el.dataset.app = appEntry.id;
     el.setAttribute('role', 'group');
     el.setAttribute('aria-label', appEntry.name);
-    el.style.left = geo.x + 'px';
-    el.style.top = geo.y + 'px';
-    el.style.width = geo.w + 'px';
-    el.style.height = geo.h + 'px';
+    applyFrameStyles(el, frame);
 
-    el.innerHTML = `
-      <div class="win-tb" data-drag>
+    el.innerHTML = html`
+      <div class="win-tb" data-drag tabindex="-1">
+        <button type="button" class="vh" data-focus-content>Jump to ${appEntry.name} content</button>
         <div class="win-title">
           <svg class="icon" aria-hidden="true"><use href="#i-${appEntry.icon}"></use></svg>
           <span class="win-name">${appEntry.name}</span>
@@ -1715,35 +1934,36 @@ class WindowManager extends EventTarget{
       <a class="win-escape" href="${appEntry.url}" target="_blank" rel="noopener noreferrer" aria-label="Open ${appEntry.name} in a new tab">
         <svg class="icon"><use href="#i-external"></use></svg>
       </a>
-      ${['n','s','e','w','ne','nw','se','sw'].map(d => `<div class="rh rh-${d}" data-resize="${d}"></div>`).join('')}
+      ${raw(['n','s','e','w','ne','nw','se','sw'].map(d => `<div class="rh rh-${d}" data-resize="${d}"></div>`).join(''))}
     `;
 
     this.root.appendChild(el);
 
     const win = {
       id: appEntry.id, app: appEntry, el,
-      geo, maximized: !!base.maximized, minimized:false,
+      frame, restoreFrame: saved ? saved.restoreFrame : null,
+      maximized: !!(saved && saved.maximized), minimized:false,
       tabs: [appEntry.id], activeTab: appEntry.id, panes: new Map()
     };
     this.wins.set(appEntry.id, win);
-    this.order.push(appEntry.id);
+
     this.mountTab(win, appEntry);
     this.wireChrome(win);
     this.bindDrag(win);
     this.bindResize(win);
+
     this.focus(appEntry.id);
 
     if(win.maximized) this.applyMaximize(win, true);
 
-    if(flipFrom && !reduced()){
-      const to = rectOf(el);
-      flipRun(el, flipFrom, to, { fadeIn:true });
-    }else{
-      animate(el, [{ opacity:0, transform:'scale(.98)' }, { opacity:1, transform:'scale(1)' }], { duration:170 });
-    }
+    animate(el, [
+      { opacity:0, transform:`translate3d(${frame.x}px, ${frame.y}px, 0) scale(.98)` },
+      { opacity:1, transform:`translate3d(${frame.x}px, ${frame.y}px, 0) scale(1)` }
+    ], { duration:170 });
 
     announce(`${appEntry.name} opened`);
     this.dispatchEvent(new CustomEvent('winopen', { detail:{ id: appEntry.id } }));
+    this.checkInvariants('create');
     return win;
   }
 
@@ -1752,6 +1972,7 @@ class WindowManager extends EventTarget{
     const pane = document.createElement('div');
     pane.className = 'tab-pane';
     pane.dataset.pane = appEntry.id;
+    pane.tabIndex = -1;
     body.appendChild(pane);
     win.panes.set(appEntry.id, pane);
 
@@ -1762,10 +1983,8 @@ class WindowManager extends EventTarget{
       return;
     }
     const frame = this.embed.mount(appEntry, pane);
-    if(frame.ready){
-      loading?.remove();
-      this.setLive(appEntry.id, true);
-    }
+    if(frame.shown) loading?.remove();
+    if(frame.ready) this.setLive(appEntry.id, true);
   }
 
   onEmbedStatus({ appId, status, title }){
@@ -1778,6 +1997,8 @@ class WindowManager extends EventTarget{
       if(title && appId === win.activeTab){
         win.el.querySelector('.win-name').textContent = title;
       }
+    }else if(status === 'shown'){
+      loading?.remove();
     }else if(status === 'timeout'){
       loading?.remove();
       const pane = win.panes.get(appId);
@@ -1811,6 +2032,8 @@ class WindowManager extends EventTarget{
         escapeLink.setAttribute('href', appEntry.url);
         escapeLink.setAttribute('aria-label', `Open ${appEntry.name} in a new tab`);
       }
+      const focusBtn = win.el.querySelector('[data-focus-content]');
+      if(focusBtn) focusBtn.textContent = `Jump to ${appEntry.name} content`;
     }
     const dot = win.el.querySelector('[data-live]');
     if(dot) dot.classList.toggle('is-live', this.embed.isLive(appId));
@@ -1830,22 +2053,29 @@ class WindowManager extends EventTarget{
     win.tabs.forEach(appId => {
       const appEntry = findById(appId);
       if(!appEntry) return;
-      const tab = document.createElement('button');
-      tab.type = 'button';
-      tab.className = `win-tab${appId === win.activeTab ? ' is-active' : ''}`;
-      tab.innerHTML = `
-        <svg class="icon"><use href="#i-${appEntry.icon}"></use></svg>
-        <span>${appEntry.name}</span>
-        <span class="win-tab-close" data-tab-close aria-label="Close ${appEntry.name} tab">&times;</span>`;
-      tab.addEventListener('click', e => {
-        if(e.target.closest('[data-tab-close]')){
-          e.stopPropagation();
-          this.closeTab(win.id, appId);
-          return;
-        }
-        this.showTab(win, appId);
+
+      const wrap = document.createElement('div');
+      wrap.className = `win-tab-wrap${appId === win.activeTab ? ' is-active' : ''}`;
+
+      const select = document.createElement('button');
+      select.type = 'button';
+      select.className = 'win-tab';
+      select.innerHTML = html`<svg class="icon"><use href="#i-${appEntry.icon}"></use></svg><span>${appEntry.name}</span>`;
+      select.addEventListener('click', () => this.showTab(win, appId));
+
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.className = 'win-tab-close';
+      close.setAttribute('aria-label', `Close ${appEntry.name} tab`);
+      close.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-close"></use></svg>';
+      close.addEventListener('click', e => {
+        e.stopPropagation();
+        this.closeTab(win.id, appId);
       });
-      strip.appendChild(tab);
+
+      wrap.appendChild(select);
+      wrap.appendChild(close);
+      strip.appendChild(wrap);
     });
   }
 
@@ -1857,19 +2087,26 @@ class WindowManager extends EventTarget{
     const body = target.el.querySelector('[data-body]');
     source.tabs.forEach(appId => {
       const pane = source.panes.get(appId);
+
+      if(target.panes.has(appId) && target.panes.get(appId) !== pane){
+        target.panes.get(appId)?.remove();
+      }
       if(pane){
         body.appendChild(pane);
         target.panes.set(appId, pane);
       }
       if(!target.tabs.includes(appId)) target.tabs.push(appId);
     });
+    source._snapPreviewEl?.remove();
+    source._resizeGhostEl?.remove();
     source.el.remove();
     this.wins.delete(sourceWinId);
     this.order = this.order.filter(x => x !== sourceWinId);
-    store.setGeometry(sourceWinId, null);
+    store.deleteGeometry(sourceWinId);
     this.showTab(target, source.activeTab);
     this.focus(targetWinId);
     announce(`${source.app.name} merged into ${target.app.name} window`);
+    this.checkInvariants('mergeInto');
   }
 
   closeTab(winId, appId){
@@ -1879,6 +2116,8 @@ class WindowManager extends EventTarget{
 
     const wasActive = win.activeTab === appId;
     const pane = win.panes.get(appId);
+
+    const closedName = findById(appId)?.name || appId;
 
     const finishRemoval = () => {
       this.embed.release(appId);
@@ -1902,11 +2141,12 @@ class WindowManager extends EventTarget{
         this.order = this.order.map(x => x === winId ? newId : x);
         const geo = store.geometry(winId);
         if(geo) store.setGeometry(newId, geo);
-        store.setGeometry(winId, null);
+        store.deleteGeometry(winId);
       }
 
       this.dispatchEvent(new CustomEvent('winclose', { detail:{ id: appId } }));
-      announce(`${appId} tab closed`);
+      announce(`${closedName} tab closed`);
+      this.checkInvariants('closeTab');
     };
 
     if(!wasActive || reduced() || !pane){
@@ -1931,14 +2171,21 @@ class WindowManager extends EventTarget{
       if(e.target.closest('.wc')) return;
       this.toggleMaximize(win.id);
     });
+
+    const focusBtn = el.querySelector('[data-focus-content]');
+    focusBtn?.addEventListener('click', () => {
+      const pane = win.panes.get(win.activeTab);
+      const iframe = pane?.querySelector('iframe');
+      (iframe || pane)?.focus();
+    });
   }
 
   focus(id){
     if(this.focusedId === id) return;
-    this.order = this.order.filter(x => x !== id);
-    this.order.push(id);
+    this.raise(id);
     this.reorderZ();
     this.dispatchEvent(new CustomEvent('focuschange', { detail:{ id } }));
+    this.checkInvariants('focus');
   }
 
   reorderZ(){
@@ -1953,43 +2200,36 @@ class WindowManager extends EventTarget{
   }
 
   persistGeometry(win){
-    store.setGeometry(win.id, { ...win.geo, maximized: win.maximized });
+
+    store.setGeometry(win.id, {
+      frame: { ...win.frame },
+      restoreFrame: win.restoreFrame ? { ...win.restoreFrame } : null,
+      maximized: win.maximized
+    });
   }
 
   close(id){
     const win = this.wins.get(id);
     if(!win) return;
-    const dockRect = this.dockRectFor?.(id);
-    const from = rectOf(win.el);
     const finish = () => {
       win.tabs.forEach(t => this.embed.release(t));
+
+      win._snapPreviewEl?.remove();
+      win._resizeGhostEl?.remove();
       win.el.remove();
       this.wins.delete(id);
       this.order = this.order.filter(x => x !== id);
       this.reorderZ();
       announce(`${win.app.name} closed`);
       win.tabs.forEach(t => this.dispatchEvent(new CustomEvent('winclose', { detail:{ id: t } })));
+      this.checkInvariants('close');
     };
-    if(dockRect && !reduced()){
-      win.el.style.pointerEvents = 'none';
-      win.el.style.left = dockRect.left + 'px';
-      win.el.style.top = dockRect.top + 'px';
-      win.el.style.width = dockRect.width + 'px';
-      win.el.style.height = dockRect.height + 'px';
-      const to = rectOf(win.el);
-      const dx = from.left - to.left;
-      const dy = from.top - to.top;
-      const sx = Math.max(from.width, 1) / Math.max(to.width, 1);
-      const sy = Math.max(from.height, 1) / Math.max(to.height, 1);
-      const anim = withWillChange(win.el, 'transform, opacity', () => animate(win.el, [
-        { transform:`translate(${dx}px,${dy}px) scale(${sx},${sy})`, opacity:1, offset:0 },
-        { transform:'translate(0,0) scale(1,1)', opacity:0, offset:1 }
-      ], { duration:240, easing:EASE.in }));
-      (anim.finished || Promise.resolve()).then(finish).catch(finish);
-    }else{
-      animate(win.el, [{ opacity:1, transform:'scale(1)' }, { opacity:0, transform:'scale(.97)' }], { duration:160, easing:EASE.in })
-        .finished?.then(finish).catch(finish) ?? finish();
-    }
+    const baseTransform = win.el.style.transform || 'translate3d(0,0,0)';
+    const anim = animate(win.el, [
+      { opacity:1, transform: baseTransform },
+      { opacity:0, transform:`${baseTransform} scale(.97)` }
+    ], { duration:160, easing:EASE.in });
+    (anim.finished || Promise.resolve()).then(finish).catch(finish);
   }
 
   closeFocused(){
@@ -2003,11 +2243,15 @@ class WindowManager extends EventTarget{
         this.closeTab(existing.id, appEntry.id);
       }else{
         existing.tabs.forEach(t => this.embed.release(t));
+        existing._snapPreviewEl?.remove();
+        existing._resizeGhostEl?.remove();
         existing.el.remove();
         this.wins.delete(existing.id);
         this.order = this.order.filter(x => x !== existing.id);
+
+        existing.tabs.forEach(t => this.dispatchEvent(new CustomEvent('winclose', { detail:{ id: t } })));
       }
-      store.setGeometry(appEntry.id, null);
+      store.deleteGeometry(appEntry.id);
     }
     return this.create(appEntry, flipFrom);
   }
@@ -2021,6 +2265,7 @@ class WindowManager extends EventTarget{
     this.reorderZ();
     announce(`${win.app.name} minimised`);
     this.dispatchEvent(new CustomEvent('winminimize', { detail:{ id } }));
+    this.checkInvariants('minimize');
   }
 
   minimizeFocused(){
@@ -2032,10 +2277,28 @@ class WindowManager extends EventTarget{
     if(!win) return;
     win.minimized = false;
     win.el.classList.remove('is-minimized');
-    this.order.push(id);
-    this.reorderZ();
+
     this.focus(id);
+    this.remountIfEvicted(win);
     this.dispatchEvent(new CustomEvent('winrestore', { detail:{ id } }));
+    this.checkInvariants('restore');
+  }
+
+  remountIfEvicted(win){
+    win.tabs.forEach(appId => {
+      if(this.embed.has(appId)) return;
+      const appEntry = findById(appId);
+      const pane = win.panes.get(appId);
+      if(!appEntry || !pane || appEntry.embed === false) return;
+      const loading = document.createElement('div');
+      loading.className = 'win-loading';
+      loading.setAttribute('data-loading', '');
+      loading.innerHTML = '<span class="spinner" aria-hidden="true"></span>';
+      pane.appendChild(loading);
+      const frame = this.embed.mount(appEntry, pane);
+      if(frame.shown) loading.remove();
+      if(frame.ready) this.setLive(appId, true);
+    });
   }
 
   toggleMaximize(id){
@@ -2046,40 +2309,103 @@ class WindowManager extends EventTarget{
   }
 
   applyMaximize(win, instant){
-    const el = win.el;
+
     if(win.maximized){
-      win.preMax = { ...win.geo };
+      win.restoreFrame = { ...win.frame };
       const inset = 12;
       const topbar = document.querySelector('.topbar');
       const top = (topbar ? topbar.getBoundingClientRect().bottom : 0) + inset;
       const target = { x:inset, y:top, w: innerWidth - inset * 2, h: innerHeight - top - inset };
-      this.animateGeo(el, target, instant);
-      win.geo = target;
-    }else if(win.preMax){
-      this.animateGeo(el, win.preMax, instant);
-      win.geo = win.preMax;
+      this.commitFrame(win, target, instant);
+      win.frame = target;
+    }else{
+      const target = win.restoreFrame || win.frame;
+      this.commitFrame(win, target, instant);
+      win.frame = target;
+      win.restoreFrame = null;
     }
-    el.classList.toggle('is-maximized', win.maximized);
+    win.el.classList.toggle('is-maximized', win.maximized);
     this.persistGeometry(win);
   }
 
-  animateGeo(el, geo, instant){
+  commitFrame(win, frame, instant){
+    const el = win.el;
     if(instant || reduced()){
-      Object.assign(el.style, { left:geo.x + 'px', top:geo.y + 'px', width:geo.w + 'px', height:geo.h + 'px' });
+      applyFrameStyles(el, frame);
       return;
     }
-    withWillChange(el, 'left, top, width, height', () =>
+    cancelSpringsFor(el);
+    const cs = getComputedStyle(el);
+    const fromTransform = cs.transform && cs.transform !== 'none'
+      ? cs.transform
+      : `translate3d(${win.frame.x}px, ${win.frame.y}px, 0)`;
+    withWillChange(el, 'transform, width, height', () =>
       animate(el, [
-        { left: el.style.left, top: el.style.top, width: el.style.width, height: el.style.height },
-        { left: geo.x + 'px', top: geo.y + 'px', width: geo.w + 'px', height: geo.h + 'px' }
-      ], { duration:220 })
+        { transform: fromTransform, width: cs.width, height: cs.height },
+        { transform:`translate3d(${frame.x}px, ${frame.y}px, 0)`, width: frame.w + 'px', height: frame.h + 'px' }
+      ], SPRING.standard)
     );
+  }
+
+  snapZoneFor(x, y){
+    const topbar = document.querySelector('.topbar');
+    const topY = topbar ? topbar.getBoundingClientRect().bottom : 0;
+    if(y <= topY + EDGE_ZONE) return 'top';
+    if(x <= EDGE_ZONE) return y < innerHeight / 2 ? 'top-left' : 'bottom-left';
+    if(x >= innerWidth - EDGE_ZONE) return y < innerHeight / 2 ? 'top-right' : 'bottom-right';
+    if(x <= EDGE_ZONE + 40) return 'left';
+    if(x >= innerWidth - EDGE_ZONE - 40) return 'right';
+    return null;
+  }
+
+  zoneRectFor(zone){
+    const topbar = document.querySelector('.topbar');
+    const top = topbar ? topbar.getBoundingClientRect().bottom : 0;
+    const fullH = innerHeight - top;
+    const map = {
+      top: { x:8, y:top + 4, w: innerWidth - 16, h: fullH - 8 },
+      left: { x:8, y:top + 4, w: innerWidth / 2 - 12, h: fullH - 8 },
+      right: { x: innerWidth / 2 + 4, y:top + 4, w: innerWidth / 2 - 12, h: fullH - 8 },
+      'top-left': { x:8, y:top + 4, w: innerWidth / 2 - 12, h: fullH / 2 - 8 },
+      'top-right': { x: innerWidth / 2 + 4, y:top + 4, w: innerWidth / 2 - 12, h: fullH / 2 - 8 },
+      'bottom-left': { x:8, y: top + fullH / 2 + 2, w: innerWidth / 2 - 12, h: fullH / 2 - 8 },
+      'bottom-right': { x: innerWidth / 2 + 4, y: top + fullH / 2 + 2, w: innerWidth / 2 - 12, h: fullH / 2 - 8 }
+    };
+    return map[zone];
+  }
+
+  snap(id, zone){
+    const win = this.wins.get(id);
+    if(!win) return;
+    if(zone === 'top'){
+      win.maximized = true;
+      this.applyMaximize(win);
+    }else{
+      win.maximized = false;
+      win.restoreFrame = null;
+      win.el.classList.remove('is-maximized');
+      const r = this.zoneRectFor(zone);
+      this.commitFrame(win, r);
+      win.frame = r;
+      this.persistGeometry(win);
+    }
+    this.checkInvariants('snap');
   }
 
   reflow(id){
     const win = this.wins.get(id);
-    if(!win || !win.maximized) return;
-    this.applyMaximize(win, true);
+    if(!win) return;
+    if(win.maximized){
+      this.applyMaximize(win, true);
+      return;
+    }
+
+    const clamped = clampGeo(win.frame);
+    if(clamped.x !== win.frame.x || clamped.y !== win.frame.y || clamped.w !== win.frame.w || clamped.h !== win.frame.h){
+      this.commitFrame(win, clamped, true);
+      win.frame = clamped;
+      this.persistGeometry(win);
+    }
   }
 
   cycle(){
@@ -2088,28 +2414,55 @@ class WindowManager extends EventTarget{
     this.order.unshift(current);
     this.reorderZ();
     const nextId = this.order[this.order.length - 1];
-    announce(`${this.wins.get(nextId)?.app.name} focused`);
+    const win = this.wins.get(nextId);
+    announce(`${win?.app.name} focused`);
     this.dispatchEvent(new CustomEvent('focuschange', { detail:{ id: nextId } }));
+
+    win?.el.querySelector('[data-drag]')?.focus();
+    this.checkInvariants('cycle');
+  }
+
+  checkInvariants(scope){
+    if(!DEV) return;
+    const seen = new Set();
+    this.order.forEach(id => {
+      if(seen.has(id)) invariantWarn(scope, `duplicate id "${id}" in order`);
+      seen.add(id);
+      if(!this.wins.has(id)) invariantWarn(scope, `order contains "${id}" with no matching window`);
+    });
+    this.wins.forEach(win => {
+      if(!win.tabs.includes(win.activeTab)){
+        invariantWarn(scope, `window "${win.id}" activeTab "${win.activeTab}" not in its own tabs`);
+      }
+      win.tabs.forEach(t => {
+        if(!win.panes.has(t)) invariantWarn(scope, `window "${win.id}" tab "${t}" has no pane`);
+      });
+      win.panes.forEach((_, paneId) => {
+        if(!win.tabs.includes(paneId)) invariantWarn(scope, `window "${win.id}" has a pane for "${paneId}" that isn't a tab`);
+      });
+    });
+    this.embed.frames.forEach((_, appId) => {
+      if(!this.findWin(appId)) invariantWarn(scope, `mounted frame "${appId}" has no owning window`);
+    });
   }
 
   bindDrag(win){
     const handle = win.el.querySelector('[data-drag]');
     const mobileQuery = matchMedia('(max-width: 768px)');
-    if(mobileQuery.matches){ this.bindMobileSheet(win, handle); return; }
-    let offset = null;
-    let preview = null;
-    let mergeTargetId = null;
-    let startLeft = 0, startTop = 0;
-    let curDx = 0, curDy = 0;
-    let lastPointer = null;
-    let rafId = null;
-    let activeZone = null;
+    let mode = null;
+
+    let offset = null, preview = null, mergeTargetId = null;
+    let startLeft = 0, startTop = 0, curDx = 0, curDy = 0;
+    let lastPointer = null, rafId = null, activeZone = null;
+
+    let sheetStartY = null, sheetLastY = null, sheetRafId = null;
 
     const getPreviewEl = () => {
       if(!preview){
         preview = document.createElement('div');
         preview.className = 'snap-preview';
         this.root.appendChild(preview);
+        win._snapPreviewEl = preview;
       }
       return preview;
     };
@@ -2118,34 +2471,7 @@ class WindowManager extends EventTarget{
       document.querySelectorAll('.win-tb.is-drop-target').forEach(el => el.classList.remove('is-drop-target'));
     };
 
-    const snapZone = (x, y) => {
-      const topbar = document.querySelector('.topbar');
-      const topY = topbar ? topbar.getBoundingClientRect().bottom : 0;
-      if(y <= topY + EDGE_ZONE) return 'top';
-      if(x <= EDGE_ZONE) return y < innerHeight / 2 ? 'top-left' : 'bottom-left';
-      if(x >= innerWidth - EDGE_ZONE) return y < innerHeight / 2 ? 'top-right' : 'bottom-right';
-      if(x <= EDGE_ZONE + 40) return 'left';
-      if(x >= innerWidth - EDGE_ZONE - 40) return 'right';
-      return null;
-    };
-
-    const zoneRect = (zone) => {
-      const topbar = document.querySelector('.topbar');
-      const top = topbar ? topbar.getBoundingClientRect().bottom : 0;
-      const fullH = innerHeight - top;
-      const map = {
-        top: { x:8, y:top + 4, w: innerWidth - 16, h: fullH - 8 },
-        left: { x:8, y:top + 4, w: innerWidth / 2 - 12, h: fullH - 8 },
-        right: { x: innerWidth / 2 + 4, y:top + 4, w: innerWidth / 2 - 12, h: fullH - 8 },
-        'top-left': { x:8, y:top + 4, w: innerWidth / 2 - 12, h: fullH / 2 - 8 },
-        'top-right': { x: innerWidth / 2 + 4, y:top + 4, w: innerWidth / 2 - 12, h: fullH / 2 - 8 },
-        'bottom-left': { x:8, y: top + fullH / 2 + 2, w: innerWidth / 2 - 12, h: fullH / 2 - 8 },
-        'bottom-right': { x: innerWidth / 2 + 4, y: top + fullH / 2 + 2, w: innerWidth / 2 - 12, h: fullH / 2 - 8 }
-      };
-      return map[zone];
-    };
-
-    const processFrame = () => {
+    const desktopProcessFrame = () => {
       rafId = null;
       if(!offset || !lastPointer) return;
       const rawY = lastPointer.y - offset.y;
@@ -2153,7 +2479,7 @@ class WindowManager extends EventTarget{
       const y = Math.max(4, rawY);
       curDx = x - startLeft;
       curDy = y - startTop;
-      win.el.style.transform = `translate3d(${curDx}px, ${curDy}px, 0)`;
+      win.el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 
       const hit = document.elementFromPoint(lastPointer.x, lastPointer.y);
       const targetTb = hit ? hit.closest('.win-tb') : null;
@@ -2170,132 +2496,137 @@ class WindowManager extends EventTarget{
         return;
       }
 
-      const zone = snapZone(lastPointer.x, lastPointer.y);
+      const zone = this.snapZoneFor(lastPointer.x, lastPointer.y);
       if(zone !== activeZone){
         activeZone = zone;
         const el = getPreviewEl();
         if(zone){
-          const r = zoneRect(zone);
-          Object.assign(el.style, { left:r.x + 'px', top:r.y + 'px', width:r.w + 'px', height:r.h + 'px', opacity:'1' });
+          const r = this.zoneRectFor(zone);
+
+          const fromTransform = el.style.transform || `translate3d(${r.x}px, ${r.y}px, 0)`;
+          el.style.opacity = '1';
+          animate(el, [
+            { transform: fromTransform, width: el.style.width || r.w + 'px', height: el.style.height || r.h + 'px' },
+            { transform:`translate3d(${r.x}px, ${r.y}px, 0)`, width:r.w + 'px', height:r.h + 'px' }
+          ], SPRING.snappy);
         }else{
           el.style.opacity = '0';
         }
       }
     };
+    const desktopSchedule = () => { if(rafId === null) rafId = requestAnimationFrame(desktopProcessFrame); };
 
-    const schedule = () => {
-      if(rafId === null) rafId = requestAnimationFrame(processFrame);
+    const sheetProcessFrame = () => {
+      sheetRafId = null;
+      if(sheetStartY === null || sheetLastY === null) return;
+      const dy = Math.max(0, sheetLastY - sheetStartY);
+      win.el.style.transform = `translate3d(0, ${dy}px, 0)`;
     };
+    const sheetSchedule = () => { if(sheetRafId === null) sheetRafId = requestAnimationFrame(sheetProcessFrame); };
 
     handle.addEventListener('pointerdown', e => {
-      if(e.target.closest('.wc') || win.maximized) return;
+
+      mode = mobileQuery.matches ? 'mobile' : 'desktop';
+      if(mode === 'mobile'){
+        if(e.target.closest('.wc, [data-focus-content]')){ mode = null; return; }
+        cancelSpringsFor(win.el);
+        sheetStartY = e.clientY;
+        sheetLastY = e.clientY;
+        try{ handle.setPointerCapture(e.pointerId); }catch(err){}
+        win.el.style.transition = 'none';
+        this.focus(win.id);
+        return;
+      }
+      if(e.target.closest('.wc, [data-focus-content]') || win.maximized){ mode = null; return; }
+      cancelSpringsFor(win.el);
       const rect = win.el.getBoundingClientRect();
       offset = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-      const parsedLeft = parseFloat(win.el.style.left);
-      const parsedTop = parseFloat(win.el.style.top);
-      startLeft = Number.isNaN(parsedLeft) ? rect.left : parsedLeft;
-      startTop = Number.isNaN(parsedTop) ? rect.top : parsedTop;
+      startLeft = win.frame.x;
+      startTop = win.frame.y;
       curDx = 0; curDy = 0;
       lastPointer = { x:e.clientX, y:e.clientY };
-      try{ handle.setPointerCapture(e.pointerId); }catch(err){ /* unsupported in this environment */ }
+      try{ handle.setPointerCapture(e.pointerId); }catch(err){}
       win.el.classList.add('is-drag-live');
+      win.el.style.pointerEvents = 'none';
       this.focus(win.id);
     });
 
     handle.addEventListener('pointermove', e => {
-      if(!offset) return;
-      lastPointer = { x:e.clientX, y:e.clientY };
-      schedule();
+      if(mode === 'mobile'){
+        if(sheetStartY === null) return;
+        sheetLastY = e.clientY;
+        sheetSchedule();
+      }else if(mode === 'desktop'){
+        if(!offset) return;
+        lastPointer = { x:e.clientX, y:e.clientY };
+        desktopSchedule();
+      }
     });
 
     ['pointerup', 'pointercancel'].forEach(evt => handle.addEventListener(evt, e => {
-      if(!offset) return;
+      if(mode === 'mobile'){
+        if(sheetStartY === null) return;
+        if(sheetRafId !== null){ cancelAnimationFrame(sheetRafId); sheetRafId = null; }
+        const dy = Math.max(0, (sheetLastY ?? e.clientY) - sheetStartY);
+        win.el.style.transition = '';
+        sheetStartY = null; sheetLastY = null;
+        if(dy > 140){
+          this.close(win.id);
+        }else{
+          applyFrameStyles(win.el, win.frame);
+        }
+        mode = null;
+        return;
+      }
+      if(mode !== 'desktop' || !offset) return;
       if(rafId !== null){ cancelAnimationFrame(rafId); rafId = null; }
       offset = null;
       lastPointer = null;
       win.el.classList.remove('is-drag-live');
-      win.el.style.transform = '';
-      win.el.style.left = (startLeft + curDx) + 'px';
-      win.el.style.top = (startTop + curDy) + 'px';
+      win.el.style.pointerEvents = '';
       clearDropHighlight();
+      if(preview) preview.style.opacity = '0';
+
       if(mergeTargetId){
         const targetId = mergeTargetId;
         mergeTargetId = null;
+        activeZone = null;
+        mode = null;
         this.mergeInto(win.id, targetId);
         return;
       }
       if(activeZone){
-        const r = zoneRect(activeZone);
-        win.maximized = activeZone === 'top';
-        this.animateGeo(win.el, r);
-        win.geo = r;
-        this.persistGeometry(win);
-        if(preview) preview.style.opacity = '0';
+        this.snap(win.id, activeZone);
         activeZone = null;
       }else{
-        win.geo = { ...win.geo, x: parseFloat(win.el.style.left), y: parseFloat(win.el.style.top) };
+        const finalFrame = { ...win.frame, x: startLeft + curDx, y: startTop + curDy };
+        applyFrameStyles(win.el, finalFrame);
+        win.frame = finalFrame;
         this.persistGeometry(win);
       }
-    }));
-  }
-
-  bindMobileSheet(win, handle){
-    let startY = null;
-    let lastY = null;
-    let rafId = null;
-
-    const processFrame = () => {
-      rafId = null;
-      if(startY === null || lastY === null) return;
-      const dy = Math.max(0, lastY - startY);
-      win.el.style.transform = `translate3d(0, ${dy}px, 0)`;
-    };
-    const schedule = () => { if(rafId === null) rafId = requestAnimationFrame(processFrame); };
-
-    handle.addEventListener('pointerdown', e => {
-      if(e.target.closest('.wc')) return;
-      startY = e.clientY;
-      lastY = e.clientY;
-      try{ handle.setPointerCapture(e.pointerId); }catch(err){ /* unsupported in this environment */ }
-      win.el.style.transition = 'none';
-    });
-    handle.addEventListener('pointermove', e => {
-      if(startY === null) return;
-      lastY = e.clientY;
-      schedule();
-    });
-    ['pointerup', 'pointercancel'].forEach(evt => handle.addEventListener(evt, e => {
-      if(startY === null) return;
-      if(rafId !== null){ cancelAnimationFrame(rafId); rafId = null; }
-      const dy = Math.max(0, (lastY ?? e.clientY) - startY);
-      win.el.style.transition = '';
-      startY = null; lastY = null;
-      if(dy > 140){
-        this.close(win.id);
-      }else{
-        win.el.style.transform = '';
-      }
+      mode = null;
     }));
   }
 
   bindResize(win){
-    if(matchMedia('(max-width: 768px)').matches) return;
+    let sharedGhost = null;
+    const getGhost = () => {
+      if(!sharedGhost){
+        sharedGhost = document.createElement('div');
+        sharedGhost.className = 'resize-ghost';
+        this.root.appendChild(sharedGhost);
+        win._resizeGhostEl = sharedGhost;
+      }
+      return sharedGhost;
+    };
+
     win.el.querySelectorAll('[data-resize]').forEach(handle => {
       const dir = handle.dataset.resize;
       let start = null;
-      let ghost = null;
       let lastPointer = null;
       let rafId = null;
       let finalGeo = null;
-
-      const getGhost = () => {
-        if(!ghost){
-          ghost = document.createElement('div');
-          ghost.className = 'resize-ghost';
-          this.root.appendChild(ghost);
-        }
-        return ghost;
-      };
+      let snapshotEl = null;
 
       const processFrame = () => {
         rafId = null;
@@ -2320,13 +2651,25 @@ class WindowManager extends EventTarget{
       const schedule = () => { if(rafId === null) rafId = requestAnimationFrame(processFrame); };
 
       handle.addEventListener('pointerdown', e => {
+
+        if(matchMedia('(max-width: 768px)').matches) return;
         e.stopPropagation();
         this.focus(win.id);
-        start = { x:e.clientX, y:e.clientY, rect: win.el.getBoundingClientRect() };
+        cancelSpringsFor(win.el);
+        start = { x:e.clientX, y:e.clientY, rect: { left: win.frame.x, top: win.frame.y, width: win.frame.w, height: win.frame.h } };
         lastPointer = { x:e.clientX, y:e.clientY };
         finalGeo = null;
-        try{ handle.setPointerCapture(e.pointerId); }catch(err){ /* unsupported in this environment */ }
+        try{ handle.setPointerCapture(e.pointerId); }catch(err){}
         win.el.classList.add('is-resize-live');
+
+        const activeApp = findById(win.activeTab);
+        const pane = win.panes.get(win.activeTab);
+        if(activeApp?.poster && pane){
+          snapshotEl = document.createElement('div');
+          snapshotEl.className = 'resize-snapshot';
+          snapshotEl.style.backgroundImage = `url("${activeApp.poster}")`;
+          pane.appendChild(snapshotEl);
+        }
       });
       handle.addEventListener('pointermove', e => {
         if(!start) return;
@@ -2337,15 +2680,14 @@ class WindowManager extends EventTarget{
         if(!start) return;
         if(rafId !== null){ cancelAnimationFrame(rafId); rafId = null; }
         win.el.classList.remove('is-resize-live');
-        if(ghost) ghost.style.opacity = '0';
+        if(sharedGhost) sharedGhost.style.opacity = '0';
+        snapshotEl?.remove();
+        snapshotEl = null;
         start = null;
         lastPointer = null;
         if(finalGeo){
-          win.el.style.left = finalGeo.x + 'px';
-          win.el.style.top = finalGeo.y + 'px';
-          win.el.style.width = finalGeo.w + 'px';
-          win.el.style.height = finalGeo.h + 'px';
-          win.geo = { ...finalGeo };
+          applyFrameStyles(win.el, finalGeo);
+          win.frame = { ...finalGeo };
           this.persistGeometry(win);
         }
         finalGeo = null;
@@ -2354,22 +2696,19 @@ class WindowManager extends EventTarget{
   }
 }
 
-
-/* ---- js/dock.js ---- */
-
 const BASE = 52;
 const PEAK_SCALE = 1.35;
 const RADIUS = 110;
 const LERP = 0.28;
 const SETTLE_EPS = 0.001;
 const DRAG_THRESHOLD = 6;
+const TOOLTIP_DELAY = 400;
 
 class Dock{
-  constructor(el, apps, { onLaunch, wm }){
+  constructor(el, apps, { onLaunch }){
     this.el = el;
     this.apps = apps;
     this.onLaunch = onLaunch;
-    this.wm = wm;
     this.tiles = [];
     this.mouseX = null;
     this.hovering = false;
@@ -2377,10 +2716,17 @@ class Dock{
     this.draggingId = null;
     this.rafId = null;
     this.running = false;
+    this._lastTick = null;
+
+    this.openIds = new Set();
+    this.focusedId = null;
+    this.tooltipEl = null;
+    this.tooltipTimer = null;
     this.render();
     this.roving = rovingTabindex(this.el, '.dock-tile');
     this.bindMagnify();
     this.bindLaunchAndDrag();
+    this.bindTooltip();
     addEventListener('resize', () => this.cacheRects());
   }
 
@@ -2392,12 +2738,13 @@ class Dock{
       tile.type = 'button';
       tile.className = 'dock-tile';
       tile.dataset.app = app.id;
-      tile.title = app.name;
       tile.setAttribute('aria-label', `${app.name}, ${app.accel ? `shortcut control ${app.accel}` : 'app'}`);
       tile.tabIndex = -1;
-      tile.innerHTML = `
+      tile.innerHTML = html`
         <svg class="icon" aria-hidden="true"><use href="#i-${app.icon}"></use></svg>
         <span class="dock-dot" data-open aria-hidden="true"></span>`;
+      tile.classList.toggle('has-window', this.openIds.has(app.id));
+      tile.classList.toggle('is-focused', this.focusedId === app.id);
       this.el.appendChild(tile);
       return { id: app.id, app, el: tile, cur: 1, target: 1, shift: 0, curShift: 0, centerX: 0 };
     });
@@ -2406,19 +2753,23 @@ class Dock{
   }
 
   cacheRects(){
+
+    if(!this.tiles.length) return;
+    const parent = this.tiles[0].el.offsetParent;
+    const baseLeft = parent ? parent.getBoundingClientRect().left : 0;
     this.tiles.forEach(t => {
-      const r = t.el.getBoundingClientRect();
-      t.centerX = r.left + r.width / 2;
+      t.centerX = baseLeft + t.el.offsetLeft + t.el.offsetWidth / 2;
     });
   }
 
   setOpenState(appId, isOpen){
+    if(isOpen) this.openIds.add(appId); else this.openIds.delete(appId);
     const t = this.tiles.find(t => t.id === appId);
-    if(!t) return;
-    t.el.classList.toggle('has-window', isOpen);
+    if(t) t.el.classList.toggle('has-window', isOpen);
   }
 
   setActive(appId){
+    this.focusedId = appId;
     this.tiles.forEach(t => t.el.classList.toggle('is-focused', t.id === appId));
   }
 
@@ -2437,10 +2788,16 @@ class Dock{
     if(this.running) return;
     this.running = true;
     this.el.classList.add('is-animating');
-    this.rafId = requestAnimationFrame(() => this.tick());
+    this._lastTick = null;
+    this.rafId = requestAnimationFrame(t => this.tick(t));
   }
 
-  tick(){
+  tick(timestamp){
+
+    const dt = this._lastTick ? Math.min(48, timestamp - this._lastTick) : 16.667;
+    this._lastTick = timestamp;
+    const k = 1 - Math.pow(1 - LERP, dt / 16.667);
+
     let settled = true;
     const extras = this.tiles.map(t => {
       let scale = 1;
@@ -2466,8 +2823,8 @@ class Dock{
       const dScale = t.target - t.cur;
       const dShift = t.shift - t.curShift;
       if(Math.abs(dScale) > SETTLE_EPS || Math.abs(dShift) > SETTLE_EPS) settled = false;
-      t.cur += dScale * LERP;
-      t.curShift += dShift * LERP;
+      t.cur += dScale * k;
+      t.curShift += dShift * k;
       t.el.style.transform = `translateX(${t.curShift.toFixed(2)}px) scale(${t.cur.toFixed(4)})`;
     });
 
@@ -2476,7 +2833,14 @@ class Dock{
       this.el.classList.remove('is-animating');
       return;
     }
-    this.rafId = requestAnimationFrame(() => this.tick());
+    this.rafId = requestAnimationFrame(t2 => this.tick(t2));
+  }
+
+  bounce(id){
+    const t = this.tiles.find(t => t.id === id);
+    if(!t || reduced()) return;
+    t.cur = Math.max(t.cur, 1) * 1.22;
+    this.wake();
   }
 
   bindLaunchAndDrag(){
@@ -2489,7 +2853,7 @@ class Dock{
       this.pressedId = id;
       this.wake();
       dragState = { id, tile, startX: e.clientX, moved:false };
-      try{ tile.setPointerCapture(e.pointerId); }catch(err){ /* unsupported in this environment; drag/launch still functions, just without capture outside the tile's bounds */ }
+      try{ tile.setPointerCapture(e.pointerId); }catch(err){}
     });
 
     this.el.addEventListener('pointermove', e => {
@@ -2522,7 +2886,7 @@ class Dock{
         this.render();
       }else{
         const app = this.apps.find(a => a.id === id);
-        if(app) this.onLaunch(app, tile.getBoundingClientRect());
+        if(app){ this.bounce(id); this.onLaunch(app, tile.getBoundingClientRect()); }
       }
       dragState = null;
       this.wake();
@@ -2534,7 +2898,7 @@ class Dock{
       if(e.key === 'Enter' || e.key === ' '){
         e.preventDefault();
         const app = this.apps.find(a => a.id === tile.dataset.app);
-        if(app) this.onLaunch(app, tile.getBoundingClientRect());
+        if(app){ this.bounce(tile.dataset.app); this.onLaunch(app, tile.getBoundingClientRect()); }
       }
     });
 
@@ -2549,13 +2913,40 @@ class Dock{
       ]);
     });
   }
-}
 
-
-/* ---- js/palette.js ---- */
-
-function esc(s){
-  return String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  bindTooltip(){
+    const show = tile => {
+      const app = this.apps.find(a => a.id === tile.dataset.app);
+      if(!app) return;
+      if(!this.tooltipEl){
+        this.tooltipEl = document.createElement('div');
+        this.tooltipEl.className = 'dock-tooltip';
+        this.tooltipEl.setAttribute('role', 'tooltip');
+      }
+      this.tooltipEl.textContent = app.name;
+      if(this.tooltipEl.parentElement !== tile) tile.appendChild(this.tooltipEl);
+      this.tooltipEl.style.left = '50%';
+      requestAnimationFrame(() => this.tooltipEl?.classList.add('is-visible'));
+    };
+    const hide = () => {
+      clearTimeout(this.tooltipTimer);
+      this.tooltipTimer = null;
+      this.tooltipEl?.classList.remove('is-visible');
+    };
+    this.el.addEventListener('pointerover', e => {
+      const tile = e.target.closest('.dock-tile');
+      if(!tile) return;
+      clearTimeout(this.tooltipTimer);
+      this.tooltipTimer = setTimeout(() => show(tile), TOOLTIP_DELAY);
+    });
+    this.el.addEventListener('pointerout', e => {
+      const tile = e.target.closest('.dock-tile');
+      if(!tile) return;
+      if(e.relatedTarget && tile.contains(e.relatedTarget)) return;
+      hide();
+    });
+    this.el.addEventListener('pointerdown', hide, true);
+  }
 }
 
 function fuzzyMatch(query, text){
@@ -2595,6 +2986,8 @@ function looksLikeUrl(q){
   }catch(err){ return false; }
 }
 
+const PALETTE_WIDE_QUERY = matchMedia('(min-width: 900px)');
+
 class Palette{
   constructor(el, ctx){
     this.el = el;
@@ -2606,6 +2999,7 @@ class Palette{
     this.results = [];
     this.activeIndex = 0;
     this.releaseFocus = null;
+    this._justOpened = false;
     this.bind();
   }
 
@@ -2617,7 +3011,10 @@ class Palette{
     if(this.isOpen()) return;
     this.el.classList.add('is-open');
     this.el.setAttribute('aria-hidden', 'false');
+
+    this.input.setAttribute('aria-expanded', 'true');
     this.input.value = '';
+    this._justOpened = true;
     this.render('');
     this.releaseFocus = trapFocus(this.el, { restoreFocusTo: document.activeElement });
   }
@@ -2627,6 +3024,7 @@ class Palette{
     this.hidePreview();
     this.el.classList.remove('is-open');
     this.el.setAttribute('aria-hidden', 'true');
+    this.input.setAttribute('aria-expanded', 'false');
     this.releaseFocus?.();
     this.releaseFocus = null;
   }
@@ -2674,18 +3072,22 @@ class Palette{
     return rows;
   }
 
-  render(raw){
-    const { mode, q } = this.parseMode(raw);
+  render(rawQuery){
+    const { mode, q } = this.parseMode(rawQuery);
     this.mode = mode;
-    this.badge.classList.toggle('show', raw.length > 0);
-    this.badge.textContent = mode === 'cmd' ? 'Commands' : mode === 'app' ? 'Apps' : '↵ Open · ⌘↵ New window · ⇧↵ Preview · ⌥↵ New tab';
+    this.badge.classList.toggle('show', rawQuery.length > 0);
+    const allHint = PALETTE_WIDE_QUERY.matches
+      ? '↵ Open · ⌘↵ New window · ⌥↵ New tab'
+      : '↵ Open · ⌘↵ New window · ⇧↵ Preview · ⌥↵ New tab';
+    this.badge.textContent = mode === 'cmd' ? 'Commands' : mode === 'app' ? 'Apps' : allHint;
     this.list.innerHTML = '';
     this.results = this.gather(mode, q);
 
     if(!this.results.length){
-      this.list.innerHTML = `<div class="palette-empty">No results for &ldquo;<strong>${esc(q)}</strong>&rdquo;</div>`;
+      this.list.innerHTML = html`<div class="palette-empty">No results for &ldquo;<strong>${q}</strong>&rdquo;</div>`;
       this.activeIndex = -1;
       this.input.removeAttribute('aria-activedescendant');
+      this.updateRailPreview();
       return;
     }
 
@@ -2695,6 +3097,8 @@ class Palette{
         lastGroup = r.group;
         const h = document.createElement('div');
         h.className = 'palette-group-h';
+
+        h.setAttribute('role', 'presentation');
         h.textContent = r.group;
         this.list.appendChild(h);
       }
@@ -2705,17 +3109,17 @@ class Palette{
       row.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
 
       if(r.kind === 'url'){
-        row.innerHTML = `
+        row.innerHTML = html`
           <div class="palette-icon"><svg class="icon"><use href="#i-external"></use></svg></div>
-          <div class="palette-meta"><div class="palette-name">Open ${esc(r.url)}</div><div class="palette-sub">New window</div></div>
+          <div class="palette-meta"><div class="palette-name">Open ${r.url}</div><div class="palette-sub">New window</div></div>
           <div class="palette-hint mono">↵</div>`;
       }else{
         const { item } = r;
-        row.innerHTML = `
+        row.innerHTML = html`
           <div class="palette-icon"><svg class="icon"><use href="#i-${item.icon || 'search'}"></use></svg></div>
-          <div class="palette-meta"><div class="palette-name">${highlight(item.name, r.indices)}</div><div class="palette-sub">${item.kind === 'app' ? 'App' : 'Command'}${item.group ? ' · ' + esc(item.group) : ''}</div></div>
-          ${item.kind === 'app' ? `<button type="button" class="palette-escape" data-escape tabindex="-1" aria-label="Open ${esc(item.name)} in a new tab, skipping preview"><svg class="icon"><use href="#i-external"></use></svg></button>` : ''}
-          <div class="palette-hint mono">${item.accel ? esc(item.accel) : '↵'}</div>`;
+          <div class="palette-meta"><div class="palette-name">${raw(highlight(item.name, r.indices))}</div><div class="palette-sub">${item.kind === 'app' ? 'App' : 'Command'}${item.group ? ' · ' + item.group : ''}</div></div>
+          ${raw(item.kind === 'app' ? `<button type="button" class="palette-escape" data-escape tabindex="-1" aria-label="Open ${esc(item.name)} in a new tab, skipping preview"><svg class="icon"><use href="#i-external"></use></svg></button>` : '')}
+          <div class="palette-hint mono">${item.accel || '↵'}</div>`;
         const escapeBtn = row.querySelector('[data-escape]');
         if(escapeBtn){
           escapeBtn.addEventListener('click', e => {
@@ -2732,6 +3136,18 @@ class Palette{
 
     this.activeIndex = 0;
     this.input.setAttribute('aria-activedescendant', 'palette-item-0');
+    this.updateRailPreview();
+
+    if(this._justOpened && !reduced()){
+      const rows = Array.from(this.list.querySelectorAll('.palette-item'));
+      rows.slice(0, 8).forEach((row, i) => {
+        animate(row, [
+          { opacity:0, transform:'translateY(4px)' },
+          { opacity:1, transform:'translateY(0)' }
+        ], { duration:170, delay: i * 12, easing:EASE.out });
+      });
+    }
+    this._justOpened = false;
   }
 
   setActive(i){
@@ -2744,6 +3160,7 @@ class Palette{
       if(active) el.scrollIntoView({ block:'nearest' });
     });
     this.input.setAttribute('aria-activedescendant', `palette-item-${i}`);
+    this.updateRailPreview();
   }
 
   move(delta){
@@ -2752,15 +3169,63 @@ class Palette{
     this.setActive(next);
   }
 
+  updateRailPreview(){
+    if(!PALETTE_WIDE_QUERY.matches) return;
+    const r = this.results[this.activeIndex];
+    const item = r && r.kind !== 'url' ? r.item : null;
+    if(item && item.kind === 'app' && item.poster){
+      this.showPreview(item);
+    }else{
+      this.preview.innerHTML = '';
+      this.preview.hidden = false;
+      this.preview.classList.remove('is-visible');
+    }
+  }
+
   showPreview(item){
     if(item.kind !== 'app' || !item.poster) return;
     this.preview.hidden = false;
-    this.preview.innerHTML = `
-      <img src="${item.poster}" alt="" class="palette-preview-poster" />
+    const origin = originOf(item.url) || '';
+    const hostname = origin ? origin.replace(/^https?:\/\//, '') : item.url;
+    const isOpen = this.ctx.wm.isOpen(item.id);
+    this.preview.innerHTML = html`
+      <div class="palette-preview-media">
+        <img src="${item.poster}" alt="" class="palette-preview-art" />
+      </div>
       <div class="palette-preview-body">
-        <div class="palette-preview-name">${esc(item.name)}</div>
-        <div class="palette-preview-url mono">${esc(item.url.replace(/^https?:\/\//, ''))}</div>
+        <div class="palette-preview-name">${item.name}</div>
+        <div class="palette-preview-id">
+          <img class="palette-preview-favicon" data-favicon src="${origin}/favicon.ico" alt="" />
+          <span class="mono palette-preview-host">${hostname}</span>
+        </div>
+        <div class="palette-preview-meta">
+          ${raw(item.group ? `<span class="palette-preview-tag">${esc(item.group)}</span>` : '')}
+          ${raw(item.accel ? `<span class="palette-preview-key mono">${esc(item.accel)}</span>` : '')}
+          ${raw(isOpen ? `<span class="palette-preview-status"><span class="live-dot is-live"></span>Open</span>` : '')}
+        </div>
+        <div class="palette-preview-actions">
+          <button type="button" class="btn-sig" data-act="open">
+            <svg class="icon"><use href="#i-${item.icon || 'search'}"></use></svg>
+            Open
+          </button>
+          <button type="button" class="palette-preview-btn" data-act="newwindow">
+            <svg class="icon"><use href="#i-expand"></use></svg>
+            New window
+          </button>
+          <button type="button" class="palette-preview-btn" data-act="external">
+            <svg class="icon"><use href="#i-external"></use></svg>
+            New tab
+          </button>
+        </div>
       </div>`;
+    const favicon = this.preview.querySelector('[data-favicon]');
+    favicon?.addEventListener('error', () => { favicon.style.display = 'none'; });
+    this.preview.querySelectorAll('[data-act]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        this.commit(btn.dataset.act);
+      });
+    });
     requestAnimationFrame(() => {
       requestAnimationFrame(() => this.preview.classList.add('is-visible'));
     });
@@ -2768,6 +3233,7 @@ class Palette{
 
   hidePreview(){
     if(!this.preview || this.preview.hidden) return;
+    if(PALETTE_WIDE_QUERY.matches) return;
     const el = this.preview;
     el.classList.remove('is-visible');
     const settle = () => {
@@ -2789,7 +3255,7 @@ class Palette{
     }
     const { item } = r;
     if(item.kind === 'app'){
-      if(action === 'preview'){ this.showPreview(item); return; }
+      if(action === 'preview'){ if(!PALETTE_WIDE_QUERY.matches) this.showPreview(item); return; }
       if(action === 'external'){ this.hidePreview(); openExternal(item); this.close(); return; }
       this.hidePreview();
       const dockRect = this.ctx.dock.rectFor(item.id);
@@ -2815,7 +3281,7 @@ class Palette{
         else this.commit('open');
       }else if(e.key === 'Escape'){
         e.stopPropagation();
-        if(!this.preview.hidden){ this.hidePreview(); }
+        if(!PALETTE_WIDE_QUERY.matches && !this.preview.hidden){ this.hidePreview(); }
         else this.close();
       }
     });
@@ -2823,20 +3289,14 @@ class Palette{
   }
 }
 
-
-/* ---- js/desktop.js ---- */
-
 class Desktop{
   constructor(root, ctx){
     this.root = root;
     this.ctx = ctx;
-    this.clockEl = root.querySelector('[data-clock]');
-    this.dateEl = root.querySelector('[data-date]');
     this.searchEl = root.querySelector('[data-search]');
     this.jumpEl = root.querySelector('[data-jump]');
     this.jumpWrap = root.querySelector('[data-jump-wrap]');
     this.pinnedEl = root.querySelector('[data-pinned]');
-    this.bindClock();
     this.bindSearch();
     this.renderJumpBack();
     this.renderPinned();
@@ -2844,24 +3304,10 @@ class Desktop{
     this.bindPullToSearch();
   }
 
-  bindClock(){
-    const tick = () => {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      if(this.clockEl) this.clockEl.textContent = `${h}:${m}`;
-      if(this.dateEl) this.dateEl.textContent = now.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
-    };
-    tick();
-    setInterval(tick, 1000);
-  }
-
   bindSearch(){
     if(!this.searchEl) return;
-    this.searchEl.addEventListener('focus', () => {
-      this.ctx.palette.open();
-      this.searchEl.blur();
-    });
+
+    this.searchEl.addEventListener('click', () => this.ctx.palette.open());
   }
 
   renderJumpBack(){
@@ -2876,7 +3322,7 @@ class Desktop{
       const tile = document.createElement('button');
       tile.type = 'button';
       tile.className = 'jump-tile';
-      tile.innerHTML = `<svg class="icon"><use href="#i-${app.icon}"></use></svg><span>${app.name}</span>`;
+      tile.innerHTML = html`<svg class="icon"><use href="#i-${app.icon}"></use></svg><span>${app.name}</span>`;
       tile.addEventListener('click', () => this.ctx.launch(app, tile));
       tile.addEventListener('contextmenu', e => {
         e.preventDefault();
@@ -2900,7 +3346,7 @@ class Desktop{
       tile.className = 'pin-tile';
       tile.draggable = true;
       tile.dataset.id = id;
-      tile.innerHTML = `
+      tile.innerHTML = html`
         <svg class="icon"><use href="#i-${app.icon}"></use></svg>
         <span>${app.name}</span>`;
       tile.addEventListener('click', () => this.ctx.launch(app, tile));
@@ -2946,6 +3392,7 @@ class Desktop{
       const now = performance.now();
       if(now - last < 33) return;
       last = now;
+
       wallpaper.style.setProperty('--cx', e.clientX + 'px');
       wallpaper.style.setProperty('--cy', e.clientY + 'px');
     });
@@ -3003,28 +3450,57 @@ class Desktop{
   }
 }
 
+function startClock(){
+  let timer = null;
 
-/* ---- js/boot.js ---- */
+  function render(){
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    document.querySelectorAll('[data-clock], [data-topbar-clock]').forEach(el => { el.textContent = `${h}:${m}`; });
+    document.querySelectorAll('[data-date]').forEach(el => {
+      el.textContent = now.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+    });
+  }
+
+  function schedule(){
+    render();
+    const now = new Date();
+    const msToNextMinute = 60000 - (now.getSeconds() * 1000 + now.getMilliseconds());
+    timer = setTimeout(schedule, Math.max(250, msToNextMinute));
+  }
+
+  function stop(){
+    if(timer){ clearTimeout(timer); timer = null; }
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if(document.hidden) stop(); else schedule();
+  });
+
+  schedule();
+}
+
 function safeSessionGet(key){
   try{ return sessionStorage.getItem(key); }catch(err){ return null; }
 }
 
 function safeSessionSet(key, value){
-  try{ sessionStorage.setItem(key, value); }catch(err){ /* storage unavailable, proceed without persistence */ }
+  try{ sessionStorage.setItem(key, value); }catch(err){}
 }
 
 function runBoot(){
   const root = document.documentElement;
   const already = safeSessionGet('lxos:booted');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reducedPref = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if(already || reduced){
+  if(already || reducedPref){
+    root.classList.remove('booting');
     root.classList.add('boot-done');
     safeSessionSet('lxos:booted', '1');
     return;
   }
 
-  root.classList.add('booting');
   const stages = [['.substrate', 0], ['.topbar', 80], ['.dock-wrap', 160]];
   stages.forEach(([selector, delay]) => {
     const el = document.querySelector(selector);
@@ -3038,11 +3514,6 @@ function runBoot(){
     safeSessionSet('lxos:booted', '1');
   }, 600);
 }
-
-
-/* ---- js/main.js ---- */
-
-window.__lxTrapFocus = trapFocus;
 
 function applyPersistedAppearance(){
   store.applyTheme(store.effectiveTheme());
@@ -3124,7 +3595,6 @@ function init(){
   const dock = new Dock(dockEl, APPS, {
     onLaunch: (app, rect) => wm.open(app, { flipFrom: rect })
   });
-  wm.dockRectFor = id => dock.rectFor(id);
 
   const toggleTheme = () => { store.toggleTheme(); updateThemeIcon(); embed.broadcastTheme(); };
   const settings = initSettings(embed, toggleTheme);
@@ -3132,6 +3602,7 @@ function init(){
 
   const paletteEl = document.getElementById('palette');
   const palette = new Palette(paletteEl, ctx);
+  ctx.dock = dock;
 
   const desktopEl = document.getElementById('desktop');
   const desktop = new Desktop(desktopEl, {
@@ -3162,13 +3633,7 @@ function init(){
     if(!store.get('theme')){ store.applyTheme(store.effectiveTheme()); updateThemeIcon(); embed.broadcastTheme(); }
   });
 
-  const clockEls = document.querySelectorAll('[data-topbar-clock]');
-  setInterval(() => {
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2, '0');
-    const m = String(now.getMinutes()).padStart(2, '0');
-    clockEls.forEach(el => { el.textContent = `${h}:${m}`; });
-  }, 1000);
+  startClock();
 
   document.addEventListener('keydown', e => {
     const meta = e.metaKey || e.ctrlKey;
@@ -3177,7 +3642,8 @@ function init(){
     if(meta && e.key.toLowerCase() === 'm' && wm.focusedId){ e.preventDefault(); wm.minimizeFocused(); return; }
     if(meta && e.key === '`' && wm.order.length > 1){ e.preventDefault(); wm.cycle(); return; }
     if(meta && e.shiftKey && e.key.toLowerCase() === 'l'){ e.preventDefault(); toggleTheme(); return; }
-    if(e.ctrlKey && /^[1-9]$/.test(e.key)){
+
+    if(e.ctrlKey && /^[1-9]$/.test(e.key) && !isTypingTarget(e.target) && !palette.isOpen()){
       const app = APPS.find(a => a.accel === e.key);
       if(app){ e.preventDefault(); wm.open(app, { flipFrom: dock.rectFor(app.id) }); }
       return;
@@ -3194,7 +3660,8 @@ function init(){
 
   if('serviceWorker' in navigator){
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
+
+      navigator.serviceWorker.register('sw.js').catch(err => console.warn('Service worker registration failed:', err));
     });
   }
 }
@@ -3211,7 +3678,6 @@ try{
       </div>
     </div>`;
 }
-
 </script>
 </body>
 </html>
