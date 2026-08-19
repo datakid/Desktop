@@ -984,6 +984,11 @@ html.booting .substrate{ transform:none }
   <path d="M12 21.5s6.5-5.9 6.5-11A6.5 6.5 0 0 0 5.5 10.5c0 5.1 6.5 11 6.5 11Z"/>
   <circle cx="12" cy="10.5" r="2.3"/>
 </symbol>
+<symbol id="i-calculator" viewBox="0 0 24 24">
+  <rect x="5.5" y="3.5" width="13" height="17" rx="1.6"/>
+  <rect x="7.5" y="5.5" width="9" height="4" rx="0.8"/>
+  <path d="M7.8 13.2h.01M12 13.2h.01M16.2 13.2h.01M7.8 16.6h.01M12 16.6h.01M16.2 16.6h.01" stroke-width="2.4"/>
+</symbol>
 </svg>
 
 
@@ -1140,10 +1145,14 @@ const APPS = [
     url:'https://lx-search-kappa.vercel.app/', icon:'list',
     embed:true, poster:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgNDgwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZy1saXN0IiBjeD0iMjQlIiBjeT0iMTglIiByPSI5MCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMjAyNDJBIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzEyMTQxNyIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjQ4MCIgaGVpZ2h0PSI0ODAiIGZpbGw9InVybCgjZy1saXN0KSIvPgogIDxyZWN0IHdpZHRoPSI0ODAiIGhlaWdodD0iNDgwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyQTJFMzUiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE4MCwxODApIiBzdHJva2U9IiNGRkIwMUYiIHN0cm9rZS13aWR0aD0iMS42IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgPGcgdHJhbnNmb3JtPSJzY2FsZSg1KSI+PHBhdGggZD0iTTkgNi41aDExTTkgMTJoMTFNOSAxNy41aDExIi8+PGNpcmNsZSBjeD0iNC4zIiBjeT0iNi41IiByPSIxIi8+PGNpcmNsZSBjeD0iNC4zIiBjeT0iMTIiIHI9IjEiLz48Y2lyY2xlIGN4PSI0LjMiIGN5PSIxNy41IiByPSIxIi8+PC9nPgogIDwvZz48L3N2Zz4=',
     keywords:['index','search','directory'], accel:'6'
+  },
+  {
+    id:'calculator', name:'Calculator', kind:'app', group:'Reference',
+    url:'https://newlist-eta.vercel.app/', icon:'calculator',
+    embed:true, poster:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgNDgwIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZy1jYWxjdWxhdG9yIiBjeD0iMjQlIiBjeT0iMTglIiByPSI5MCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMjAyNDJBIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzEyMTQxNyIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjQ4MCIgaGVpZ2h0PSI0ODAiIGZpbGw9InVybCgjZy1jYWxjdWxhdG9yKSIvPgogIDxyZWN0IHdpZHRoPSI0ODAiIGhlaWdodD0iNDgwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyQTJFMzUiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE4MCwxODApIiBzdHJva2U9IiNGRkIwMUYiIHN0cm9rZS13aWR0aD0iMS42IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgPGcgdHJhbnNmb3JtPSJzY2FsZSg1KSI+PHJlY3QgeD0iNS41IiB5PSIzLjUiIHdpZHRoPSIxMyIgaGVpZ2h0PSIxNyIgcng9IjEuNiIvPjxyZWN0IHg9IjcuNSIgeT0iNS41IiB3aWR0aD0iOSIgaGVpZ2h0PSI0IiByeD0iMC44Ii8+PHBhdGggZD0iTTcuOCAxMy4yaC4wMU0xMiAxMy4yaC4wMU0xNi4yIDEzLjJoLjAxTTcuOCAxNi42aC4wMU0xMiAxNi42aC4wMU0xNi4yIDE2LjZoLjAxIiBzdHJva2Utd2lkdGg9IjIuNCIvPjwvZz4KICA8L2c+PC9zdmc+Cg==',
+    keywords:['price','cost','calculate','math'], accel:'7'
   }
 ];
-
-const PRICE_URL = 'https://newlist-eta.vercel.app/';
 
 const COMMANDS = [
   {
@@ -1157,12 +1166,6 @@ const COMMANDS = [
   {
     id:'toggle-transparency', name:'Toggle Reduce Transparency', kind:'cmd', icon:'wallpaper',
     run:(ctx)=>ctx.store.toggleReduceTransparency(), accel:null
-  },
-  {
-    id:'open-prices', name:'Open Prices', kind:'cmd', icon:'tag',
-    run:()=>{
-      window.open(PRICE_URL, '_blank', 'noopener,noreferrer');
-    }, accel:null
   },
   {
     id:'close-window', name:'Close Window', kind:'cmd', icon:'close',
