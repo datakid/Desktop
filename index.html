@@ -223,8 +223,17 @@ h1,h2,h3,.display{letter-spacing:var(--tr-display)}
   box-shadow:var(--edge);
 }
 .topbar-side{display:flex; align-items:center; gap:var(--s-3)}
-.topbar-logo{display:flex; align-items:center; gap:var(--s-2); font-size:var(--fs-13); font-weight:600; color:var(--tx-1)}
+.topbar-logo{width:auto; padding:0 var(--s-3) 0 var(--s-2); gap:var(--s-2); font-size:var(--fs-13); font-weight:600; color:var(--tx-1)}
 .topbar-logo .icon{width:16px; height:16px; color:var(--sig)}
+.topbar-sep{ width:var(--hair); height:18px; background:var(--line-1) }
+.topbar-focused{
+  display:flex; align-items:center; gap:var(--s-2);
+  height:32px; padding:0 var(--s-3) 0 var(--s-2); border-radius:var(--r-2);
+  color:var(--tx-2); font-size:var(--fs-13); max-width:220px;
+  transition:background var(--t-2) var(--e-out), color var(--t-2) var(--e-out);
+}
+.topbar-focused:hover{ background:var(--bg-hover); color:var(--tx-1) }
+.topbar-focused-name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
 .topbar-clock{font-size:var(--fs-13); color:var(--tx-2)}
 .topbar-btn{
   width:32px; height:32px; border-radius:var(--r-2);
@@ -235,11 +244,9 @@ h1,h2,h3,.display{letter-spacing:var(--tr-display)}
 .topbar-btn:hover{background:var(--bg-hover); color:var(--tx-1)}
 .topbar-btn:active{background:var(--bg-press); transform:scale(.92)}
 .topbar-btn .icon{width:17px; height:17px}
-.topbar-live{
-  width:6px; height:6px; border-radius:50%;
-  background:var(--tx-3); transition:background var(--t-2) var(--e-out), box-shadow var(--t-2) var(--e-out);
-}
-.topbar-live.is-live{ background:var(--live); box-shadow:0 0 0 3px var(--sig-dim) }
+.topbar-search-chip{ width:auto; padding:0 var(--s-3) 0 var(--s-2); gap:6px; border-radius:var(--r-f); background:var(--bg-hover) }
+.topbar-search-chip .mono{ font-size:var(--fs-11); color:var(--tx-3) }
+.topbar-search-chip:hover{ background:var(--bg-press) }
 
 html.booting .topbar,
 html.booting .dock-wrap,
@@ -284,6 +291,37 @@ html.booting .substrate{ transform:none }
   display:flex; align-items:center; justify-content:space-between;
   width:100%; padding:var(--s-2) 0; font-size:var(--fs-13); color:var(--tx-1);
 }
+
+.running-sheet{
+  position:fixed; inset:0; z-index:var(--z-palette);
+  display:none;
+  opacity:0; pointer-events:none;
+  transition:opacity var(--t-3) var(--e-out);
+}
+.running-sheet.is-open{ display:block; opacity:1; pointer-events:auto }
+.running-sheet-scrim{ position:absolute; inset:0; background:rgba(0,0,0,.32) }
+[data-theme="light"] .running-sheet-scrim{ background:rgba(24,22,18,.18) }
+.running-sheet-panel{
+  position:absolute; left:0; right:0; bottom:0;
+  max-height:60vh; overflow-y:auto;
+  background:var(--bg-float); border-top:var(--hair) solid var(--line-2);
+  border-radius:var(--r-4) var(--r-4) 0 0; box-shadow:var(--e3), var(--edge);
+  padding:var(--s-3) var(--s-4) calc(var(--s-4) + env(safe-area-inset-bottom));
+  transform:translateY(0);
+  transition:transform var(--t-3) var(--e-out);
+}
+.running-sheet:not(.is-open) .running-sheet-panel{ transform:translateY(100%) }
+.running-sheet-handle{ width:36px; height:4px; border-radius:var(--r-f); background:var(--line-2); margin:0 auto var(--s-3) }
+.running-sheet-row{
+  display:flex; align-items:center; gap:var(--s-3);
+  width:100%; padding:var(--s-3) var(--s-2); border-radius:var(--r-2);
+  color:var(--tx-1); font-size:var(--fs-14);
+}
+.running-sheet-row:active{ background:var(--bg-press) }
+.running-sheet-row .icon{ width:20px; height:20px; flex-shrink:0 }
+.running-sheet-row span{ flex:1; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.running-sheet-row .live-dot{ flex-shrink:0 }
+@media (min-width: 769px){ .running-sheet{ display:none !important } }
 .settings-val{ color:var(--tx-2); text-transform:capitalize }
 .settings-swatches{ gap:var(--s-2) }
 .swatch-group{ display:flex; gap:var(--s-2) }
@@ -346,13 +384,25 @@ html.booting .substrate{ transform:none }
   z-index:var(--z-dock);
 }
 .dock{
-  display:flex; align-items:flex-end; gap:var(--s-2);
+  display:flex; align-items:flex-end; gap:var(--s-3);
   padding:var(--s-2) var(--s-3);
   background:var(--bg-raise);
   border:var(--hair) solid var(--line-1);
   border-radius:var(--r-4);
   box-shadow:var(--e2), var(--edge);
 }
+.dock-tiles{ display:flex; align-items:flex-end; gap:var(--s-2) }
+.dock-divider{ width:var(--hair); height:36px; background:var(--line-1); flex-shrink:0; align-self:center }
+.dock-library-btn{
+  width:52px; height:52px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:var(--r-2);
+  color:var(--tx-2);
+  transition:background var(--t-2) var(--e-out), color var(--t-2) var(--e-out);
+}
+.dock-library-btn:hover{ background:var(--bg-hover); color:var(--tx-1) }
+.dock-library-btn:active{ background:var(--bg-press) }
+.dock-library-btn .icon{ width:20px; height:20px }
 .dock-tile{
   position:relative;
   width:52px; height:52px;
@@ -375,12 +425,12 @@ html.booting .substrate{ transform:none }
   position:absolute; bottom:-7px; left:50%; transform:translateX(-50%);
   width:4px; height:4px; border-radius:50%;
   background:var(--tx-1); opacity:0;
-  transition:opacity var(--t-2) var(--e-out);
+  transition:opacity var(--t-2) var(--e-out), width var(--t-2) var(--e-out), height var(--t-2) var(--e-out), background var(--t-2) var(--e-out), border-color var(--t-2) var(--e-out);
 }
-.dock-tile.has-window .dock-dot{ opacity:.85 }
-.dock-tile.has-window .dock-dot{ width:14px; border-radius:var(--r-f) }
+.dock-tile.has-window .dock-dot{ opacity:.85; width:14px; border-radius:var(--r-f) }
+.dock-tile.is-minimized .dock-dot{ opacity:.85; width:7px; height:7px; background:transparent; border:1.5px solid var(--tx-1) }
 
-.jump-tile, .pin-tile, .dock-tile{
+.jump-tile, .pin-tile, .dock-tile, .dock-library-btn, .topbar-focused{
   -webkit-tap-highlight-color:transparent;
 }
 
@@ -746,7 +796,12 @@ html.booting .substrate{ transform:none }
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   padding:calc(var(--s-8) * 2) var(--s-6) calc(var(--dock-reserve, var(--s-18)) + var(--s-4));
   overflow-y:auto;
+  opacity:1; filter:none;
+  transition:opacity var(--t-3) var(--e-out), filter var(--t-3) var(--e-out);
 }
+body:not([data-windows="0"]) .desktop{ opacity:.45; filter:blur(2px) }
+body:not([data-windows="0"]) .desktop-clockblock{ pointer-events:none }
+@media (prefers-reduced-motion: reduce){ .desktop{ transition:none } }
 .desktop-clockblock{ text-align:center; margin-bottom:var(--s-8); user-select:none }
 .desktop-clock{
   font-family:var(--f-mono); font-size:var(--fs-72); font-weight:500;
@@ -795,7 +850,11 @@ html.booting .substrate{ transform:none }
   display:grid; grid-template-columns:repeat(auto-fill, minmax(84px, 1fr));
   gap:var(--s-3);
 }
+.library-wrap{ width:min(680px, 92vw) }
+.library-wrap .jump-label{ display:flex; align-items:baseline; gap:6px }
+.library-count{ font-size:var(--fs-11); color:var(--tx-3); text-transform:none; letter-spacing:0; font-weight:500 }
 .pin-tile{
+  position:relative;
   display:flex; flex-direction:column; align-items:center; gap:var(--s-2);
   padding:var(--s-4) var(--s-2);
   border-radius:var(--r-3);
@@ -809,6 +868,7 @@ html.booting .substrate{ transform:none }
 .pin-tile.is-dragging{ opacity:.4 }
 .pin-tile .icon{ width:24px; height:24px; transition:color var(--t-2) var(--e-out) }
 .pin-tile span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100% }
+.pin-dot{ position:absolute; top:8px; right:8px; width:6px; height:6px; border-radius:50%; background:var(--sig) }
 
 @media (max-width: 768px){
   .desktop{ padding-top:calc(var(--s-8) * 2 + env(safe-area-inset-top)) }
@@ -1009,16 +1069,21 @@ html.booting .substrate{ transform:none }
 
 <header class="topbar chrome">
   <div class="topbar-side">
-    <div class="topbar-logo">
+    <button type="button" class="topbar-btn topbar-logo" data-lx-menu aria-label="Lx menu" aria-haspopup="menu">
       <svg class="icon" aria-hidden="true"><use href="#i-command"></use></svg>
       <span>Lx</span>
-    </div>
+    </button>
+    <div class="topbar-sep" aria-hidden="true"></div>
+    <button type="button" class="topbar-focused" data-topbar-focused hidden>
+      <span class="live-dot" data-topbar-focused-dot hidden></span>
+      <span class="topbar-focused-name" data-topbar-focused-name></span>
+    </button>
   </div>
   <div class="topbar-side">
     <span class="topbar-clock mono" data-topbar-clock></span>
-    <span class="topbar-live" data-topbar-live aria-hidden="true"></span>
-    <button class="topbar-btn" data-open-palette aria-label="Open command palette">
+    <button class="topbar-btn topbar-search-chip" data-open-palette aria-label="Open command palette (⌘K)">
       <svg class="icon"><use href="#i-search"></use></svg>
+      <span class="mono">⌘K</span>
     </button>
     <button class="topbar-btn" data-toggle-theme aria-label="Toggle theme">
       <svg class="icon"><use href="#i-moon"></use></svg>
@@ -1041,10 +1106,13 @@ html.booting .substrate{ transform:none }
     <span class="mono">⌘K</span>
   </button>
   <div class="jump-wrap" data-jump-wrap hidden>
-    <div class="jump-label">Jump back in</div>
+    <div class="jump-label">Continue</div>
     <div class="jump-row" data-jump></div>
   </div>
-  <div class="pinned-grid" data-pinned></div>
+  <div class="library-wrap">
+    <div class="jump-label">Library <span class="library-count mono" data-library-count></span></div>
+    <div class="pinned-grid" data-pinned></div>
+  </div>
 </main>
 
 <div id="window-layer"></div>
@@ -1110,6 +1178,14 @@ html.booting .substrate{ transform:none }
         <input type="checkbox" data-reduce-motion />
       </label>
     </section>
+  </div>
+</div>
+
+<div class="running-sheet" id="running-sheet" aria-hidden="true">
+  <div class="running-sheet-scrim" data-running-scrim></div>
+  <div class="running-sheet-panel" role="dialog" aria-modal="true" aria-label="Open apps">
+    <div class="running-sheet-handle" aria-hidden="true"></div>
+    <div class="running-sheet-list" data-running-list></div>
   </div>
 </div>
 
@@ -2132,6 +2208,7 @@ class WindowManager extends EventTarget{
       else{ dot.hidden = true; delete dot.dataset.state; }
     }
     this.renderTabStrip(win);
+    this.dispatchEvent(new CustomEvent('tabchange', { detail:{ winId: win.id, appId } }));
   }
 
   renderTabStrip(win){
@@ -2384,6 +2461,18 @@ class WindowManager extends EventTarget{
 
   minimizeFocused(){
     if(this.focusedId) this.minimize(this.focusedId);
+  }
+
+  minimizeAll(){
+    [...this.wins.values()].forEach(win => { if(!win.minimized) this.minimize(win.id); });
+  }
+
+  restoreAll(){
+    [...this.wins.values()].forEach(win => { if(win.minimized) this.restore(win.id); });
+  }
+
+  anyMinimized(){
+    return [...this.wins.values()].some(win => win.minimized);
   }
 
   restore(id){
@@ -2842,11 +2931,13 @@ const DRAG_THRESHOLD = 6;
 const TOOLTIP_DELAY = 400;
 
 class Dock{
-  constructor(el, apps, { onLaunch }){
+  constructor(el, apps, { onActivate, onShowDesktop }){
     this.el = el;
     this.apps = apps;
-    this.onLaunch = onLaunch;
+    this.onActivate = onActivate;
+    this.onShowDesktop = onShowDesktop;
     this.tiles = [];
+    this.tilesEl = null;
     this.mouseX = null;
     this.hovering = false;
     this.pressedId = null;
@@ -2856,10 +2947,12 @@ class Dock{
     this._lastTick = null;
 
     this.openIds = new Set();
+    this.minimizedIds = new Set();
     this.focusedId = null;
     this.tooltipEl = null;
     this.tooltipTimer = null;
     this.render();
+    this.buildChrome();
     this.roving = rovingTabindex(this.el, '.dock-tile');
     this.bindMagnify();
     this.bindLaunchAndDrag();
@@ -2867,26 +2960,54 @@ class Dock{
     addEventListener('resize', () => this.cacheRects());
   }
 
+  buildChrome(){
+    if(this.chromeBuilt) return;
+    this.chromeBuilt = true;
+    const divider = document.createElement('div');
+    divider.className = 'dock-divider';
+    divider.setAttribute('aria-hidden', 'true');
+    this.el.appendChild(divider);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'dock-library-btn';
+    btn.setAttribute('aria-label', 'Show desktop — minimise all windows');
+    btn.title = 'Show desktop';
+    btn.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-grid"></use></svg>';
+    btn.addEventListener('click', () => this.onShowDesktop?.());
+    this.el.appendChild(btn);
+  }
+
   render(){
     const order = store.dockOrder(this.apps.map(a => a.id));
-    this.el.innerHTML = '';
+    if(!this.tilesEl){
+      this.tilesEl = document.createElement('div');
+      this.tilesEl.className = 'dock-tiles';
+      this.el.appendChild(this.tilesEl);
+    }
+    this.tilesEl.innerHTML = '';
     this.tiles = order.map(id => this.apps.find(a => a.id === id)).filter(Boolean).map(app => {
       const tile = document.createElement('button');
       tile.type = 'button';
       tile.className = 'dock-tile';
       tile.dataset.app = app.id;
-      tile.setAttribute('aria-label', `${app.name}, ${app.accel ? `shortcut control ${app.accel}` : 'app'}`);
       tile.tabIndex = -1;
       tile.innerHTML = html`
         <svg class="icon" aria-hidden="true"><use href="#i-${app.icon}"></use></svg>
         <span class="dock-dot" data-open aria-hidden="true"></span>`;
       tile.classList.toggle('has-window', this.openIds.has(app.id));
+      tile.classList.toggle('is-minimized', this.minimizedIds.has(app.id));
       tile.classList.toggle('is-focused', this.focusedId === app.id);
-      this.el.appendChild(tile);
+      this.updateTileLabel(tile, app);
+      this.tilesEl.appendChild(tile);
       return { id: app.id, app, el: tile, cur: 1, target: 1, shift: 0, curShift: 0, centerX: 0 };
     });
     if(this.roving) this.roving.setActive(this.roving.items()[0]);
     this.cacheRects();
+  }
+
+  updateTileLabel(tile, app){
+    const state = this.minimizedIds.has(app.id) ? ', minimised' : this.openIds.has(app.id) ? ', running' : '';
+    tile.setAttribute('aria-label', `${app.name}${app.accel ? `, shortcut control ${app.accel}` : ''}${state}`);
   }
 
   cacheRects(){
@@ -2900,9 +3021,20 @@ class Dock{
   }
 
   setOpenState(appId, isOpen){
-    if(isOpen) this.openIds.add(appId); else this.openIds.delete(appId);
+    if(isOpen) this.openIds.add(appId); else{ this.openIds.delete(appId); this.minimizedIds.delete(appId); }
     const t = this.tiles.find(t => t.id === appId);
-    if(t) t.el.classList.toggle('has-window', isOpen);
+    if(!t) return;
+    t.el.classList.toggle('has-window', isOpen);
+    t.el.classList.toggle('is-minimized', this.minimizedIds.has(appId));
+    this.updateTileLabel(t.el, t.app);
+  }
+
+  setMinimized(appId, isMin){
+    if(isMin) this.minimizedIds.add(appId); else this.minimizedIds.delete(appId);
+    const t = this.tiles.find(t => t.id === appId);
+    if(!t) return;
+    t.el.classList.toggle('is-minimized', isMin);
+    this.updateTileLabel(t.el, t.app);
   }
 
   setActive(appId){
@@ -3006,7 +3138,7 @@ class Dock{
       const after = this.tiles.find(t => t.id !== dragState.id && e.clientX < t.centerX);
       const targetEl = after ? after.el : null;
       if(targetEl !== dragState.tile.nextSibling){
-        this.el.insertBefore(dragState.tile, targetEl);
+        this.tilesEl.insertBefore(dragState.tile, targetEl);
       }
     });
 
@@ -3018,12 +3150,12 @@ class Dock{
       tile.classList.remove('is-dragging');
       tile.style.transform = '';
       if(moved){
-        const newOrder = Array.from(this.el.children).map(el => el.dataset.app);
+        const newOrder = Array.from(this.tilesEl.children).map(el => el.dataset.app);
         store.setDockOrder(newOrder);
         this.render();
       }else{
         const app = this.apps.find(a => a.id === id);
-        if(app){ this.bounce(id); this.onLaunch(app, tile.getBoundingClientRect()); }
+        if(app){ this.bounce(id); this.onActivate(app, tile.getBoundingClientRect()); }
       }
       dragState = null;
       this.wake();
@@ -3035,7 +3167,7 @@ class Dock{
       if(e.key === 'Enter' || e.key === ' '){
         e.preventDefault();
         const app = this.apps.find(a => a.id === tile.dataset.app);
-        if(app){ this.bounce(tile.dataset.app); this.onLaunch(app, tile.getBoundingClientRect()); }
+        if(app){ this.bounce(tile.dataset.app); this.onActivate(app, tile.getBoundingClientRect()); }
       }
     });
 
@@ -3440,6 +3572,7 @@ class Desktop{
     this.jumpEl = root.querySelector('[data-jump]');
     this.jumpWrap = root.querySelector('[data-jump-wrap]');
     this.pinnedEl = root.querySelector('[data-pinned]');
+    this.libraryCountEl = root.querySelector('[data-library-count]');
     this.bindSearch();
     this.renderJumpBack();
     this.renderPinned();
@@ -3455,7 +3588,8 @@ class Desktop{
 
   renderJumpBack(){
     if(!this.jumpEl) return;
-    const ids = store.recentIds(4);
+    const show = store.get('showContinueRow');
+    const ids = show ? store.recentIds(8).filter(id => !this.ctx.wm.isOpen(id)).slice(0, 3) : [];
     this.jumpEl.innerHTML = '';
     const has = ids.length > 0;
     if(this.jumpWrap) this.jumpWrap.hidden = !has;
@@ -3484,6 +3618,7 @@ class Desktop{
     order.forEach(id => {
       const app = APPS.find(a => a.id === id);
       if(!app) return;
+      const isOpen = this.ctx.wm.isOpen(id);
       const tile = document.createElement('button');
       tile.type = 'button';
       tile.className = 'pin-tile';
@@ -3491,7 +3626,8 @@ class Desktop{
       tile.dataset.id = id;
       tile.innerHTML = html`
         <svg class="icon"><use href="#i-${app.icon}"></use></svg>
-        <span>${app.name}</span>`;
+        <span>${app.name}</span>
+        <span class="pin-dot" data-pin-open="${id}" ${isOpen ? '' : 'hidden'}></span>`;
       tile.addEventListener('click', () => this.ctx.launch(app, tile));
       tile.addEventListener('contextmenu', e => {
         e.preventDefault();
@@ -3501,6 +3637,14 @@ class Desktop{
       });
       this.bindDragReorder(tile);
       this.pinnedEl.appendChild(tile);
+    });
+    if(this.libraryCountEl) this.libraryCountEl.textContent = order.length;
+  }
+
+  updatePinnedState(){
+    if(!this.pinnedEl) return;
+    this.pinnedEl.querySelectorAll('[data-pin-open]').forEach(dot => {
+      dot.hidden = !this.ctx.wm.isOpen(dot.dataset.pinOpen);
     });
   }
 
@@ -3532,6 +3676,7 @@ class Desktop{
     if(!wallpaper) return;
     let last = 0;
     addEventListener('pointermove', e => {
+      if(document.body.dataset.windows && document.body.dataset.windows !== '0') return;
       const now = performance.now();
       if(now - last < 33) return;
       last = now;
@@ -3590,6 +3735,7 @@ class Desktop{
 
   refresh(){
     this.renderJumpBack();
+    this.updatePinnedState();
   }
 }
 
@@ -3742,7 +3888,12 @@ function init(){
 
   const dockEl = document.getElementById('dock');
   const dock = new Dock(dockEl, APPS, {
-    onLaunch: (app, rect) => wm.open(app, { flipFrom: rect })
+    onActivate: (app, rect) => {
+      const win = wm.findWin(app.id);
+      if(win && !win.minimized && wm.focusedId === win.id) wm.minimize(win.id);
+      else wm.open(app, { flipFrom: rect });
+    },
+    onShowDesktop: () => wm.minimizeAll()
   });
 
   const toggleTheme = () => { store.toggleTheme(); updateThemeIcon(); embed.broadcastTheme(); };
@@ -3759,20 +3910,98 @@ function init(){
     launch: (app, el) => wm.open(app, { flipFrom: el.getBoundingClientRect() })
   });
 
-  function updateLive(){
-    const liveDot = document.querySelector('[data-topbar-live]');
-    if(!liveDot) return;
-    const anyLive = [...wm.wins.values()].some(w => wm.liveState.get(w.activeTab) === 'embedded');
-    liveDot.classList.toggle('is-live', anyLive);
+  function updateFocusedTopbar(){
+    const btn = document.querySelector('[data-topbar-focused]');
+    const nameEl = document.querySelector('[data-topbar-focused-name]');
+    const dot = document.querySelector('[data-topbar-focused-dot]');
+    if(!btn || !nameEl || !dot) return;
+    const win = wm.focusedId ? wm.wins.get(wm.focusedId) : null;
+    if(!win){ btn.hidden = true; return; }
+    const appEntry = findById(win.activeTab);
+    btn.hidden = false;
+    nameEl.textContent = appEntry ? appEntry.name : '';
+    const state = wm.liveState.get(win.activeTab);
+    if(state){ dot.hidden = false; dot.dataset.state = state; }
+    else{ dot.hidden = true; delete dot.dataset.state; }
   }
 
-  wm.addEventListener('focuschange', e => dock.setActive(e.detail.id));
-  wm.addEventListener('winopen', e => { dock.setOpenState(e.detail.id, true); desktop.refresh(); updateLive(); });
-  wm.addEventListener('winclose', e => { dock.setOpenState(e.detail.id, false); desktop.refresh(); updateLive(); });
-  wm.addEventListener('winminimize', () => updateLive());
-  wm.addEventListener('winrestore', () => updateLive());
-  embed.addEventListener('status', () => updateLive());
+  function updateWindowsPresence(){
+    const openCount = [...wm.wins.values()].filter(w => !w.minimized).length;
+    document.body.dataset.windows = String(openCount);
+  }
+
+  const runningSheet = document.getElementById('running-sheet');
+  const runningList = document.querySelector('[data-running-list]');
+  const mobileQuery = matchMedia('(max-width: 768px)');
+  function renderRunningSheet(){
+    if(!runningList) return;
+    runningList.innerHTML = '';
+    wm.order.forEach(id => {
+      const win = wm.wins.get(id);
+      if(!win) return;
+      const appEntry = findById(win.activeTab);
+      if(!appEntry) return;
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'running-sheet-row';
+      const state = wm.liveState.get(win.activeTab);
+      row.innerHTML = html`
+        <svg class="icon"><use href="#i-${appEntry.icon}"></use></svg>
+        <span>${appEntry.name}</span>
+        ${raw(state ? `<span class="live-dot" data-state="${esc(state)}"></span>` : '')}`;
+      row.addEventListener('click', () => {
+        if(win.minimized) wm.restore(id); else wm.focus(id);
+        closeRunningSheet();
+      });
+      runningList.appendChild(row);
+    });
+  }
+  function openRunningSheet(){
+    if(!runningSheet || !wm.order.length) return;
+    renderRunningSheet();
+    runningSheet.classList.add('is-open');
+    runningSheet.setAttribute('aria-hidden', 'false');
+  }
+  function closeRunningSheet(){
+    if(!runningSheet) return;
+    runningSheet.classList.remove('is-open');
+    runningSheet.setAttribute('aria-hidden', 'true');
+  }
+  document.querySelector('[data-running-scrim]')?.addEventListener('click', closeRunningSheet);
+  document.querySelector('[data-topbar-focused]')?.addEventListener('click', () => {
+    if(mobileQuery.matches) openRunningSheet();
+  });
+
+  wm.addEventListener('focuschange', e => { dock.setActive(e.detail.id); updateFocusedTopbar(); });
+  wm.addEventListener('tabchange', () => updateFocusedTopbar());
+  wm.addEventListener('winopen', e => {
+    dock.setOpenState(e.detail.id, true);
+    desktop.refresh();
+    updateFocusedTopbar();
+    updateWindowsPresence();
+  });
+  wm.addEventListener('winclose', e => {
+    dock.setOpenState(e.detail.id, false);
+    desktop.refresh();
+    updateFocusedTopbar();
+    updateWindowsPresence();
+    if(runningSheet?.classList.contains('is-open')) renderRunningSheet();
+  });
+  wm.addEventListener('winminimize', e => {
+    dock.setMinimized(e.detail.id, true);
+    updateFocusedTopbar();
+    updateWindowsPresence();
+    if(runningSheet?.classList.contains('is-open')) renderRunningSheet();
+  });
+  wm.addEventListener('winrestore', e => {
+    dock.setMinimized(e.detail.id, false);
+    updateFocusedTopbar();
+    updateWindowsPresence();
+    if(runningSheet?.classList.contains('is-open')) renderRunningSheet();
+  });
+  embed.addEventListener('status', () => updateFocusedTopbar());
   embed.addEventListener('request-palette', () => palette.open());
+  updateWindowsPresence();
 
   document.querySelector('[data-open-palette]').addEventListener('click', () => palette.open());
   document.querySelector('[data-toggle-theme]').addEventListener('click', toggleTheme);
@@ -3800,6 +4029,7 @@ function init(){
     if(e.key === 'Escape'){
       if(palette.isOpen()) palette.close();
       else if(document.getElementById('settings').classList.contains('is-open')) settings.close();
+      else if(runningSheet?.classList.contains('is-open')) closeRunningSheet();
     }
   });
 
