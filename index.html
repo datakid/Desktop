@@ -250,14 +250,16 @@ h1,h2,h3,.display{letter-spacing:var(--tr-display)}
 
 html.booting .topbar,
 html.booting .dock-wrap,
-html.booting .substrate{ opacity:0; transform:translateY(6px) }
+html.booting .substrate,
+html.booting .desktop{ opacity:0; transform:translateY(6px) }
 html.booting .substrate{ transform:none }
-.topbar.boot-in,
-.dock-wrap.boot-in,
-.substrate.boot-in{
+html .topbar.boot-in,
+html .dock-wrap.boot-in,
+html .substrate.boot-in{
   opacity:1; transform:none;
   transition:opacity var(--t-4) var(--e-out), transform var(--t-4) var(--e-out);
 }
+html .desktop.boot-in{ opacity:1; transform:none }
 
 .settings-panel{
   position:fixed; inset:0; z-index:var(--z-palette);
@@ -356,7 +358,25 @@ html.booting .substrate{ transform:none }
 .wallpaper-swatch{
   width:44px; height:30px; border-radius:var(--r-1); border:2px solid transparent;
   box-shadow:inset 0 0 0 1px var(--line-2); overflow:hidden;
+  background-color:var(--bg-void);
   transition:transform var(--t-1) var(--e-out), border-color var(--t-1);
+}
+.wallpaper-swatch[data-wallpaper="mesh-1"]{
+  background-image:
+    radial-gradient(circle at 14% 18%, rgba(255,176,31,.55), transparent 42%),
+    radial-gradient(circle at 82% 12%, rgba(84,214,196,.5), transparent 46%),
+    radial-gradient(circle at 76% 84%, rgba(255,255,255,.3), transparent 50%),
+    radial-gradient(circle at 20% 88%, rgba(255,255,255,.25), transparent 44%);
+}
+.wallpaper-swatch[data-wallpaper="mesh-2"]{
+  background-image:
+    radial-gradient(circle at 80% 20%, rgba(255,176,31,.6), transparent 40%),
+    radial-gradient(circle at 20% 80%, rgba(84,214,196,.5), transparent 46%);
+}
+.wallpaper-swatch[data-wallpaper="mesh-3"]{
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.4), transparent 55%),
+    radial-gradient(circle at 50% 100%, rgba(255,176,31,.45), transparent 55%);
 }
 .wallpaper-swatch:hover{ transform:scale(1.04) }
 .wallpaper-swatch:active{ transform:scale(.96) }
@@ -479,13 +499,19 @@ html.booting .substrate{ transform:none }
   box-shadow:var(--e1), var(--edge);
   contain:layout style;
   transform-origin:0 0;
-  transition:box-shadow var(--t-3) var(--e-out), border-color var(--t-3) var(--e-out);
+  transition:box-shadow var(--t-3) var(--e-out), border-color var(--t-3) var(--e-out), border-radius var(--t-3) var(--e-out);
 }
 .win.is-focused{ border-color:var(--line-2); box-shadow:var(--e3), var(--edge) }
 .win.is-unfocused{ border-color:var(--line-1); box-shadow:var(--e1), var(--edge) }
 .win.is-unfocused .win-tb{ background:var(--bg-base) }
 .win.is-minimized{ display:none }
 .win.is-maximized{ border-radius:var(--r-2) }
+@keyframes win-pulse{
+  0%, 100%{ box-shadow: var(--e3), var(--edge), 0 0 0 0 var(--sig-dim) }
+  50%{ box-shadow: var(--e3), var(--edge), 0 0 0 4px var(--sig-dim) }
+}
+.win.is-pulsing{ animation: win-pulse 420ms var(--e-out) }
+@media (prefers-reduced-motion: reduce){ .win.is-pulsing{ animation:none } }
 
 .win-tb{
   height:40px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between;
@@ -565,16 +591,6 @@ html.booting .substrate{ transform:none }
 .tab-pane[hidden]{ display:none }
 .lx-frame{ position:absolute; inset:0; width:100%; height:100%; border:none }
 
-.win-escape{
-  position:absolute; top:6px; right:98px; z-index:4;
-  width:22px; height:22px; border-radius:var(--r-1);
-  display:flex; align-items:center; justify-content:center;
-  color:var(--tx-3); background:var(--bg-raise); border:var(--hair) solid var(--line-1);
-  opacity:.7; transition:opacity var(--t-2) var(--e-out), color var(--t-2) var(--e-out), background var(--t-2) var(--e-out);
-}
-.win-escape .icon{ width:12px; height:12px }
-.win-escape:hover{ opacity:1; color:var(--tx-1); background:var(--bg-hover) }
-
 .menu{
   position:fixed; z-index:var(--z-toast); min-width:200px; max-width:280px;
   max-height:calc(100vh - 16px); overflow-y:auto;
@@ -630,17 +646,11 @@ html.booting .substrate{ transform:none }
 
 .win.is-drag-live{ will-change:transform }
 .win.is-resize-live .win-body{ pointer-events:none }
-.resize-snapshot{
-  position:absolute; inset:0; z-index:3;
-  background:var(--bg-base) center/cover no-repeat;
-  filter:saturate(.7) brightness(.85);
-}
 
 @media (max-width: 768px){
   .win{ position:fixed !important; inset:0 !important; left:0 !important; top:0 !important; width:100% !important; height:100% !important; border-radius:0 !important; }
   .rh{ display:none }
   .win-tb{ height:calc(40px + env(safe-area-inset-top)); padding-top:env(safe-area-inset-top) }
-  .win-escape{ top:calc(6px + env(safe-area-inset-top)) }
 }
 
 .palette{
@@ -830,11 +840,12 @@ html.booting .substrate{ transform:none }
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   padding:calc(var(--s-8) * 2) var(--s-6) calc(var(--dock-reserve, var(--s-18)) + var(--s-4));
   overflow-y:auto;
-  opacity:1; filter:none;
-  transition:opacity var(--t-3) var(--e-out), filter var(--t-3) var(--e-out);
+  opacity:1; filter:none; transform:none;
+  transition:opacity var(--t-3) var(--e-out), filter var(--t-3) var(--e-out), transform var(--t-4) var(--e-out);
 }
 body:not([data-windows="0"]) .desktop{ opacity:.45; filter:blur(2px) }
 body:not([data-windows="0"]) .desktop-clockblock{ pointer-events:none }
+html.booting .desktop{ opacity:0; transform:translateY(6px) }
 @media (prefers-reduced-motion: reduce){ .desktop{ transition:none } }
 .desktop-clockblock{ text-align:center; margin-bottom:var(--s-8); user-select:none }
 .desktop-clock{
@@ -1333,7 +1344,7 @@ const COMMANDS = [
     run:(ctx)=>ctx.wm.closeFocused(), accel:'⌘W'
   },
   {
-    id:'minimize-window', name:'Minimize Window', kind:'cmd', icon:'minus',
+    id:'minimize-window', name:'Minimise Window', kind:'cmd', icon:'minus',
     run:(ctx)=>ctx.wm.minimizeFocused(), accel:'⌘M'
   },
   {
@@ -2355,11 +2366,20 @@ class WindowManager extends EventTarget{
     let win = this.findWin(appEntry.id);
     if(win){
       if(win.minimized) this.restore(win.id);
+      else if(this.focusedId === win.id && win.activeTab === appEntry.id) this.pulseWindow(win);
       else this.focus(win.id);
       if(win.activeTab !== appEntry.id) this.showTab(win, appEntry.id);
       return win;
     }
     return this.create(appEntry, opts.flipFrom);
+  }
+
+  pulseWindow(win){
+    if(reduced()) return;
+    win.el.classList.remove('is-pulsing');
+    void win.el.offsetWidth;
+    win.el.classList.add('is-pulsing');
+    win.el.addEventListener('animationend', () => win.el.classList.remove('is-pulsing'), { once:true });
   }
 
   addTab(win, appEntry){
@@ -2400,11 +2420,14 @@ class WindowManager extends EventTarget{
         <button type="button" class="vh" data-focus-content>Jump to ${appEntry.name} content</button>
         <div class="win-title">
           <svg class="icon" aria-hidden="true"><use href="#i-${appEntry.icon}"></use></svg>
-          <span class="win-name">${appEntry.name}</span>
+          <span class="win-name" title="${appEntry.name}">${appEntry.name}</span>
           <span class="live-dot" data-live></span>
         </div>
         <div class="win-tabs" data-tabs hidden></div>
         <div class="win-ctrl">
+          <a class="wc wc-external" href="${appEntry.url}" target="_blank" rel="noopener noreferrer" aria-label="Open ${appEntry.name} in the browser">
+            <svg class="icon"><use href="#i-external"></use></svg>
+          </a>
           <button class="wc wc-min" data-min aria-label="Minimise ${appEntry.name}">
             <svg class="icon"><use href="#i-minus"></use></svg>
           </button>
@@ -2421,9 +2444,6 @@ class WindowManager extends EventTarget{
           <span class="spinner" aria-hidden="true"></span>
         </div>
       </div>
-      <a class="win-escape" href="${appEntry.url}" target="_blank" rel="noopener noreferrer" aria-label="Open ${appEntry.name} in a new tab">
-        <svg class="icon"><use href="#i-external"></use></svg>
-      </a>
       ${raw(['n','s','e','w','ne','nw','se','sw'].map(d => `<div class="rh rh-${d}" data-resize="${d}"></div>`).join(''))}
     `;
 
@@ -2485,7 +2505,9 @@ class WindowManager extends EventTarget{
       paneLoading?.remove();
       this.setLive(appId, 'embedded');
       if(title && appId === win.activeTab){
-        win.el.querySelector('.win-name').textContent = title;
+        const nameEl = win.el.querySelector('.win-name');
+        nameEl.textContent = title;
+        nameEl.title = title;
       }
     }else if(status === 'shown'){
       loading?.remove();
@@ -2522,11 +2544,11 @@ class WindowManager extends EventTarget{
       const iconUse = win.el.querySelector('.win-title .icon use');
       if(iconUse) iconUse.setAttribute('href', `#i-${appEntry.icon}`);
       const nameEl = win.el.querySelector('.win-name');
-      if(nameEl) nameEl.textContent = appEntry.name;
-      const escapeLink = win.el.querySelector('.win-escape');
+      if(nameEl){ nameEl.textContent = appEntry.name; nameEl.title = appEntry.name; }
+      const escapeLink = win.el.querySelector('.wc-external');
       if(escapeLink){
         escapeLink.setAttribute('href', appEntry.url);
-        escapeLink.setAttribute('aria-label', `Open ${appEntry.name} in a new tab`);
+        escapeLink.setAttribute('aria-label', `Open ${appEntry.name} in the browser`);
       }
       const focusBtn = win.el.querySelector('[data-focus-content]');
       if(focusBtn) focusBtn.textContent = `Jump to ${appEntry.name} content`;
@@ -3078,6 +3100,8 @@ class WindowManager extends EventTarget{
     let lastPointer = null, rafId = null, activeZone = null;
 
     let sheetStartY = null, sheetLastY = null, sheetRafId = null;
+    const SHEET_DISMISS_PX = 140;
+    const SHEET_RESIST_START = 60;
 
     const getPreviewEl = () => {
       if(!preview){
@@ -3141,8 +3165,11 @@ class WindowManager extends EventTarget{
     const sheetProcessFrame = () => {
       sheetRafId = null;
       if(sheetStartY === null || sheetLastY === null) return;
-      const dy = Math.max(0, sheetLastY - sheetStartY);
+      const rawDy = Math.max(0, sheetLastY - sheetStartY);
+      const dy = rawDy <= SHEET_RESIST_START ? rawDy : SHEET_RESIST_START + (rawDy - SHEET_RESIST_START) * 0.4;
+      const progress = Math.min(rawDy / SHEET_DISMISS_PX, 1);
       win.el.style.transform = `translate3d(0, ${dy}px, 0)`;
+      win.el.style.opacity = String(1 - progress * 0.35);
     };
     const sheetSchedule = () => { if(sheetRafId === null) sheetRafId = requestAnimationFrame(sheetProcessFrame); };
 
@@ -3205,13 +3232,19 @@ class WindowManager extends EventTarget{
       if(mode === 'mobile'){
         if(sheetStartY === null) return;
         if(sheetRafId !== null){ cancelAnimationFrame(sheetRafId); sheetRafId = null; }
-        const dy = Math.max(0, (sheetLastY ?? e.clientY) - sheetStartY);
+        const rawDy = Math.max(0, (sheetLastY ?? e.clientY) - sheetStartY);
         win.el.style.transition = '';
         sheetStartY = null; sheetLastY = null;
-        if(dy > 140){
+        if(rawDy > SHEET_DISMISS_PX){
           this.close(win.id);
         }else{
-          applyFrameStyles(win.el, win.frame);
+          const fromTransform = win.el.style.transform || 'translate3d(0, 0, 0)';
+          const fromOpacity = win.el.style.opacity || '1';
+          win.el.style.opacity = '';
+          animate(win.el, [
+            { transform: fromTransform, opacity: fromOpacity },
+            { transform:'translate3d(0, 0, 0)', opacity:'1' }
+          ], SPRING.snappy);
         }
         mode = null;
         return;
@@ -3264,7 +3297,7 @@ class WindowManager extends EventTarget{
       let lastPointer = null;
       let rafId = null;
       let finalGeo = null;
-      let snapshotEl = null;
+      let useGhost = false;
 
       const processFrame = () => {
         rafId = null;
@@ -3279,12 +3312,16 @@ class WindowManager extends EventTarget{
         width = Math.max(MIN_W, width);
         height = Math.max(MIN_H, height);
         finalGeo = { x:left, y:top, w:width, h:height };
-        const el = getGhost();
-        el.style.left = left + 'px';
-        el.style.top = top + 'px';
-        el.style.width = width + 'px';
-        el.style.height = height + 'px';
-        el.style.opacity = '1';
+        if(useGhost){
+          const el = getGhost();
+          el.style.left = left + 'px';
+          el.style.top = top + 'px';
+          el.style.width = width + 'px';
+          el.style.height = height + 'px';
+          el.style.opacity = '1';
+        }else{
+          applyFrameStyles(win.el, finalGeo);
+        }
       };
       const schedule = () => { if(rafId === null) rafId = requestAnimationFrame(processFrame); };
 
@@ -3294,20 +3331,12 @@ class WindowManager extends EventTarget{
         e.stopPropagation();
         this.focus(win.id);
         cancelSpringsFor(win.el);
+        useGhost = reduced();
         start = { x:e.clientX, y:e.clientY, rect: { left: win.frame.x, top: win.frame.y, width: win.frame.w, height: win.frame.h } };
         lastPointer = { x:e.clientX, y:e.clientY };
         finalGeo = null;
         try{ handle.setPointerCapture(e.pointerId); }catch(err){}
         win.el.classList.add('is-resize-live');
-
-        const activeApp = findById(win.activeTab);
-        const pane = win.panes.get(win.activeTab);
-        if(activeApp?.poster && pane){
-          snapshotEl = document.createElement('div');
-          snapshotEl.className = 'resize-snapshot';
-          snapshotEl.style.backgroundImage = `url("${activeApp.poster}")`;
-          pane.appendChild(snapshotEl);
-        }
       });
       handle.addEventListener('pointermove', e => {
         if(!start) return;
@@ -3319,8 +3348,6 @@ class WindowManager extends EventTarget{
         if(rafId !== null){ cancelAnimationFrame(rafId); rafId = null; }
         win.el.classList.remove('is-resize-live');
         if(sharedGhost) sharedGhost.style.opacity = '0';
-        snapshotEl?.remove();
-        snapshotEl = null;
         start = null;
         lastPointer = null;
         if(finalGeo){
@@ -4214,7 +4241,7 @@ function runBoot(){
     return;
   }
 
-  const stages = [['.substrate', 0], ['.topbar', 80], ['.dock-wrap', 160]];
+  const stages = [['.substrate', 0], ['.topbar', 80], ['.dock-wrap', 160], ['.desktop', 240]];
   stages.forEach(([selector, delay]) => {
     const el = document.querySelector(selector);
     if(!el) return;
