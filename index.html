@@ -344,7 +344,36 @@ html .desktop.boot-in{ opacity:1; transform:none }
 .shortcut-row{ display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); padding:var(--s-2) 0; border-bottom:var(--hair) solid var(--line-1) }
 .shortcut-row:last-child{ border-bottom:none }
 .shortcut-row .menu-accel{ margin-left:0; font-size:var(--fs-12) }
+
+.toast{
+  position:fixed; left:50%; bottom:calc(var(--dock-reserve, 96px) + var(--s-3));
+  transform:translateX(-50%) translateY(8px);
+  z-index:var(--z-toast);
+  display:flex; align-items:center; gap:var(--s-3);
+  padding:var(--s-3) var(--s-2) var(--s-3) var(--s-4);
+  background:var(--bg-float); border:var(--hair) solid var(--line-1); border-radius:var(--r-3);
+  box-shadow:var(--e3), var(--edge);
+  font-size:var(--fs-13); color:var(--tx-1); white-space:nowrap;
+  opacity:0; pointer-events:none;
+  transition:opacity var(--t-2) var(--e-out), transform var(--t-2) var(--e-out);
+}
+.toast.is-open{ opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto }
+@media (prefers-reduced-motion: reduce){ .toast{ transition:none } }
+.toast-undo{
+  display:flex; align-items:center; gap:6px;
+  padding:var(--s-1) var(--s-2); border-radius:var(--r-1);
+  color:var(--sig); font-weight:600; font-size:var(--fs-13);
+}
+.toast-undo:hover{ background:var(--sig-dim) }
+.toast-undo .mono{ font-size:var(--fs-11); color:var(--tx-3); font-weight:500 }
+@media (max-width: 768px){ .toast{ bottom:calc(var(--s-4) + env(safe-area-inset-bottom)) } }
 .settings-val{ color:var(--tx-2); text-transform:capitalize }
+.settings-theme-row{ align-items:center }
+.theme-segment{ display:flex; background:var(--bg-hover); border-radius:var(--r-2); padding:2px; gap:2px }
+.theme-seg-btn{ padding:var(--s-1) var(--s-3); border-radius:var(--r-1); font-size:var(--fs-12); color:var(--tx-2); transition:background var(--t-1) var(--e-out), color var(--t-1) var(--e-out) }
+.theme-seg-btn.is-active{ background:var(--bg-float); color:var(--tx-1); box-shadow:var(--edge) }
+.theme-seg-btn:hover:not(.is-active){ color:var(--tx-1) }
+.settings-row[data-action="reset-workspace"]{ color:var(--dngr) }
 .settings-swatches{ gap:var(--s-2) }
 .swatch-group{ display:flex; gap:var(--s-2) }
 .swatch{
@@ -1220,10 +1249,14 @@ html.booting .desktop{ opacity:0; transform:translateY(6px) }
     </div>
     <section class="settings-section">
       <h3>Appearance</h3>
-      <button class="settings-row" data-action="toggle-theme">
+      <div class="settings-row settings-theme-row">
         <span>Theme</span>
-        <span class="settings-val mono" data-theme-val>dark</span>
-      </button>
+        <div class="theme-segment" data-theme-group role="radiogroup" aria-label="Theme">
+          <button type="button" class="theme-seg-btn" data-theme-opt="system">System</button>
+          <button type="button" class="theme-seg-btn" data-theme-opt="light">Light</button>
+          <button type="button" class="theme-seg-btn" data-theme-opt="dark">Dark</button>
+        </div>
+      </div>
       <div class="settings-row settings-swatches">
         <span>Accent</span>
         <div class="swatch-group" data-accent-group>
@@ -1241,6 +1274,20 @@ html.booting .desktop{ opacity:0; transform:translateY(6px) }
           <button class="wallpaper-swatch" data-wallpaper="mesh-3" aria-label="Wallpaper 3"></button>
         </div>
       </div>
+    </section>
+    <section class="settings-section">
+      <h3>General</h3>
+      <label class="settings-row settings-toggle">
+        <span>12-hour clock</span>
+        <input type="checkbox" data-clock-hour12 />
+      </label>
+      <button class="settings-row" data-action="open-shortcuts">
+        <span>Keyboard Shortcuts</span>
+        <span class="settings-val mono">⌘/</span>
+      </button>
+      <button class="settings-row" data-action="reset-workspace">
+        <span>Reset Workspace</span>
+      </button>
     </section>
     <section class="settings-section">
       <h3>Accessibility</h3>
@@ -1275,6 +1322,13 @@ html.booting .desktop{ opacity:0; transform:translateY(6px) }
     </div>
     <div class="info-sheet-body" data-info-body></div>
   </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true" hidden>
+  <span class="toast-msg" data-toast-msg></span>
+  <button type="button" class="toast-undo" data-toast-undo>
+    Undo <span class="mono">⌘Z</span>
+  </button>
 </div>
 
 <div id="live-region" class="live-region" aria-live="polite" aria-atomic="true"></div>
@@ -2382,7 +2436,7 @@ class WindowManager extends EventTarget{
     win.el.addEventListener('animationend', () => win.el.classList.remove('is-pulsing'), { once:true });
   }
 
-  addTab(win, appEntry){
+  addTab(win, appEntry, instant){
     if(!win) return null;
     if(win.tabs.includes(appEntry.id)){
       this.showTab(win, appEntry.id);
@@ -2392,12 +2446,12 @@ class WindowManager extends EventTarget{
       this.showTab(win, appEntry.id);
     }
     this.focus(win.id);
-    store.recordRecent(appEntry.id);
+    if(!instant) store.recordRecent(appEntry.id);
     this.checkInvariants('addTab');
     return win;
   }
 
-  create(appEntry, flipFrom){
+  create(appEntry, flipFrom, instant){
     const saved = this.normalizeSavedGeometry(store.geometry(appEntry.id));
     const base = saved ? saved.frame : {
       x: Math.round(innerWidth / 2 - 440 + (this.openCount % 6) * CASCADE),
@@ -2465,10 +2519,13 @@ class WindowManager extends EventTarget{
     this.focus(appEntry.id);
 
     if(win.maximized) this.applyMaximize(win, true);
+    else if(instant) applyFrameStyles(el, frame);
     else openFlipAnimation(el, flipFrom, frame);
 
-    store.recordRecent(appEntry.id);
-    announce(`${appEntry.name} opened`);
+    if(!instant){
+      store.recordRecent(appEntry.id);
+      announce(`${appEntry.name} opened`);
+    }
     this.dispatchEvent(new CustomEvent('winopen', { detail:{ id: appEntry.id } }));
     this.checkInvariants('create');
     return win;
@@ -2631,6 +2688,9 @@ class WindowManager extends EventTarget{
       return;
     }
     const body = target.el.querySelector('[data-body]');
+    const mergeSnapshot = { tabs: [...source.tabs], activeTab: source.activeTab, minimized: source.minimized };
+    const sourceName = source.app.name;
+    const targetName = target.app.name;
     source.tabs.forEach(appId => {
       const pane = source.panes.get(appId);
 
@@ -2657,8 +2717,9 @@ class WindowManager extends EventTarget{
     store.deleteGeometry(sourceWinId);
     this.showTab(target, source.activeTab);
     this.focus(targetWinId);
-    announce(`${source.app.name} merged into ${target.app.name} window`);
+    announce(`${sourceName} merged into ${targetName} window`);
     this.checkInvariants('mergeInto');
+    this.onMergeUndo?.(sourceName, targetName, targetWinId, mergeSnapshot);
   }
 
   closeTab(winId, appId){
@@ -2819,6 +2880,8 @@ class WindowManager extends EventTarget{
   close(id){
     const win = this.wins.get(id);
     if(!win) return;
+    const snapshot = { id: win.id, tabs: [...win.tabs], activeTab: win.activeTab, minimized: win.minimized };
+    const appName = win.app.name;
     const finish = () => {
       win.tabs.forEach(t => this.embed.release(t));
 
@@ -2831,6 +2894,7 @@ class WindowManager extends EventTarget{
       announce(`${win.app.name} closed`);
       win.tabs.forEach(t => this.dispatchEvent(new CustomEvent('winclose', { detail:{ id: t } })));
       this.checkInvariants('close');
+      this.onCloseUndo?.(appName, snapshot);
     };
     const baseTransform = win.el.style.transform || 'translate3d(0,0,0)';
     const anim = animate(win.el, [
@@ -2838,6 +2902,22 @@ class WindowManager extends EventTarget{
       { opacity:0, transform:`${baseTransform} scale(.97)` }
     ], { duration:160, easing:EASE.in });
     (anim.finished || Promise.resolve()).then(finish).catch(finish);
+  }
+
+  restoreWindowSnapshot(entry){
+    const primaryApp = findById(entry.id);
+    if(!primaryApp) return null;
+    const win = this.create(primaryApp, null, true);
+    if(!win) return null;
+    entry.tabs.filter(tid => tid !== entry.id).forEach(tid => {
+      const tabApp = findById(tid);
+      if(tabApp) this.addTab(win, tabApp, true);
+    });
+    if(entry.activeTab && win.tabs.includes(entry.activeTab) && entry.activeTab !== win.activeTab){
+      this.showTab(win, entry.activeTab);
+    }
+    if(entry.minimized) this.minimize(win.id);
+    return win;
   }
 
   closeFocused(){
@@ -4195,9 +4275,18 @@ function startClock(){
 
   function render(){
     const now = new Date();
-    const h = String(now.getHours()).padStart(2, '0');
-    const m = String(now.getMinutes()).padStart(2, '0');
-    document.querySelectorAll('[data-clock], [data-topbar-clock]').forEach(el => { el.textContent = `${h}:${m}`; });
+    let text;
+    if(store.get('clockHour12')){
+      let h = now.getHours() % 12;
+      if(h === 0) h = 12;
+      const m = String(now.getMinutes()).padStart(2, '0');
+      text = `${h}:${m} ${now.getHours() < 12 ? 'AM' : 'PM'}`;
+    }else{
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      text = `${h}:${m}`;
+    }
+    document.querySelectorAll('[data-clock], [data-topbar-clock]').forEach(el => { el.textContent = text; });
     document.querySelectorAll('[data-date]').forEach(el => {
       el.textContent = now.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
     });
@@ -4219,6 +4308,7 @@ function startClock(){
   });
 
   schedule();
+  return { refresh: render };
 }
 
 function safeSessionGet(key){
@@ -4268,6 +4358,23 @@ function updateThemeIcon(){
   if(use) use.setAttribute('href', `#i-${store.effectiveTheme() === 'dark' ? 'sun' : 'moon'}`);
 }
 
+function saveSession(wm){
+  const seen = new Set();
+  const ordered = [];
+  wm.order.forEach(id => { const w = wm.wins.get(id); if(w && !seen.has(id)){ seen.add(id); ordered.push(w); } });
+  wm.wins.forEach((w, id) => { if(!seen.has(id)){ seen.add(id); ordered.push(w); } });
+  const windows = ordered.map(win => ({
+    id: win.id, tabs: [...win.tabs], activeTab: win.activeTab, minimized: win.minimized
+  }));
+  store.set('session', windows.length ? { windows } : null);
+}
+
+function restoreSession(wm){
+  const session = store.get('session');
+  if(!session || !Array.isArray(session.windows) || !session.windows.length) return;
+  session.windows.forEach(entry => wm.restoreWindowSnapshot(entry));
+}
+
 function moveDockOrder(appId, dir, ctx){
   const ids = APPS.map(a => a.id);
   const order = [...ctx.store.dockOrder(ids)];
@@ -4282,9 +4389,15 @@ function moveDockOrder(appId, dir, ctx){
 
 function removeFromDock(appId, ctx){
   const ids = APPS.map(a => a.id);
-  ctx.store.setDockOrder(ctx.store.dockOrder(ids).filter(id => id !== appId));
+  const before = ctx.store.dockOrder(ids);
+  ctx.store.setDockOrder(before.filter(id => id !== appId));
   ctx.dock.render();
+  const app = findById(appId);
   announce('Removed from dock');
+  ctx.toast?.push(`Removed ${app ? app.name : 'app'} from dock`, () => {
+    ctx.store.setDockOrder(before);
+    ctx.dock.render();
+  });
 }
 
 function addToDock(appId, ctx){
@@ -4304,6 +4417,13 @@ function toggleLibrary(appId, ctx, add){
   ctx.store.setPinned(next);
   ctx.desktop.renderPinned();
   announce(add ? 'Added to Library' : 'Removed from Library');
+  if(!add){
+    const app = findById(appId);
+    ctx.toast?.push(`Removed ${app ? app.name : 'app'} from Library`, () => {
+      ctx.store.setPinned(current);
+      ctx.desktop.renderPinned();
+    });
+  }
 }
 
 function appMenu(app, ctx){
@@ -4505,6 +4625,7 @@ const SHORTCUT_GROUPS = [
   { title:'General', rows:[
     ['⌘K', 'Open command palette'],
     ['⌘/', 'Shortcuts (this panel)'],
+    ['⌘Z', 'Undo last action'],
     ['⇧⌘L', 'Toggle theme'],
     ['Ctrl 1–9', 'Launch app by dock position']
   ] },
@@ -4559,13 +4680,56 @@ function initInfoSheet(){
   };
 }
 
-function initSettings(embed, toggleTheme){
+function initToast(){
+  const el = document.getElementById('toast');
+  const msgEl = document.querySelector('[data-toast-msg]');
+  const undoBtn = document.querySelector('[data-toast-undo]');
+  const stack = [];
+  let hideTimer = null;
+
+  function hide(){
+    el.classList.remove('is-open');
+    el.hidden = true;
+    clearTimeout(hideTimer);
+  }
+
+  function show(label){
+    clearTimeout(hideTimer);
+    msgEl.textContent = label;
+    el.hidden = false;
+    requestAnimationFrame(() => el.classList.add('is-open'));
+    hideTimer = setTimeout(hide, 5000);
+  }
+
+  function runUndo(){
+    const entry = stack.pop();
+    hide();
+    entry?.undo();
+  }
+
+  undoBtn.addEventListener('click', runUndo);
+
+  return {
+    push(label, undo){
+      stack.push({ label, undo });
+      if(stack.length > 5) stack.shift();
+      show(label);
+    },
+    undoLast: runUndo
+  };
+}
+
+function initSettings(embed, infoSheet, clock){
   const panel = document.getElementById('settings');
   let release = null;
 
   function refresh(){
-    const themeVal = panel.querySelector('[data-theme-val]');
-    if(themeVal) themeVal.textContent = store.effectiveTheme();
+    panel.querySelectorAll('[data-theme-opt]').forEach(el => {
+      const val = el.dataset.themeOpt;
+      const current = store.get('theme');
+      const active = val === 'system' ? current == null : current === val;
+      el.classList.toggle('is-active', active);
+    });
     panel.querySelectorAll('[data-accent]').forEach(el => {
       el.classList.toggle('is-active', el.dataset.accent === store.get('accent'));
     });
@@ -4574,6 +4738,7 @@ function initSettings(embed, toggleTheme){
     });
     panel.querySelector('[data-reduce-transparency]').checked = store.effectiveReduceTransparency();
     panel.querySelector('[data-reduce-motion]').checked = store.effectiveReduceMotion();
+    panel.querySelector('[data-clock-hour12]').checked = !!store.get('clockHour12');
   }
 
   function open(){
@@ -4593,8 +4758,13 @@ function initSettings(embed, toggleTheme){
   panel.querySelector('[data-scrim]').addEventListener('click', close);
   panel.addEventListener('keydown', e => { if(e.key === 'Escape') close(); });
 
-  panel.querySelector('[data-action="toggle-theme"]').addEventListener('click', () => {
-    toggleTheme(); refresh();
+  panel.querySelectorAll('[data-theme-opt]').forEach(el => {
+    el.addEventListener('click', () => {
+      store.setTheme(el.dataset.themeOpt === 'system' ? null : el.dataset.themeOpt);
+      updateThemeIcon();
+      embed.broadcastTheme();
+      refresh();
+    });
   });
   panel.querySelectorAll('[data-accent]').forEach(el => {
     el.addEventListener('click', () => { store.setAccent(el.dataset.accent); embed.broadcastTheme(); refresh(); });
@@ -4609,6 +4779,12 @@ function initSettings(embed, toggleTheme){
   panel.querySelector('[data-reduce-motion]').addEventListener('change', e => {
     store.setReduceMotion(e.target.checked);
   });
+  panel.querySelector('[data-clock-hour12]').addEventListener('change', e => {
+    store.set('clockHour12', e.target.checked);
+    clock.refresh();
+  });
+  panel.querySelector('[data-action="open-shortcuts"]').addEventListener('click', () => infoSheet.openShortcuts());
+  panel.querySelector('[data-action="reset-workspace"]').addEventListener('click', resetWorkspace);
 
   return { open, close, toggle: () => panel.classList.contains('is-open') ? close() : open() };
 }
@@ -4623,6 +4799,7 @@ function init(){
     const dockWrap = document.querySelector('.dock-wrap');
     if(dockWrap) new ResizeObserver(updateDockReserve).observe(dockWrap);
   }
+  const clock = startClock();
 
   const embed = new EmbedManager();
   const windowLayer = document.getElementById('window-layer');
@@ -4642,16 +4819,34 @@ function init(){
   });
 
   const toggleTheme = () => { store.toggleTheme(); updateThemeIcon(); embed.broadcastTheme(); };
-  const settings = initSettings(embed, toggleTheme);
   const infoSheet = initInfoSheet();
+  const settings = initSettings(embed, infoSheet, clock);
+  const toast = initToast();
 
   const ctx = {
-    wm, dock, store, settings, toggleTheme,
+    wm, dock, store, settings, toast, toggleTheme,
     openSettings: () => settings.open(),
     openShortcuts: () => infoSheet.openShortcuts(),
     openAbout: () => infoSheet.openAbout(),
     resetWorkspace,
     launch: (app, el) => wm.open(app, { flipFrom: el.getBoundingClientRect() })
+  };
+
+  wm.onCloseUndo = (appName, snapshot) => {
+    toast.push(`Closed ${appName}`, () => wm.restoreWindowSnapshot(snapshot));
+  };
+  wm.onMergeUndo = (sourceName, targetName, targetWinId, snapshot) => {
+    toast.push(`Merged ${sourceName} into ${targetName}`, () => {
+      const [firstId, ...rest] = snapshot.tabs;
+      const newWin = wm.detachTab(targetWinId, firstId);
+      if(!newWin) return;
+      rest.forEach(tid => {
+        const app = findById(tid);
+        if(app) wm.addTab(newWin, app, true);
+      });
+      if(snapshot.activeTab && newWin.tabs.includes(snapshot.activeTab)) wm.showTab(newWin, snapshot.activeTab);
+      if(snapshot.minimized) wm.minimize(newWin.id);
+    });
   };
 
   const paletteEl = document.getElementById('palette');
@@ -4675,7 +4870,17 @@ function init(){
     const dot = document.querySelector('[data-topbar-focused-dot]');
     if(!btn || !nameEl || !dot) return;
     const win = wm.focusedId ? wm.wins.get(wm.focusedId) : null;
-    if(!win){ btn.hidden = true; return; }
+    if(!win){
+      if(wm.wins.size){
+        btn.hidden = false;
+        nameEl.textContent = wm.wins.size === 1 ? '1 app minimised' : `${wm.wins.size} apps minimised`;
+        dot.hidden = true;
+        delete dot.dataset.state;
+      }else{
+        btn.hidden = true;
+      }
+      return;
+    }
     const appEntry = findById(win.activeTab);
     btn.hidden = false;
     nameEl.textContent = appEntry ? appEntry.name : '';
@@ -4695,7 +4900,11 @@ function init(){
   function renderRunningSheet(){
     if(!runningList) return;
     runningList.innerHTML = '';
-    wm.order.forEach(id => {
+    const seen = new Set();
+    const ids = [];
+    wm.order.forEach(id => { if(!seen.has(id)){ seen.add(id); ids.push(id); } });
+    wm.wins.forEach((w, id) => { if(!seen.has(id)){ seen.add(id); ids.push(id); } });
+    ids.forEach(id => {
       const win = wm.wins.get(id);
       if(!win) return;
       const appEntry = findById(win.activeTab);
@@ -4706,7 +4915,7 @@ function init(){
       const state = wm.liveState.get(win.activeTab);
       row.innerHTML = html`
         <svg class="icon"><use href="#i-${appEntry.icon}"></use></svg>
-        <span>${appEntry.name}</span>
+        <span>${appEntry.name}${raw(win.minimized ? ' <span class="menu-accel">Minimised</span>' : '')}</span>
         ${raw(state ? `<span class="live-dot" data-state="${esc(state)}"></span>` : '')}`;
       row.addEventListener('click', () => {
         if(win.minimized) wm.restore(id); else wm.focus(id);
@@ -4716,7 +4925,7 @@ function init(){
     });
   }
   function openRunningSheet(){
-    if(!runningSheet || !wm.order.length) return;
+    if(!runningSheet || !wm.wins.size) return;
     renderRunningSheet();
     runningSheet.classList.add('is-open');
     runningSheet.setAttribute('aria-hidden', 'false');
@@ -4731,13 +4940,17 @@ function init(){
     if(mobileQuery.matches) openRunningSheet();
   });
 
-  wm.addEventListener('focuschange', e => { dock.setActive(e.detail.id); updateFocusedTopbar(); });
-  wm.addEventListener('tabchange', () => updateFocusedTopbar());
+  let sessionSaveTimer = null;
+  const scheduleSessionSave = () => { clearTimeout(sessionSaveTimer); sessionSaveTimer = setTimeout(() => saveSession(wm), 400); };
+
+  wm.addEventListener('focuschange', e => { dock.setActive(e.detail.id); updateFocusedTopbar(); scheduleSessionSave(); });
+  wm.addEventListener('tabchange', () => { updateFocusedTopbar(); scheduleSessionSave(); });
   wm.addEventListener('winopen', e => {
     dock.setOpenState(e.detail.id, true);
     desktop.refresh();
     updateFocusedTopbar();
     updateWindowsPresence();
+    scheduleSessionSave();
   });
   wm.addEventListener('winclose', e => {
     dock.setOpenState(e.detail.id, false);
@@ -4745,18 +4958,21 @@ function init(){
     updateFocusedTopbar();
     updateWindowsPresence();
     if(runningSheet?.classList.contains('is-open')) renderRunningSheet();
+    scheduleSessionSave();
   });
   wm.addEventListener('winminimize', e => {
     dock.setMinimized(e.detail.id, true);
     updateFocusedTopbar();
     updateWindowsPresence();
     if(runningSheet?.classList.contains('is-open')) renderRunningSheet();
+    scheduleSessionSave();
   });
   wm.addEventListener('winrestore', e => {
     dock.setMinimized(e.detail.id, false);
     updateFocusedTopbar();
     updateWindowsPresence();
     if(runningSheet?.classList.contains('is-open')) renderRunningSheet();
+    scheduleSessionSave();
   });
   embed.addEventListener('status', () => updateFocusedTopbar());
   embed.addEventListener('request-palette', () => palette.open());
@@ -4770,8 +4986,6 @@ function init(){
     if(!store.get('theme')){ store.applyTheme(store.effectiveTheme()); updateThemeIcon(); embed.broadcastTheme(); }
   });
 
-  startClock();
-
   document.addEventListener('keydown', e => {
     const meta = e.metaKey || e.ctrlKey;
     if(meta && e.key.toLowerCase() === 'k'){ e.preventDefault(); palette.open(); return; }
@@ -4780,6 +4994,7 @@ function init(){
     if(meta && e.key === '`' && wm.order.length > 1){ e.preventDefault(); wm.cycle(); return; }
     if(meta && e.shiftKey && e.key.toLowerCase() === 'l'){ e.preventDefault(); toggleTheme(); return; }
     if(meta && (e.key === '/' || e.key === '?')){ e.preventDefault(); infoSheet.openShortcuts(); return; }
+    if(meta && !e.shiftKey && e.key.toLowerCase() === 'z' && !isTypingTarget(e.target)){ e.preventDefault(); toast.undoLast(); return; }
     if(meta && e.altKey && wm.focusedId){
       if(e.key === 'ArrowLeft'){ e.preventDefault(); wm.snap(wm.focusedId, 'left'); return; }
       if(e.key === 'ArrowRight'){ e.preventDefault(); wm.snap(wm.focusedId, 'right'); return; }
@@ -4801,6 +5016,7 @@ function init(){
 
   window.addEventListener('beforeunload', () => {
     wm.wins.forEach(win => wm.persistGeometry(win));
+    saveSession(wm);
   });
 
   if('serviceWorker' in navigator){
@@ -4808,6 +5024,15 @@ function init(){
 
       navigator.serviceWorker.register('sw.js').catch(err => console.warn('Service worker registration failed:', err));
     });
+  }
+
+  restoreSession(wm);
+
+  const deepLinkId = new URLSearchParams(location.search).get('open');
+  if(deepLinkId){
+    const app = findById(deepLinkId);
+    if(app && app.kind === 'app') wm.open(app, { flipFrom: dock.rectFor(app.id) });
+    history.replaceState(null, '', location.pathname + location.hash);
   }
 }
 
