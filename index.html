@@ -1925,8 +1925,19 @@ function announce(msg){
   requestAnimationFrame(() => { liveEl.textContent = msg; });
 }
 
+function launchLink(url){
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  a.hidden = true;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
 function openExternal(app){
-  window.open(app.url, '_blank', 'noopener,noreferrer');
+  launchLink(app.url);
   announce(`Opening ${app.name} in a new tab`);
 }
 
@@ -4490,7 +4501,7 @@ class Palette{
     const r = this.results[this.activeIndex];
     if(!r) return;
     if(r.kind === 'url'){
-      window.open(r.url, '_blank', 'noopener,noreferrer');
+      launchLink(r.url);
       this.close();
       return;
     }
