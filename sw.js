@@ -20,6 +20,12 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if(event.request.mode !== 'navigate') return;
   event.respondWith(
-    fetch(event.request).catch(() => caches.match('./'))
+    fetch(event.request).then(response => {
+      if(response.ok){
+        const copy = response.clone();
+        event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put('./', copy)));
+      }
+      return response;
+    }).catch(() => caches.match('./'))
   );
 });
